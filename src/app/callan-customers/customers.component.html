@@ -1,0 +1,3 @@
+<app-callan-customers-list [customers$]="customers$" (setCurrentCustomer)="onSetCurrentCustomer($event)"></app-callan-customers-list>
+
+<p *ngIf="currentCustomer">Current customer: {{currentCustomer.email}}</p>

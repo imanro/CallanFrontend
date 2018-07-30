@@ -1,0 +1,57 @@
+<ng-template #eventModalContent let-close="close">
+  <div class="modal-header">
+    <h5 class="modal-title">{{eventModalData?.title}}</h5>
+    <button type="button" class="close" (click)="close()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p [innerHTML]="eventModalData?.body"></p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-secondary" (click)="close()">Cancel</button>
+
+    <button type="button" class="btn btn-outline-primary" (click)="handleConfirmLessonEventCreate()">OK</button>
+  </div>
+</ng-template>
+
+<div class="row">
+  <div class="col-sm-12 mt-2">
+
+  <div class="btn-group d-none d-sm-none d-md-none d-lg-block">
+  <a class="btn btn-raised btn-primary" mwlCalendarPreviousView [view]="calendarView" [(viewDate)]="currentDate">
+    Previous
+  </a>
+  <a class="btn btn-raised btn-danger" mwlCalendarToday [viewDate]="currentDate">
+    Today
+  </a>
+  <a class="btn btn-raised btn-primary" mwlCalendarNextView [view]="calendarView" [(viewDate)]="currentDate">
+    Next
+  </a>
+</div>
+  </div>
+</div>
+
+<iq-calendar-week-hours-view
+        [viewDate]="currentDate"
+        [events]="calendarEvents"
+        [hourSegments]="hourSegments"
+        [hourSegmentHeight]="50"
+        [dayStartHour]="0"
+
+        [dayEndHour]="23"
+        [weekStartsOn]="1"
+        [headerColVisible]="false"
+        [hoursEnabled]="hoursEnabled"
+        [datesEnabled]="datesEnabled"
+        (hourSegmentClicked)="handleClickHourSegment($event)"
+        (eventClicked)="handleLessonEventClicked($event)"
+>
+</iq-calendar-week-hours-view>
+
+
+<div class="row">
+  <div class="col-sm-12 mt-2">
+<a class="btn btn-raised gradient-nepal white" href="javascript:void(0)" (click)="handleClickCancel($event)">Cancel</a>
+  </div>
+</div>
