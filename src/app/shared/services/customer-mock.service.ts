@@ -4,7 +4,7 @@ import {delay} from 'rxjs/operators';
 
 // import { CallanCustomersModule } from '../callan.module';
 import {CallanCustomerService} from './customer.service';
-import {CallanCustomer} from '../models/callan-customer.model';
+import {CallanCustomer} from '../models/customer.model';
 import {AppConfig, IAppConfig} from '../../app.config';
 import {mockCustomers} from '../data/mock-customers';
 
@@ -26,6 +26,7 @@ export class CallanCustomerMockService extends CallanCustomerService {
         return new Observable<CallanCustomer[]>(observer => {
             observer.next(mockCustomers);
             observer.complete();
+
         }).pipe(
             delay(d)
         );

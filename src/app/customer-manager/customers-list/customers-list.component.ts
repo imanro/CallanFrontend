@@ -2,7 +2,7 @@ import {Component, OnInit, EventEmitter, Input, Output} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import {LocalDataSource} from 'ng2-smart-table';
 
-import {CallanCustomer} from '../../shared/models/callan-customer.model';
+import {CallanCustomer} from '../../shared/models/customer.model';
 
 @Component({
     selector: 'app-callan-customers-list',

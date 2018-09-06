@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {CallanCourseProgress} from '../../shared/models/callan-course-progress.model';
+import {CallanCourseProgress} from '../../shared/models/course-progress.model';
 
 @Component({
     selector: 'app-callan-course-progress-details',

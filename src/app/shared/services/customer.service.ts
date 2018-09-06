@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 
 // import {CallanCustomersModule} from '../callan.module';
-import {CallanCustomer} from '../models/callan-customer.model';
+import {CallanCustomer} from '../models/customer.model';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 
 // @Injectable({

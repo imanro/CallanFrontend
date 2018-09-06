@@ -1,5 +1,5 @@
-import {CallanCourse} from './callan-course.model';
-import {CallanCourseStage} from './callan-course-stage.model';
+import {CallanCourse} from './course.model';
+import {CallanCourseStage} from './course-stage.model';
 
 export class CallanLesson {
     id: number;

@@ -7,11 +7,15 @@ export interface IAppConfig {
     apiProtocol: string;
     apiUrlHost:  string;
     apiUrlPrefix: string;
+    checkNearestLessonEventIntervalSec: number;
+    checkCurrentLessonEventStartTimeIntervalSec: number;
 }
 
 export const _appConfig: IAppConfig = {
     mockDelayMs: 1000,
     apiProtocol: 'http',
     apiUrlHost: '',
-    apiUrlPrefix: ''
+    apiUrlPrefix: '',
+    checkNearestLessonEventIntervalSec: 60000,
+    checkCurrentLessonEventStartTimeIntervalSec: 60000
 };

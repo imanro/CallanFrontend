@@ -2,12 +2,12 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 
-import {CallanCustomersComponent} from './customers.component';
+import {CallanCustomerManagerContainerComponent} from './customer-manager-container.component';
 
 const routes: Routes = [
     {
         path: '',
-        component: CallanCustomersComponent,
+        component: CallanCustomerManagerContainerComponent,
         data: {
             title: 'Customers'
         },

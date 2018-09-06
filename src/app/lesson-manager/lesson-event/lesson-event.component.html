@@ -1,0 +1,62 @@
+<div *ngIf="lessonEvent">
+
+    <div class="row">
+        <div class="col-sm-12">
+            <h4 class="mt-3">Upcoming lesson</h4>
+
+            <div class="card">
+                <div class="card-body">
+                    <div class="card-block">
+                        <dl>
+                            <dt>Course</dt>
+                            <dd>{{lessonEvent.lesson?.course?.title}}</dd>
+                            <dt>Lesson</dt>
+                            <dd>{{lessonEvent.lesson?.title}}</dd>
+                            <dt>Time</dt>
+                            <dd>{{lessonEvent.startTime|date: 'short'}}</dd>
+                            <dt>Teacher</dt>
+                            <dd>{{lessonEvent.teacher.firstName}}</dd>
+                        </dl>
+                    </div>
+                    <!--
+                    <pre>
+                        lesson: {{lessonEvent}} lessonStarted: {{isLessonStarted}} lessonTimeSpent: {{isLessonTimeSpent}}
+                    </pre>
+                    -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" *ngIf="isLessonStarted; else lessonIsUpcommingBlock">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="card-block">
+                        <p>Lesson was started!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <ng-template #lessonIsUpcommingBlock>
+        <div class="row" *ngIf="isLessonTimeSpent; else lessonUpcommingCounterBlock">
+            <div class="col-sm-12">
+                <div class="mt-2">
+                    <a class="btn btn-raised gradient-blackberry white" href="javascript:void(0)"
+                       (click)="handleLessonEventStart()">Start the lesson!</a>
+                </div>
+            </div>
+        </div>
+
+        <ng-template #lessonUpcommingCounterBlock>
+            <div class="row">
+                <div class="col-sm-12">
+                    <p>You have upcoming lesson just in {{lessonEventRemainingMinutes + 1}} minutes</p>
+                </div>
+            </div>
+        </ng-template>
+
+    </ng-template>
+</div>

@@ -2,19 +2,19 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 
-import {CallanLessonsComponent} from './lessons.component';
+import {CallanLessonManagerContainerComponent} from './lesson-manager-container.component';
 
 const routes: Routes = [
     {
         path: '',
-        component: CallanLessonsComponent,
+        component: CallanLessonManagerContainerComponent,
         data: {
             title: 'Lessons'
         },
     },
     {
         path: ':courseProgressId',
-        component: CallanLessonsComponent,
+        component: CallanLessonManagerContainerComponent,
         data: {
             title: 'Course'
         }
@@ -25,6 +25,6 @@ const routes: Routes = [
     imports: [RouterModule.forChild(routes)],
     exports: [RouterModule],
 })
-export class CallanLessonsRoutingModule {
+export class CallanLessonManagerRoutingModule {
 
 }

@@ -77,10 +77,10 @@ export const Full_ROUTES: Routes = [
     },
     {
         path: 'customers',
-        loadChildren: './callan-customers/customers.module#CallanCustomersModule'
+        loadChildren: './customer-manager/customer-manager.module#CallanCustomerManagerModule'
     },
     {
         path: 'lessons',
-        loadChildren: './callan-lessons/lessons.module#CallanLessonsModule'
+        loadChildren: './lesson-manager/lesson-manager.module#CallanLessonManagerModule'
     },
 ];

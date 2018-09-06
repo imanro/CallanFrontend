@@ -1,5 +1,5 @@
-import {CallanLesson} from './callan-lesson.model';
-import {CallanCustomer} from './callan-customer.model';
+import {CallanLesson} from './lesson.model';
+import {CallanCustomer} from './customer.model';
 
 export class CallanLessonEvent {
 

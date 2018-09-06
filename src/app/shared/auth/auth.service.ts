@@ -1,6 +1,6 @@
 import { Router } from '@angular/router';
 import { Injectable } from '@angular/core';
-import {CallanCustomer} from '../models/callan-customer.model';
+import {CallanCustomer} from '../models/customer.model';
 
 @Injectable()
 export class AuthService {

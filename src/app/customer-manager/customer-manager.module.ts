@@ -1,15 +1,15 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {CallanCustomersRoutingModule} from './customers-routing.module';
+import {CallanCustomersRoutingModule} from './customer-manager-routing.module';
 
-import {CallanCustomersComponent} from './customers.component';
+import {CallanCustomerManagerContainerComponent} from './customer-manager-container.component';
 import {CallanCustomersListComponent} from './customers-list/customers-list.component';
 
 import { Ng2SmartTableModule } from 'ng2-smart-table';
 
 @NgModule({
     declarations: [
-        CallanCustomersComponent,
+        CallanCustomerManagerContainerComponent,
         CallanCustomersListComponent
     ],
     imports: [
@@ -19,9 +19,9 @@ import { Ng2SmartTableModule } from 'ng2-smart-table';
     ],
     providers: [],
     bootstrap: [
-        CallanCustomersComponent
+        CallanCustomerManagerContainerComponent
     ]
 })
 
-export class CallanCustomersModule {
+export class CallanCustomerManagerModule {
 }

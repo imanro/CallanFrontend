@@ -1,17 +1,17 @@
 import {Component, OnInit, EventEmitter, Input, Output, OnDestroy} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 
-import {CallanCustomer} from '../shared/models/callan-customer.model';
+import {CallanCustomer} from '../shared/models/customer.model';
 import {CallanCustomerService} from '../shared/services/customer.service';
 import {Subscription} from 'rxjs/Subscription';
 
 @Component({
-    selector: 'app-callan-customers',
-    templateUrl: './customers.component.html',
-    styleUrls: ['./customers.component.scss']
+    selector: 'app-callan-customer-manager-container',
+    templateUrl: './customer-manager-container.component.html',
+    styleUrls: ['./customer-manager-container.component.scss']
 })
 
-export class CallanCustomersComponent implements OnInit, OnDestroy {
+export class CallanCustomerManagerContainerComponent implements OnInit, OnDestroy {
 
     customers$: Observable<CallanCustomer[]>;
 

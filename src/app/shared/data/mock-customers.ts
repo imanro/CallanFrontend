@@ -1,4 +1,4 @@
-import {CallanCustomer} from '../models/callan-customer.model';
+import {CallanCustomer} from '../models/customer.model';
 
 const customerData = [
     {

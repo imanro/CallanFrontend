@@ -2,8 +2,8 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import { NgbPanelChangeEvent } from '@ng-bootstrap/ng-bootstrap';
 
-import {CallanCourse} from '../../shared/models/callan-course.model';
-import {CallanCourseProgress} from '../../shared/models/callan-course-progress.model';
+import {CallanCourse} from '../../shared/models/course.model';
+import {CallanCourseProgress} from '../../shared/models/course-progress.model';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Subject} from 'rxjs/Subject';
 

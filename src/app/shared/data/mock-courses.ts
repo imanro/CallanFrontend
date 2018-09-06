@@ -1,4 +1,4 @@
-import {CallanCourse} from '../models/callan-course.model';
+import {CallanCourse} from '../models/course.model';
 
 const courseData = [
     {

@@ -1,6 +1,6 @@
-import {CallanCustomer} from './callan-customer.model';
-import {CallanCourse} from './callan-course.model';
-import {CallanLessonEvent} from './callan-lesson-event.model';
+import {CallanCustomer} from './customer.model';
+import {CallanCourse} from './course.model';
+import {CallanLessonEvent} from './lesson-event.model';
 
 export class CallanCourseProgress {
     id: number;

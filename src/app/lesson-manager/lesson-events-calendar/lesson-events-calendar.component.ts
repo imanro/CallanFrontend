@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, Output, OnInit, ViewChild, TemplateRef, OnDestroy} from '@angular/core';
-import {CallanCourseProgress} from '../../shared/models/callan-course-progress.model';
+import {CallanCourseProgress} from '../../shared/models/course-progress.model';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {NgbModal, NgbModalRef} from '@ng-bootstrap/ng-bootstrap/modal/modal.module';
 import {Subject} from 'rxjs/Subject';
@@ -22,16 +22,16 @@ import {
     /*    CalendarEventAction,
         CalendarEventTimesChangedEvent */
 } from 'angular-calendar';
-import {CallanLessonEvent} from '../../shared/models/callan-lesson-event.model';
+import {CallanLessonEvent} from '../../shared/models/lesson-event.model';
 import {CallanLessonService} from '../../shared/services/lesson.service';
 
 
 @Component({
     selector: 'app-callan-lesson-events-list',
-    templateUrl: './lesson-events-list.component.html',
-    styleUrls: ['./lesson-events-list.component.scss']
+    templateUrl: './lesson-events-calendar.component.html',
+    styleUrls: ['./lesson-events-calendar.component.scss']
 })
-export class CallanLessonEventsListComponent implements OnInit, OnDestroy {
+export class CallanLessonEventsCalendarComponent implements OnInit, OnDestroy {
 
     @Input() courseProgress$: BehaviorSubject<CallanCourseProgress>;
 
@@ -60,6 +60,7 @@ export class CallanLessonEventsListComponent implements OnInit, OnDestroy {
     hoursEnabled: number[];
     datesEnabled: Date[];
     hourSegments = 1;
+    calendarRefresh$ = new BehaviorSubject<void>(null);
 
     private unsubscribe: Subject<void> = new Subject();
 
@@ -85,9 +86,10 @@ export class CallanLessonEventsListComponent implements OnInit, OnDestroy {
                 }
             }
 
-            console.log('received new lesevents list', events);
+            console.log('Lesson Events were updated', events);
             console.log(this.calendarEvents);
-
+            this.datesEnabled = this.lessonService.getDatesEnabled(events, this.datesEnabled);
+            this.calendarRefresh$.next(null);
         });
 
         this.courseProgress$.pipe(
@@ -97,7 +99,6 @@ export class CallanLessonEventsListComponent implements OnInit, OnDestroy {
         });
 
         this.hoursEnabled = [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
-        this.datesEnabled = this.lessonService.createDatesEnabledDev();
         console.log(this.datesEnabled);
     }
 
@@ -110,7 +111,7 @@ export class CallanLessonEventsListComponent implements OnInit, OnDestroy {
 
         this.currentHourSegment = $event;
 
-        if($event.isSegmentEnabled) {
+        if ($event.isSegmentEnabled) {
             this.eventModalData.title = 'Confirm planning lesson';
             this.eventModalData.body = '<p>Next lesson will start at:</p> <p><strong>' +
                 moment($event.date).format('D.MM.YYYY h:mm A') + '</strong></p>';
