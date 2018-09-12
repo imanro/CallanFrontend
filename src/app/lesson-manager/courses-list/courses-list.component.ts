@@ -5,7 +5,6 @@ import { NgbPanelChangeEvent } from '@ng-bootstrap/ng-bootstrap';
 import {CallanCourse} from '../../shared/models/course.model';
 import {CallanCourseProgress} from '../../shared/models/course-progress.model';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {Subject} from 'rxjs/Subject';
 
 @Component({
     selector: 'app-callan-courses-list',

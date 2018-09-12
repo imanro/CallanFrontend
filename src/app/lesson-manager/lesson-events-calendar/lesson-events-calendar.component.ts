@@ -88,8 +88,11 @@ export class CallanLessonEventsCalendarComponent implements OnInit, OnDestroy {
 
             console.log('Lesson Events were updated', events);
             console.log(this.calendarEvents);
-            this.datesEnabled = this.lessonService.getDatesEnabled(events, this.datesEnabled);
-            this.calendarRefresh$.next(null);
+
+            this.lessonService.getDatesEnabled(events, this.datesEnabled).subscribe(dates => {
+                this.datesEnabled = dates;
+                this.calendarRefresh$.next(null);
+            });
         });
 
         this.courseProgress$.pipe(

@@ -1,0 +1,28 @@
+@import "../../../assets/sass/scss/core/app-colors";
+
+:host {
+
+  dl {
+    padding: 1rem;
+  }
+
+  .contact-info {
+    background: map-get($grey, 'lighten-3');
+    border-radius: 5px;
+  }
+
+  .date-info {
+
+    align-self: center;
+
+    * {
+      vertical-align: middle !important;
+    }
+
+    i {
+      color: map-get($grey, 'base');
+      font-size: 1.3rem;
+      margin-right: 0.7rem;
+    }
+  }
+}

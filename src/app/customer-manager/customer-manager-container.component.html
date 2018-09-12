@@ -1,3 +1,23 @@
-<app-callan-customers-list [customers$]="customers$" (setCurrentCustomer)="onSetCurrentCustomer($event)"></app-callan-customers-list>
+<div class="main-panel">
+    <div class="main-content">
+        <div class="content-wrapper">
+            <div class="container-fluid">
 
-<p *ngIf="currentCustomer">Current customer: {{currentCustomer.email}}</p>
+
+                <app-callan-customers-list [customers$]="customers$"
+                                           (setCurrentCustomer)="handleSetCurrentCustomer($event)" *ngIf="!isDetailsShown"></app-callan-customers-list>
+
+                <app-callan-customer-details [customer]="currentCustomer" (customerSaveEvent)="handleCustomerSave($event)" (cancelEvent)="handleDetailsReset()" *ngIf="currentCustomer && isDetailsShown"></app-callan-customer-details>
+
+                <div class="row" *ngIf="!isDetailsShown">
+                    <div class="col-sm-12">
+                            <a class="btn btn-raised gradient-blueberry white" href="javascript:void(0)" (click)="handleCustomerCreate()">Add a new
+                                user</a>
+                    </div>
+                </div>
+
+                <p *ngIf="currentCustomer">Current customer: {{currentCustomer.email}}</p>
+            </div>
+        </div>
+    </div>
+</div>

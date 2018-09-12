@@ -31,4 +31,17 @@ export class CallanCustomerMockService extends CallanCustomerService {
             delay(d)
         );
     }
+
+    saveCustomer(customer: CallanCustomer): Observable<CallanCustomer> {
+        const d = this.appConfig.mockDelayMs;
+        customer.id = Math.floor(Math.random() * 100) + 1000;
+
+        return new Observable<CallanCustomer>(observer => {
+            mockCustomers.push(customer);
+            observer.next(customer);
+            observer.complete();
+        }).pipe(
+            delay(d)
+        );
+    }
 }

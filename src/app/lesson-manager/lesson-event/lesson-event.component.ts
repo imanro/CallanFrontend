@@ -15,6 +15,9 @@ export class CallanLessonEventComponent implements OnInit {
 
     @Output() lessonStartEvent = new EventEmitter<void>();
 
+    lessonEventRemainingDays = 0;
+    lessonEventRemainingHours = 0;
+
     constructor() {
         console.log('constr');
     }
@@ -24,7 +27,16 @@ export class CallanLessonEventComponent implements OnInit {
     }
 
     ngOnInit() {
-        console.log('now, lesson event:', this.lessonEvent);
+
+        this.lessonEventRemainingDays = Math.floor(this.lessonEventRemainingMinutes / 60 / 24);
+        if (this.lessonEventRemainingDays > 0) {
+            console.log('this case');
+            this.lessonEventRemainingHours = Math.floor(this.lessonEventRemainingMinutes / 60 % 24);
+        } else {
+            this.lessonEventRemainingHours = Math.floor(this.lessonEventRemainingMinutes / 60 );
+        }
+
+        console.log('DHM', this.lessonEventRemainingDays, this.lessonEventRemainingHours, this.lessonEventRemainingMinutes);
     }
 
 }

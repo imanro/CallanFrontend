@@ -1,0 +1,40 @@
+<div *ngIf="lessonEvent.isStarted(); else lessonIsUpcommingBlock">
+    <div class="row">
+        <div class="col-sm-12">
+            <span class="text">The <a href="javascript:void(0)" (click)="handleLessonEventView()">lesson</a> is started</span>
+        </div>
+    </div>
+</div>
+
+<ng-template #lessonIsUpcommingBlock>
+    <div class="row" *ngIf="!isLessonTimeSpent; else lessonUpcommingCounterBlock">
+        <div class="col-sm-12">
+            <span class="text">The <a href="javascript:void(0)" (click)="handleLessonEventView()">lesson</a> time is NOW.</span>
+            <a class="btn btn-raised btn-sm gradient-blackberry white"
+               href="javascript:void(0)"
+               (click)="handleLessonEventStart()">Start the lesson!</a>
+        </div>
+    </div>
+
+    <ng-template #lessonUpcommingCounterBlock>
+        <div class="row">
+            <div class="col-sm-12" *ngIf="lessonEventRemainingDays > 0; else lessonEventRemainingHoursBlock">
+                    <span class="text">You have an upcoming <a href="javascript:void(0)"
+                                                               (click)="handleLessonEventView()">lesson</a> in {{lessonEventRemainingDays}} days</span>
+            </div>
+
+            <ng-template #lessonEventRemainingHoursBlock>
+                <div class="col-sm-12" *ngIf="lessonEventRemainingHours > 0; else lessonEventRemainingMinutesBlock">
+                        <span class="text">You have an upcoming <a href="javascript:void(0)"
+                                                                   (click)="handleLessonEventView()">lesson</a> just in {{lessonEventRemainingHours}} hours</span>
+                </div>
+                <ng-template #lessonEventRemainingMinutesBlock>
+                    <div class="col-sm-12">
+                            <span class="text">You have an upcoming <a href="javascript:void(0)"
+                                                                       (click)="handleLessonEventView()">lesson</a> just in {{lessonEventRemainingMinutes + 1}} minutes</span>
+                    </div>
+                </ng-template>
+            </ng-template>
+        </div>
+    </ng-template>
+</ng-template>

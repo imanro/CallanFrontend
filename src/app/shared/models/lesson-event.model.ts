@@ -1,13 +1,8 @@
 import {CallanLesson} from './lesson.model';
 import {CallanCustomer} from './customer.model';
+import {CallanLessonEventStateEnum} from '../enums/lesson-event.state.enum';
 
 export class CallanLessonEvent {
-
-    static readonly STATE_PLANNED = 1;
-
-    static readonly STATE_ONGOING = 2;
-
-    static readonly STATE_COMPLETED = 3;
 
     id: number;
     title: string;
@@ -17,4 +12,8 @@ export class CallanLessonEvent {
     startTime: Date;
     duration: number;
     state: number;
+
+    isStarted?() {
+        return this.state === CallanLessonEventStateEnum.STARTED;
+    }
 }

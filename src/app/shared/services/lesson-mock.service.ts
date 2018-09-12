@@ -116,64 +116,75 @@ export class CallanLessonMockService extends CallanLessonService {
         return lessonEvents[0];
     }
 
-    getDatesEnabled(lessonEvents: CallanLessonEvent[], previousDates: Date[]): Date[] {
+    getDatesEnabled(lessonEvents: CallanLessonEvent[], previousDates: Date[]): Observable<Date[]> {
 
-        const baseDate = new Date();
+        return new Observable<Date[]>(observer => {
+            const baseDate = new Date();
 
-        baseDate.setDate(baseDate.getDate() + 1);
-        baseDate.setHours(9);
-        baseDate.setMinutes(0);
-        baseDate.setMinutes(0);
-        baseDate.setSeconds(0);
+            baseDate.setDate(baseDate.getDate() + 1);
+            baseDate.setHours(9);
+            baseDate.setMinutes(0);
+            baseDate.setMinutes(0);
+            baseDate.setSeconds(0);
 
-        let randStart, randEnd;
+            let randStart, randEnd;
 
-        let list = [];
-        if (previousDates) {
-            list = previousDates;
-        } else {
-            list = [];
-            for (let i = 0; i < 7; i++) {
+            let list = [];
+            if (previousDates) {
+                console.log('There was a previous dates', previousDates);
+                list = previousDates;
+            } else {
+                list = [];
+                for (let i = 0; i < 7; i++) {
 
-                randStart = Math.floor(Math.random() * (20 - 10) + 10);
-                randEnd = Math.floor(Math.random() * (20 - randStart) + randStart);
+                    randStart = Math.floor(Math.random() * (20 - 10) + 10);
+                    randEnd = Math.floor(Math.random() * (20 - randStart) + randStart);
 
-                // console.log(randStart, randEnd);
+                    // console.log(randStart, randEnd);
 
-                for (let j = 10; j <= 20; j++) {
-                    // console.log(j, 'is');
-                    if (j >= randStart && j <= randEnd) {
-                        // console.log('katit');
-                        const date = new Date(baseDate.getTime());
-                        date.setDate(baseDate.getDate() + i);
-                        date.setHours(j);
-                        // console.log(date);
-                        list.push(date);
+                    for (let j = 10; j <= 20; j++) {
+                        // console.log(j, 'is');
+                        if (j >= randStart && j <= randEnd) {
+                            // console.log('katit');
+                            const date = new Date(baseDate.getTime());
+                            date.setDate(baseDate.getDate() + i);
+                            date.setHours(j);
+                            // console.log(date);
+                            list.push(date);
+                        }
                     }
                 }
             }
-        }
 
-        // checking the list against the lessonEvents
-        let counter = 0;
-        for (const date of list) {
-            for (const lessonEvent of lessonEvents) {
-                if (
-                    lessonEvent.startTime.getFullYear() === date.getFullYear() &&
-                    lessonEvent.startTime.getMonth() === date.getMonth() &&
-                    lessonEvent.startTime.getDate() === date.getDate() &&
-                    lessonEvent.startTime.getHours() === date.getHours()
-                ) {
-                    console.log('Removing an item from list of enabled dates');
-                    list.splice(counter, 1);
+            // checking the list against the lessonEvents
+            let counter = 0;
+            for (const date of list) {
+                for (const lessonEvent of lessonEvents) {
+                    if (
+                        lessonEvent.startTime.getFullYear() === date.getFullYear() &&
+                        lessonEvent.startTime.getMonth() === date.getMonth() &&
+                        lessonEvent.startTime.getDate() === date.getDate() &&
+                        lessonEvent.startTime.getHours() === date.getHours()
+                    ) {
+                        console.log('Removing an item from list of enabled dates');
+                        list.splice(counter, 1);
+                    }
                 }
+
+                counter++;
             }
 
-            counter++;
-        }
+            console.log('Now, list of enabled dates contains', list.length, 'elements');
+            console.log(list);
+            observer.next(list);
+        });
+    }
 
-        console.log('Now, list of enabled dates contains', list.length, 'elements');
-
-        return list;
+    changetLessonEventState(lessonEvent: CallanLessonEvent, state: number): Observable<boolean> {
+        lessonEvent.state = state;
+        return new Observable<boolean>(observer => {
+            observer.next(true);
+            observer.complete();
+        });
     }
 }

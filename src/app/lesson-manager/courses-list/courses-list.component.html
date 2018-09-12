@@ -4,9 +4,11 @@
   <h4 class="mt-3">Your courses</h4>
 
   <ngb-accordion [closeOthers]="true" activeIds="{{currentCourseProgress && currentCourseProgress.id}}" (panelChange)="onCourseProgressChange($event)">
-    <ngb-panel *ngFor="let progress of currentCustomerCourseProgresses$|async" id="{{progress.id}}" title="{{progress.course.title}}">
+    <ngb-panel *ngFor="let progress of currentCustomerCourseProgresses$|async" id="{{progress.id}}" title="{{progress.course.title}}" >
       <ng-template ngbPanelContent>
-        <app-callan-course-progress-details [courseProgress]="progress" (lessonEventCreateEvent)="onLessonEventsCreate()"></app-callan-course-progress-details>
+        <div class="px-3">
+          <app-callan-course-progress-details [courseProgress]="progress" (lessonEventCreateEvent)="onLessonEventsCreate()"></app-callan-course-progress-details>
+        </div>
       </ng-template>
     </ngb-panel>
   </ngb-accordion>

@@ -1,0 +1,21 @@
+:host {
+  p {
+    margin: 0;
+  }
+
+  .row {
+    .btn {
+      font-size: 0.8rem;
+      margin: 0.2rem 0 0.2rem 0.2rem;
+      padding: 0.2rem 0.5rem;
+    }
+
+    > div > * {
+      vertical-align: middle !important;
+    }
+  }
+
+  .btn {
+    margin: 0;
+  }
+}

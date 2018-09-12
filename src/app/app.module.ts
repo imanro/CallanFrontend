@@ -1,5 +1,4 @@
-
-import { NgModule } from '@angular/core';
+import { NgModule, APP_INITIALIZER} from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -13,8 +12,8 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { StoreModule } from '@ngrx/store';
 
 import { AppComponent } from './app.component';
-import { ContentLayoutComponent } from "./layouts/content/content-layout.component";
-import { FullLayoutComponent } from "./layouts/full/full-layout.component";
+import { ContentLayoutComponent } from './layouts/content/content-layout.component';
+import { FullLayoutComponent } from './layouts/full/full-layout.component';
 
 import { DragulaService } from 'ng2-dragula';
 import { AuthService } from './shared/auth/auth.service';
@@ -24,7 +23,7 @@ import {CallanCustomerService} from './shared/services/customer.service';
 import {CallanCustomerMockService} from './shared/services/customer-mock.service';
 import {CallanLessonService} from './shared/services/lesson.service';
 import {CallanLessonMockService} from './shared/services/lesson-mock.service';
-import {_appConfig, AppConfig} from './app.config';
+import {AppConfig} from './app.config';
 import {CalendarModule} from 'angular-calendar';
 
 import * as $ from 'jquery';
@@ -32,6 +31,12 @@ import * as $ from 'jquery';
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
   }
+
+export function initializeApp(appConfig: AppConfig) {
+    return () => {
+        return appConfig.load();
+    };
+}
 
 @NgModule({
     declarations: [
@@ -60,15 +65,17 @@ export function createTranslateLoader(http: HttpClient) {
         CalendarModule.forRoot()
     ],
     providers: [
+        {   provide: APP_INITIALIZER,
+            useFactory: initializeApp,
+            deps: [AppConfig],
+            multi: true
+        },
         AuthService,
         AuthGuard,
         DragulaService,
+        AppConfig,
         {provide: CallanCustomerService, useClass: CallanCustomerMockService},
         {provide: CallanLessonService, useClass: CallanLessonMockService},
-        {
-            provide: AppConfig,
-            useValue: _appConfig
-        },
     ],
     bootstrap: [AppComponent]
 })

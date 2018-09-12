@@ -13,6 +13,7 @@ import {CallanCustomerService} from './customer.service';
 
 import {combineLatest as observableCombineLatest} from 'rxjs/observable/combineLatest';
 import {CallanLesson} from '../models/lesson.model';
+import {CallanLessonEventStateEnum} from '../enums/lesson-event.state.enum';
 
 
 @Injectable()
@@ -35,7 +36,9 @@ export abstract class CallanLessonService {
     abstract getNearestLessonEvent(lessonEvents: CallanLessonEvent[]): CallanLessonEvent;
 
     // CHECKME: signature (does the lessonEvents needed here?)
-    abstract getDatesEnabled(lessonEvents: CallanLessonEvent[], previousDates: Date[]): Date[];
+    abstract getDatesEnabled(lessonEvents: CallanLessonEvent[], previousDates: Date[]): Observable<Date[]>;
+
+    abstract changetLessonEventState(lessonEvent: CallanLessonEvent, state: number): Observable<boolean>;
 
     createCourse(): CallanCourse {
         return new CallanCourse();
@@ -49,10 +52,11 @@ export abstract class CallanLessonService {
         return new CallanLessonEvent();
     }
 
+
     initLessonEvent(lessonEvent: CallanLessonEvent) {
         lessonEvent.duration = 60;
         lessonEvent.title = '';
-        lessonEvent.state = CallanLessonEvent.STATE_PLANNED;
+        lessonEvent.state = CallanLessonEventStateEnum.PLANNED;
     }
 
     convertLessonEventToCalendarEvent(lessonEvent: CallanLessonEvent): CalendarEvent {

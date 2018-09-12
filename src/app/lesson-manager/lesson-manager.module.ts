@@ -11,13 +11,15 @@ import {CallanCoursesListComponent} from './courses-list/courses-list.component'
 import {CallanCourseProgressDetailsComponent} from './course-progress-details/course-progress-details.component';
 import { CallanLessonEventsCalendarComponent } from './lesson-events-calendar/lesson-events-calendar.component';
 import { CallanLessonEventComponent } from './lesson-event/lesson-event.component';
+import { LessonEventAnnouncementComponent } from './lesson-event-announcement/lesson-event-announcement.component';
 
 @NgModule({
     declarations: [CallanLessonManagerContainerComponent,
         CallanCoursesListComponent,
         CallanCourseProgressDetailsComponent,
         CallanLessonEventsCalendarComponent,
-        CallanLessonEventComponent
+        CallanLessonEventComponent,
+        LessonEventAnnouncementComponent
     ],
     imports: [
         CommonModule,

@@ -1,9 +1,9 @@
-import {Component, OnInit, EventEmitter, Input, Output, OnDestroy} from '@angular/core';
-import {Observable} from 'rxjs/Observable';
+import {Component, OnInit, OnDestroy} from '@angular/core';
 
 import {CallanCustomer} from '../shared/models/customer.model';
 import {CallanCustomerService} from '../shared/services/customer.service';
 import {Subscription} from 'rxjs/Subscription';
+import {BehaviorSubject} from 'rxjs';
 
 @Component({
     selector: 'app-callan-customer-manager-container',
@@ -13,10 +13,11 @@ import {Subscription} from 'rxjs/Subscription';
 
 export class CallanCustomerManagerContainerComponent implements OnInit, OnDestroy {
 
-    customers$: Observable<CallanCustomer[]>;
+    customers$ = new BehaviorSubject<CallanCustomer[]>([]);
 
     currentCustomer$: Subscription;
     currentCustomer: CallanCustomer;
+    isDetailsShown = false;
 
     constructor(
         private customerService: CallanCustomerService
@@ -24,24 +25,49 @@ export class CallanCustomerManagerContainerComponent implements OnInit, OnDestro
     }
 
     ngOnInit() {
-        this.customers$ = this.customerService.getCustomers();
+        // this.customers$ = this.customerService.getCustomers();
+        this.fetchCustomers();
+
         this.currentCustomer$ = this.customerService.getCurrentCustomer().subscribe(customer => {
-            if (customer instanceof CallanCustomer) {
+            if (customer) {
                 // console.log('customer assigned');
                 this.currentCustomer = customer;
             }
         });
-    }
 
-    onSetCurrentCustomer(customer: any) {
-        if (customer instanceof CallanCustomer) {
-            this.customerService.setCurrentCustomer(customer);
-        } else {
-            throw new Error('Unknown data given');
-        }
+        // for developing purposes
+        this.handleCustomerCreate();
     }
 
     ngOnDestroy() {
         this.currentCustomer$.unsubscribe();
+    }
+
+    handleSetCurrentCustomer(customer: CallanCustomer) {
+        this.customerService.setCurrentCustomer(customer);
+    }
+
+    handleCustomerCreate() {
+        this.currentCustomer = CallanCustomerService.createCustomer();
+        this.customerService.initCustomer(this.currentCustomer);
+        this.isDetailsShown = true;
+    }
+
+    handleCustomerSave(customer: CallanCustomer) {
+        console.log('Customer save clicked');
+        this.customerService.saveCustomer(customer).subscribe(() => {
+            this.fetchCustomers();
+            this.handleDetailsReset();
+        });
+    }
+
+    handleDetailsReset() {
+        this.isDetailsShown = false;
+    }
+
+    private fetchCustomers() {
+        this.customerService.getCustomers().subscribe(customers => {
+            this.customers$.next(customers);
+        });
     }
 }
