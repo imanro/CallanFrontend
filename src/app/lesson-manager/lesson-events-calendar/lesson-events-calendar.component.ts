@@ -27,7 +27,7 @@ import {CallanLessonService} from '../../shared/services/lesson.service';
 
 
 @Component({
-    selector: 'app-callan-lesson-events-list',
+    selector: 'app-callan-lesson-events-calendar',
     templateUrl: './lesson-events-calendar.component.html',
     styleUrls: ['./lesson-events-calendar.component.scss']
 })

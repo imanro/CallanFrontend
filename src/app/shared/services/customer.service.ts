@@ -7,13 +7,15 @@ import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 
 import {environment} from '../../../environments/environment';
 import {CallanEnvironmentNameEnum} from '../enums/environment.name.enum';
+import {CallanBaseService} from './base.service';
+import {CallanRole} from '../models/role.model';
+import {CallanRoleNameEnum} from '../enums/role.name.enum';
+import {CallanError} from '../models/error.model';
 
-// @Injectable({
-//  providedIn: CallanCustomersModule
-// })
+import {mockRoles} from '../data/mock-roles';
 
 @Injectable()
-export abstract class CallanCustomerService {
+export abstract class CallanCustomerService extends CallanBaseService {
 
     private currentCustomer = new BehaviorSubject<CallanCustomer>(null);
 
@@ -21,10 +23,17 @@ export abstract class CallanCustomerService {
         return new CallanCustomer();
     }
 
-    constructor() {
+    static createRole(): CallanRole {
+        return new CallanRole();
     }
 
     abstract getCustomers(): Observable<CallanCustomer[]>;
+
+    abstract getCustomer(id: number): Observable<CallanCustomer>;
+
+    abstract isCustomerExists(email)
+
+    abstract getRoles(): Observable<CallanRole[]>;
 
     abstract saveCustomer(customer: CallanCustomer): Observable<CallanCustomer>;
 
@@ -43,9 +52,21 @@ export abstract class CallanCustomerService {
         }
     }
 
+    abstract mapDataToCustomer(customer: CallanCustomer, row: any): void;
+
+    abstract mapCustomerToData(customer: CallanCustomer): object;
+
+    abstract mapDataToRole(role: CallanRole, row: any): void;
+
+    abstract mapRoleToData(role: CallanRole): object;
+
     initCustomerDev(customer: CallanCustomer) {
         customer.email = 'simon@bbc.com';
         customer.firstName = 'Simon';
         customer.lastName = 'McCoy';
+
+        const roleStudent = mockRoles[1];
+
+        customer.roles = [roleStudent];
     }
 }

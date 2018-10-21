@@ -9,7 +9,7 @@
             <div class="card">
                 <div class="card-body">
                     <div class="px-3">
-                        <form class="form" [formGroup]="customerForm" (ngSubmit)="handleCustomerSave()">
+                        <form class="form" [formGroup]="customerForm" (ngSubmit)="handleSaveCustomer()">
                             <div class="form-body">
                                 <h4 class="form-section"><i class="ft-user"></i> Personal Info</h4>
                                 <div class="row">
@@ -35,12 +35,39 @@
                                             <input type="text" id="email" class="form-control"  [formControlName]="'email'">
                                             <small class="form-text text-muted danger" *ngIf="customerForm.get('email').hasError('required') && customerForm.get('email').touched">This field is required</small>
                                             <small class="form-text text-muted danger" *ngIf="customerForm.get('email').hasError('email') && customerForm.get('email').touched">Please enter a valid email!</small>
+                                            <small class="form-text text-muted danger" *ngIf="customerForm.get('email').hasError('server')">{{customerForm.get('email').getError('server')}}</small>
                                         </div>
                                     </div>
                                 </div>
+                                <h4 class="form-section"><i class="ft-flag"></i> Access Rights</h4>
+                                <div class="row">
+                                    <div class="col-sm-2">
+                                        <label for="assigned_roles">Assigned roles</label>
+                                        <select size="4" class="form-control" id="assigned_roles" [formControlName]="'assignedRoles'" #assignedRolesInput>
+                                            <option *ngFor="let role of assignedRoles" [value]="role.id" (dblclick)="handleRefuseRole(role)">{{role.name}}</option>
+                                        </select>
+                                        <!-- This classes because *-feedback class required a lot of another classes on containers -->
+                                        <small class="form-text text-muted danger" *ngIf="customerForm.get('assignedRoles').hasError('empty')">{{customerForm.get('assignedRoles').getError('empty')}}</small>
+                                    </div>
+                                    <div class="col-sm-1">
+                                        <a class="btn btn-outline-primary role-btn add" href="javascript:void(0)" (click)="handleAssignRole()"><i class="ft-rewind"></i></a>
+                                        <a class="btn btn-outline-primary role-btn remove" href="javascript:void(0)" (click)="handleRefuseRole()"><i class="ft-fast-forward"></i></a>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <label for="existing_roles">Existing roles</label>
+                                        <select size="4" class="form-control" id="existing_roles" [formControlName]="'existingRoles'" #existingRolesInput>
+                                            <option *ngFor="let role of existingRoles" [value]="role.id" (dblclick)="handleAssignRole(role)">{{role.name}}</option>
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
+
+                            <ul *ngIf="commonFormErrors.length > 0" class="pt-20 form-errors-wrapper">
+                                <li *ngFor="let error of commonFormErrors" class="form-text text-muted danger">{{error}}</li>
+                            </ul>
+
                             <div class="form-actions">
-                                <button type="submit" class="btn btn-raised btn-primary mr-1">
+                                <button type="submit" class="btn btn-raised btn-primary mr-1" [disabled]="customerForm.invalid">
                                     Save
                                 </button>
                                 <button type="button" class="btn btn-raised btn-warning" (click)="handleCancel()">

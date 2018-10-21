@@ -45,6 +45,7 @@ event3.startTime = event3StartDate;
 event3.lesson = lesson3;
 
 // mockLessonEvents.push(event1);
+// mockLessonEvents.push(event1);
 mockLessonEvents.push(event2);
 mockLessonEvents.push(event3);
 

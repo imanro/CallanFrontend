@@ -6,7 +6,7 @@ import {CallanLessonEvent} from '../../shared/models/lesson-event.model';
   templateUrl: './lesson-event-announcement.component.html',
   styleUrls: ['./lesson-event-announcement.component.scss']
 })
-export class LessonEventAnnouncementComponent implements OnInit {
+export class CallanLessonEventAnnouncementComponent implements OnInit {
 
     @Input() lessonEventRemainingMinutes: number;
     @Input() isLessonTimeSpent = false;

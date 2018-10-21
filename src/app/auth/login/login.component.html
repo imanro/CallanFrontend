@@ -1,0 +1,52 @@
+<!--Login Page Starts-->
+<section id="login">
+    <div class="container-fluid">
+        <div class="row full-height-vh">
+            <div class="col-12 d-flex align-items-center justify-content-center">
+                <div class="card gradient-indigo-purple text-center width-400">
+                    <div class="card-img overlap">
+                        <img alt="element 06" class="mb-1" src="assets/img/portrait/avatars/avatar-08.png" width="190">
+                    </div>
+                    <div class="card-body">
+                        <div class="card-block">
+                            <h2 class="white">Login</h2>
+                            <form novalidate="" [formGroup]="loginForm">
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <input type="email" class="form-control" name="input_email" id="input_email" placeholder="Email" [formControlName]="'email'" required email>
+                                        <small class="form-text text-muted danger" *ngIf="loginForm.get('email').hasError('required') && loginForm.get('email').touched">This field is required</small>
+                                        <small class="form-text text-muted danger" *ngIf="loginForm.get('email').hasError('email') && loginForm.get('email').touched">Please enter a valid email!</small>
+                                        <small class="form-text text-muted danger" *ngIf="loginForm.get('email').hasError('server')">{{loginForm.get('email').getError('server')}}</small>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <input type="password" class="form-control" name="input_password" id="input_password" placeholder="Password" [formControlName]="'password'" required>
+                                        <small class="form-text text-muted danger" *ngIf="loginForm.get('password').hasError('required') && loginForm.get('password').touched">This field is required</small>
+                                        <small class="form-text text-muted danger" *ngIf="loginForm.get('password').hasError('server')">{{loginForm.get('password').getError('server')}}</small>
+                                        <ul *ngIf="commonFormErrors.length > 0" class="pt-20 form-errors-wrapper">
+                                            <li *ngFor="let error of commonFormErrors" class="form-text text-muted danger"><small>{{error}}</small></li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <button type="submit" class="btn btn-pink btn-block btn-raised" [disabled]="loginForm.invalid" (click)="handleLogin()">Submit</button>
+                                        <button type="button" class="btn btn-secondary btn-block btn-raised">Cancel</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="float-left"><a class="white">Recover Password</a></div>
+                        <div class="float-right"><a class="white">New User?</a></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--Login Page Ends-->

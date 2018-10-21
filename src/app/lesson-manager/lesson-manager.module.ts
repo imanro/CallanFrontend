@@ -1,5 +1,6 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
+import { Ng2SmartTableModule } from 'ng2-smart-table';
 import {CallanLessonManagerRoutingModule} from './lesson-manager-routing.module';
 
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
@@ -11,7 +12,8 @@ import {CallanCoursesListComponent} from './courses-list/courses-list.component'
 import {CallanCourseProgressDetailsComponent} from './course-progress-details/course-progress-details.component';
 import { CallanLessonEventsCalendarComponent } from './lesson-events-calendar/lesson-events-calendar.component';
 import { CallanLessonEventComponent } from './lesson-event/lesson-event.component';
-import { LessonEventAnnouncementComponent } from './lesson-event-announcement/lesson-event-announcement.component';
+import { CallanLessonEventAnnouncementComponent } from './lesson-event-announcement/lesson-event-announcement.component';
+import { CallanLessonEventsListComponent } from './lesson-events-list/lesson-events-list.component';
 
 @NgModule({
     declarations: [CallanLessonManagerContainerComponent,
@@ -19,10 +21,12 @@ import { LessonEventAnnouncementComponent } from './lesson-event-announcement/le
         CallanCourseProgressDetailsComponent,
         CallanLessonEventsCalendarComponent,
         CallanLessonEventComponent,
-        LessonEventAnnouncementComponent
+        CallanLessonEventAnnouncementComponent,
+        CallanLessonEventsListComponent
     ],
     imports: [
         CommonModule,
+        Ng2SmartTableModule,
         CallanLessonManagerRoutingModule,
         NgbModule,
         CalendarModule.forRoot(),

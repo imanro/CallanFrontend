@@ -1,7 +1,8 @@
+import {CallanBaseModel} from './base.model';
 import {CallanCourse} from './course.model';
 import {CallanCourseStage} from './course-stage.model';
 
-export class CallanLesson {
+export class CallanLesson extends CallanBaseModel {
     id: number;
     title: string;
     course: CallanCourse;

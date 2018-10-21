@@ -30,11 +30,6 @@
                                              [currentCourseProgress$]="currentCourseProgress$"
                                              (courseSelectEvent)="handleSelectCourseProgress($event)"
                                              (lessonEventCreateEvent)="handleLessonEventCreate($event)"></app-callan-courses-list>
-                    <app-callan-lesson-events-list *ngIf="currentCourseProgress && isDetailsShown"
-                                                   [courseProgress$]="currentCourseProgress$"
-                                                   [lessonEvents$]="lessonEvents$"
-                                                   (cancelEvent)="handleLessonEventCreateCancel($event)"
-                                                   (lessonEventCreateEvent)="handleLessonEventCreateEvent($event)"></app-callan-lesson-events-list>
 
                     <div class="row" *ngIf="isAddButtonShown && !isDetailsShown && currentCustomer">
                         <div class="col-sm-12">
@@ -44,6 +39,14 @@
                             </div>
                         </div>
                     </div>
+
+                    <app-callan-lesson-events-calendar *ngIf="currentCourseProgress && isDetailsShown"
+                                                   [courseProgress$]="currentCourseProgress$"
+                                                   [lessonEvents$]="lessonEvents$"
+                                                   (cancelEvent)="handleLessonEventCreateCancel($event)"
+                                                   (lessonEventCreateEvent)="handleLessonEventCreateEvent($event)"></app-callan-lesson-events-calendar>
+
+                    <app-callan-lesson-events-list [lessonEvents$]="lessonEvents$"></app-callan-lesson-events-list>
 
                     <p *ngIf="currentCustomer">Current customer: {{currentCustomer.email}}</p>
                 </section>

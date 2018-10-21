@@ -1,8 +1,9 @@
+import {CallanBaseModel} from './base.model';
 import {CallanLesson} from './lesson.model';
 import {CallanCustomer} from './customer.model';
 import {CallanLessonEventStateEnum} from '../enums/lesson-event.state.enum';
 
-export class CallanLessonEvent {
+export class CallanLessonEvent extends CallanBaseModel {
 
     id: number;
     title: string;

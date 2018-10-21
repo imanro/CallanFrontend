@@ -7,6 +7,8 @@ import {CallanCustomerService} from './customer.service';
 import {CallanCustomer} from '../models/customer.model';
 import {AppConfig, IAppConfig} from '../../app.config';
 import {mockCustomers} from '../data/mock-customers';
+import {mockRoles} from '../data/mock-roles';
+import {CallanRole} from '../models/role.model';
 
 // @Injectable({
 //  providedIn: CallanCustomersModule
@@ -16,9 +18,9 @@ import {mockCustomers} from '../data/mock-customers';
 export class CallanCustomerMockService extends CallanCustomerService {
 
     constructor(
-        @Inject(AppConfig) private appConfig: IAppConfig
+        @Inject(AppConfig) protected appConfig: IAppConfig
     ) {
-        super();
+        super(appConfig);
     }
 
     getCustomers(): Observable<CallanCustomer[]> {
@@ -30,6 +32,53 @@ export class CallanCustomerMockService extends CallanCustomerService {
         }).pipe(
             delay(d)
         );
+    }
+
+    getCustomer(id: number): Observable<CallanCustomer> {
+        const d = this.appConfig.mockDelayMs;
+        return new Observable<CallanCustomer>(observer => {
+            observer.next(mockCustomers[0]);
+            observer.complete();
+
+        }).pipe(
+            delay(d)
+        );
+    }
+
+    isCustomerExists(email: string): Observable<boolean> {
+        const d = this.appConfig.mockDelayMs;
+        return new Observable<boolean>(observer => {
+            observer.next(false);
+            observer.complete();
+
+        }).pipe(
+            delay(d)
+        );
+    }
+
+    getRoles(): Observable<CallanRole[]> {
+        const d = this.appConfig.mockDelayMs;
+        return new Observable<CallanRole[]>(observer => {
+            observer.next(mockRoles);
+            observer.complete();
+
+        }).pipe(
+            delay(d)
+        );
+    }
+
+    mapDataToCustomer(customer: CallanCustomer, row: any): void {
+    }
+
+    mapDataToRole(role: CallanRole, row: any): void {
+    }
+
+    mapCustomerToData(customer: CallanCustomer): object {
+        return {};
+    }
+
+    mapRoleToData(role: CallanRole): object {
+        return {};
     }
 
     saveCustomer(customer: CallanCustomer): Observable<CallanCustomer> {

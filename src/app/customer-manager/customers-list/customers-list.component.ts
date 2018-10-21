@@ -16,7 +16,7 @@ export class CallanCustomersListComponent implements OnInit {
     @Output() setCurrentCustomer = new EventEmitter<any>();
 
     source: LocalDataSource;
-    settings;
+    settings: any;
 
     constructor() {
         this.source = new LocalDataSource();
@@ -39,6 +39,20 @@ export class CallanCustomersListComponent implements OnInit {
                     title: 'Last Name',
                     filter: false,
                 },
+                roles: {
+                    title: 'Roles',
+                    filter: false,
+                    valuePrepareFunction: function (value) {
+                        const list = [];
+                        if (value) {
+                            for (const item of value) {
+                                list.push(item.name);
+                            }
+                        }
+
+                        return list.join(', ');
+                    }
+                }
             },
             hideSubHeader: true,
 
@@ -64,12 +78,12 @@ export class CallanCustomersListComponent implements OnInit {
                 deleteButtonContent: '<i class="ft-x danger font-medium-1 mr-2"></i>'
             },
             custom: {
-                setCurrentButtonContent: 'aaa'
+                setCurrentButtonContent: ''
             }
         };
     }
 
-    onCustom(event){
+    onCustom(event) {
         // emit the data
         this.setCurrentCustomer.next(event.data);
     }

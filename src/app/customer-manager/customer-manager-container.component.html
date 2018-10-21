@@ -7,7 +7,7 @@
                 <app-callan-customers-list [customers$]="customers$"
                                            (setCurrentCustomer)="handleSetCurrentCustomer($event)" *ngIf="!isDetailsShown"></app-callan-customers-list>
 
-                <app-callan-customer-details [customer]="currentCustomer" (customerSaveEvent)="handleCustomerSave($event)" (cancelEvent)="handleDetailsReset()" *ngIf="currentCustomer && isDetailsShown"></app-callan-customer-details>
+                <app-callan-customer-details [customer]="currentCustomer" [rolesList$]="rolesList$" [formErrors$]="formErrors$" [isSaving]="isSaving" (customerSaveEvent)="handleCustomerSave($event)" (cancelEvent)="handleDetailsReset()" *ngIf="currentCustomer && isDetailsShown"></app-callan-customer-details>
 
                 <div class="row" *ngIf="!isDetailsShown">
                     <div class="col-sm-12">

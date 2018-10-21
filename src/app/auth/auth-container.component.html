@@ -1,0 +1,2 @@
+<app-callan-login [formErrors$]="formErrors$" (loginEvent)="handleLogin($event)" *ngIf="view === 'login'"></app-callan-login>
+<pre *ngIf="!view">An error occured: wrong url</pre>

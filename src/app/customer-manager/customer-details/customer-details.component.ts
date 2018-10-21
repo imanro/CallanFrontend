@@ -1,30 +1,46 @@
-import {Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
+import {Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef, OnDestroy} from '@angular/core';
 import {CallanCustomer} from '../../shared/models/customer.model';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 // import {cloneDeep} from 'lodash/cloneDeep';
 import * as _ from 'lodash';
+import {CallanRole} from '../../shared/models/role.model';
+import {BehaviorSubject, Observable, Subject} from 'rxjs';
+import {takeUntil} from 'rxjs/operators';
+import {CallanFormErrors} from '../../shared/models/form-errors.model';
+import {CallanFormHelper} from '../../shared/helpers/form-helper';
 
 @Component({
     selector: 'app-callan-customer-details',
     templateUrl: './customer-details.component.html',
     styleUrls: ['./customer-details.component.scss']
 })
-export class CallanCustomerDetailsComponent implements OnInit {
+export class CallanCustomerDetailsComponent implements OnInit, OnDestroy {
 
     @Input() customer: CallanCustomer;
+    @Input() rolesList$ = new BehaviorSubject<CallanRole[]>([]);
+    @Input() formErrors$ =  new BehaviorSubject<CallanFormErrors>(null);
+    @Input() isSaving = false;
 
     @Output() customerSaveEvent = new EventEmitter<CallanCustomer>();
     @Output() cancelEvent = new EventEmitter<void>();
 
+    @ViewChild('assignedRolesInput') assignedRolesInput: ElementRef;
+    @ViewChild('existingRolesInput') existingRolesInput: ElementRef;
+
     formTitle: string;
     customerForm: FormGroup;
 
+    assignedRoles: CallanRole[];
+    existingRoles: CallanRole[];
+
     commonFormErrors = [];
+
+    private unsubscribe: Subject<void> = new Subject();
 
     constructor(
         private fb: FormBuilder,
     ) {
-        this.createForm();
+        this.buildForm();
     }
 
     ngOnInit() {
@@ -33,33 +49,104 @@ export class CallanCustomerDetailsComponent implements OnInit {
         if (this.customer) {
             this.setFormValues();
         }
+
+        this.commonFormErrors = [];
+
+
+        this.rolesList$.subscribe(() => {
+            this.setAssignedRoles();
+            this.setExistingRoles();
+        });
+
+        this.formErrors$
+            .pipe(takeUntil(this.unsubscribe))
+            .subscribe(formErrors => {
+
+                if (formErrors) {
+                    console.log('Errors received');
+
+                    const unmapped = CallanFormHelper.bindErrors(formErrors, this.customerForm);
+                    console.log('unmapped:', unmapped);
+
+                    if (unmapped.length > 0) {
+                        this.commonFormErrors = [];
+                        this.commonFormErrors = this.commonFormErrors.concat(unmapped);
+                        console.log('common Form errors now', this.commonFormErrors);
+                    }
+                }
+            });
     }
 
-    handleCustomerSave() {
-        const saveCustomer = this.prepareSaveCustomer();
-        console.log('We\'ve prepared following data:', saveCustomer);
-        this.customerSaveEvent.next(saveCustomer);
+    ngOnDestroy() {
+        this.unsubscribe.next();
+        this.unsubscribe.complete();
+    }
+
+    handleSaveCustomer() {
+        if (this.validateForm()) {
+            const saveCustomer = this.prepareSaveCustomer();
+            console.log('We\'ve prepared following data:', saveCustomer);
+            this.customerSaveEvent.next(saveCustomer);
+        }
     }
 
     handleCancel() {
         this.cancelEvent.next();
     }
 
-    private createForm() {
-        this.customerForm = this.fb.group({
-            firstName: ['', Validators.required ],
-            lastName: ['', Validators.required ],
-            email: ['', [Validators.required, Validators.email]]
-        });
+    handleAssignRole(role?: CallanRole) {
+
+        const input = this.customerForm.get('assignedRoles');
+        input.reset();
+        input.markAsTouched();
+
+        if (!role) {
+            const firstOption = this.existingRolesInput.nativeElement.options[0];
+
+            if (firstOption) {
+                for (const check of this.existingRoles) {
+                    if (check.id.toString() === firstOption.value) {
+                        role = check;
+                    }
+                }
+            }
+        }
+
+        if (role) {
+            this.existingRoles = this.existingRoles.filter(check => {
+                return check.id !== role.id;
+            });
+
+            this.assignedRoles.push(role);
+            this.sortAssignedRoles();
+        }
     }
 
-    private setFormValues() {
-        if (this.customer) {
-            this.customerForm.patchValue({
-                'firstName': this.customer.firstName,
-                'lastName': this.customer.lastName,
-                'email': this.customer.email
+    handleRefuseRole(role?: CallanRole) {
+
+        const input = this.customerForm.get('assignedRoles');
+        input.reset();
+        input.markAsTouched();
+
+        if (!role) {
+            const firstOption = this.assignedRolesInput.nativeElement.options[0];
+
+            if (firstOption) {
+                for (const check of this.assignedRoles) {
+                    if (check.id.toString() === firstOption.value) {
+                        role = check;
+                    }
+                }
+            }
+        }
+
+        if (role) {
+            this.assignedRoles = this.assignedRoles.filter(check => {
+                return check.id !== role.id;
             });
+
+            this.existingRoles.push(role);
+            this.sortExistingRoles();
         }
     }
 
@@ -71,8 +158,83 @@ export class CallanCustomerDetailsComponent implements OnInit {
         saveCustomer.lastName = formModel.lastName;
         saveCustomer.email = formModel.email;
 
+        saveCustomer.roles = this.assignedRoles;
+
         return saveCustomer;
     }
 
+    private buildForm() {
+        this.customerForm = this.fb.group({
+            firstName: ['', Validators.required ],
+            lastName: ['', Validators.required ],
+            email: ['', [Validators.required, Validators.email]],
+            assignedRoles: '',
+            existingRoles: ''
+        });
+
+        this.customerForm.valueChanges.subscribe(() => {
+            this.commonFormErrors = [];
+        });
+    }
+
+    private setFormValues() {
+
+        this.customerForm.patchValue({
+            'firstName': this.customer.firstName,
+            'lastName': this.customer.lastName,
+            'email': this.customer.email
+        });
+    }
+
+    private validateForm() {
+
+        if (!this.assignedRoles.length) {
+            const input = this.customerForm.get('assignedRoles');
+            input.setErrors({'empty': 'You should choose at least 1 role for the customer'});
+            return false;
+        }
+
+        return true;
+    }
+
+    private setAssignedRoles() {
+        this.assignedRoles = this.rolesList$.getValue().filter(role => {
+            for (const check of this.customer.roles) {
+                if (check.id === role.id) {
+                    return true;
+                }
+            }
+
+            return false;
+        });
+
+        this.sortAssignedRoles();
+    }
+
+    private setExistingRoles() {
+        this.existingRoles = this.rolesList$.getValue().filter(role => {
+            for (const check of this.assignedRoles) {
+                if (check.id === role.id) {
+                    return false;
+                }
+            }
+
+            return true;
+        });
+
+        this.sortExistingRoles();
+    }
+
+    private sortExistingRoles() {
+        this.existingRoles.sort((role1, role2) => {
+            return role1.name.localeCompare(role2.name)
+        });
+    }
+
+    private sortAssignedRoles() {
+        this.assignedRoles.sort((role1, role2) => {
+            return role1.name.localeCompare(role2.name)
+        });
+    }
 
 }
