@@ -4,17 +4,15 @@ import {HttpClient, HttpHeaders} from '@angular/common/http';
 
 import {CallanAuthService} from './auth.service';
 import {AppConfig, IAppConfig} from '../../app.config';
-import {CallanCustomerService} from './customer.service';
 import { map, catchError } from 'rxjs/operators';
 
 export class CallanAuthApiService extends CallanAuthService {
 
     constructor(
         @Inject(AppConfig) protected appConfig: IAppConfig,
-        protected customerService: CallanCustomerService,
         private http: HttpClient
     ) {
-        super(appConfig, customerService);
+        super(appConfig);
     }
 
     fetchAuthToken(email: string, password: string): Observable<{id: number, token: string}> {

@@ -1,5 +1,8 @@
-import { Component } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Subject} from 'rxjs';
+import {takeUntil} from 'rxjs/operators';
+import {CallanCustomer} from '../models/customer.model';
+import {CallanCustomerService} from '../services/customer.service';
 
 @Component({
     selector: 'app-navbar',
@@ -7,17 +10,30 @@ import { TranslateService } from '@ngx-translate/core';
     styleUrls: ['./navbar.component.scss']
 })
 
-export class NavbarComponent {
-    currentLang = 'en';
+export class NavbarComponent implements OnInit, OnDestroy {
     toggleClass = 'ft-maximize';
-    constructor(public translate: TranslateService) {
-        const browserLang: string = translate.getBrowserLang();
-        translate.use(browserLang.match(/en|es|pt|de/) ? browserLang : 'en');
+
+    private unsubscribe: Subject<void> = new Subject();
+    customer: CallanCustomer;
+
+    constructor(private customerService: CallanCustomerService) {
     }
 
-    ChangeLanguage(language: string) {
-        this.translate.use(language);
+    ngOnInit() {
+        this.customerService.getAuthCustomer()
+            .pipe(
+                takeUntil(this.unsubscribe)
+            )
+            .subscribe(customer => {
+                this.customer = customer;
+            })
     }
+
+    ngOnDestroy() {
+        this.unsubscribe.next();
+        this.unsubscribe.complete();
+    }
+
 
     ToggleClass() {
         if (this.toggleClass === 'ft-maximize') {

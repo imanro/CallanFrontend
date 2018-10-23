@@ -1,6 +1,7 @@
 import {Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef, OnDestroy} from '@angular/core';
 import {CallanCustomer} from '../../shared/models/customer.model';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {CustomValidators} from 'ng2-validation';
 // import {cloneDeep} from 'lodash/cloneDeep';
 import * as _ from 'lodash';
 import {CallanRole} from '../../shared/models/role.model';
@@ -150,24 +151,17 @@ export class CallanCustomerDetailsComponent implements OnInit, OnDestroy {
         }
     }
 
-    private prepareSaveCustomer() {
-        const saveCustomer = _.cloneDeep(this.customer);
-        const formModel = this.customerForm.value;
-
-        saveCustomer.firstName = formModel.firstName;
-        saveCustomer.lastName = formModel.lastName;
-        saveCustomer.email = formModel.email;
-
-        saveCustomer.roles = this.assignedRoles;
-
-        return saveCustomer;
-    }
-
     private buildForm() {
+
+        const password = new FormControl('', [Validators.required, Validators.minLength(6)]);
+        const passwordConfirm = new FormControl('', [Validators.required, Validators.minLength(6), CustomValidators.equalTo(password)]);
+
         this.customerForm = this.fb.group({
-            firstName: ['', Validators.required ],
-            lastName: ['', Validators.required ],
+            firstName: ['', Validators.required],
+            lastName: ['', Validators.required],
             email: ['', [Validators.required, Validators.email]],
+            password: password,
+            passwordConfirm: passwordConfirm,
             assignedRoles: '',
             existingRoles: ''
         });
@@ -195,6 +189,20 @@ export class CallanCustomerDetailsComponent implements OnInit, OnDestroy {
         }
 
         return true;
+    }
+
+    private prepareSaveCustomer() {
+        const saveCustomer = _.cloneDeep(this.customer);
+        const formModel = this.customerForm.value;
+
+        saveCustomer.firstName = formModel.firstName;
+        saveCustomer.lastName = formModel.lastName;
+        saveCustomer.email = formModel.email;
+        saveCustomer.password = formModel.password;
+
+        saveCustomer.roles = this.assignedRoles;
+
+        return saveCustomer;
     }
 
     private setAssignedRoles() {

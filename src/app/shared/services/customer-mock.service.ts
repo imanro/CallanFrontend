@@ -9,6 +9,7 @@ import {AppConfig, IAppConfig} from '../../app.config';
 import {mockCustomers} from '../data/mock-customers';
 import {mockRoles} from '../data/mock-roles';
 import {CallanRole} from '../models/role.model';
+import {CallanAuthService} from './auth.service';
 
 // @Injectable({
 //  providedIn: CallanCustomersModule
@@ -18,9 +19,10 @@ import {CallanRole} from '../models/role.model';
 export class CallanCustomerMockService extends CallanCustomerService {
 
     constructor(
-        @Inject(AppConfig) protected appConfig: IAppConfig
+        @Inject(AppConfig) protected appConfig: IAppConfig,
+        protected authService: CallanAuthService
     ) {
-        super(appConfig);
+        super(appConfig, authService);
     }
 
     getCustomers(): Observable<CallanCustomer[]> {

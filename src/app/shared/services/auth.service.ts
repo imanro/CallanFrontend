@@ -1,22 +1,11 @@
-import {Inject, Injectable} from '@angular/core';
-import {CallanCustomer} from '../models/customer.model';
-import {Observable, throwError} from 'rxjs';
-import {CallanCustomerService} from './customer.service';
+import {Injectable} from '@angular/core';
+import {Observable} from 'rxjs';
+
 import {CallanBaseService} from './base.service';
-import {AppConfig, IAppConfig} from '../../app.config';
 import {CallanError} from '../models/error.model';
 
 @Injectable()
 export abstract class CallanAuthService extends CallanBaseService {
-
-    protected authCustomer: CallanCustomer;
-
-    constructor(
-        @Inject(AppConfig) protected appConfig: IAppConfig,
-        protected customerService: CallanCustomerService
-    ) {
-        super(appConfig);
-    }
 
     isAuthenticated() {
         const authData = this.getAuthDataFromStorage();
@@ -27,32 +16,15 @@ export abstract class CallanAuthService extends CallanBaseService {
         }
     }
 
-    getAuthCustomer(): Observable<CallanCustomer> {
-        return new Observable<CallanCustomer>(observer => {
-            if (!this.authCustomer) {
+    public getAuthToken(): string {
 
-                const authData = this.getAuthDataFromStorage();
+        const authData = this.getAuthDataFromStorage();
 
-                if (authData && authData.id) {
-                    this.customerService.getCustomer(authData.id)
-                        .subscribe(customer => {
-                            this.setAuthCustomer(customer);
-                            observer.next(customer);
-                        }, err => {
-                            observer.error(err);
-                        });
-                } else {
-                    observer.next(null);
-                }
-
-            } else {
-                observer.next(this.authCustomer);
-            }
-        });
-    }
-
-    setAuthCustomer(customer: CallanCustomer) {
-        this.authCustomer = customer;
+        if (authData === null) {
+            return null;
+        } else {
+            return authData.authToken;
+        }
     }
 
     login(email: string, password: string): Observable<void> {

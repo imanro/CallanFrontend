@@ -10,15 +10,17 @@ import {AppConfig, IAppConfig} from '../../app.config';
 import {CallanRole} from '../models/role.model';
 import {CallanRoleNameEnum} from '../enums/role.name.enum';
 import {CallanError} from '../models/error.model';
+import {CallanAuthService} from './auth.service';
 
 @Injectable()
 export class CallanCustomerApiService extends CallanCustomerService {
 
     constructor(
         @Inject(AppConfig) protected appConfig: IAppConfig,
+        protected authService: CallanAuthService,
         private http: HttpClient
     ) {
-        super(appConfig);
+        super(appConfig, authService);
     }
 
     getCustomers(): Observable<CallanCustomer[]> {
@@ -159,6 +161,7 @@ export class CallanCustomerApiService extends CallanCustomerService {
         data['firstName'] = customer.firstName;
         data['lastName'] = customer.lastName;
         data['email'] = customer.email;
+        data['password'] = customer.password;
 
         if (customer.roles) {
             data['roles'] = [];

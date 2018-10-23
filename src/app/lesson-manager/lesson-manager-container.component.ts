@@ -96,8 +96,10 @@ export class CallanLessonManagerContainerComponent implements OnInit, OnDestroy 
             .pipe(takeUntil(this.unsubscribe))
             .subscribe(customer => {
 
+
                 if (customer) {
                     this.currentCustomer = customer;
+
 
                     this.lessonService.getCourseProgresses(customer).subscribe(courseProgresses => {
                         this.currentCustomerCourseProgresses$.next(courseProgresses);
@@ -108,6 +110,7 @@ export class CallanLessonManagerContainerComponent implements OnInit, OnDestroy 
                         this.assignNearestLessonEvent();
                     });
                 }
+
             });
 
         // courses

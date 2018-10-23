@@ -39,6 +39,25 @@
                                         </div>
                                     </div>
                                 </div>
+                                <h4 class="form-section"><i class="ft-zap"></i> Password</h4>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label for="password">Password</label>
+                                            <input type="text" id="password" class="form-control"  [formControlName]="'password'">
+                                            <small class="form-text text-muted danger" *ngIf="customerForm.get('password').hasError('required') && customerForm.get('password').touched">This field is required</small>
+                                            <small class="form-text text-muted danger" *ngIf="customerForm.get('password').hasError('server') && customerForm.get('password').touched">{{customerForm.get('password').getError('server')}}</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label for="password_confirm">Confirm password</label>
+                                            <input type="text" id="password_confirm" class="form-control"  [formControlName]="'passwordConfirm'">
+                                            <small class="form-text text-muted danger" *ngIf="customerForm.get('passwordConfirm').hasError('required') && customerForm.get('passwordConfirm').touched">This field is required</small>
+                                            <small class="form-text text-muted danger" *ngIf="customerForm.get('passwordConfirm').hasError('equalTo') && customerForm.get('passwordConfirm').touched">Password and confirmation should match</small>
+                                        </div>
+                                    </div>
+                                </div>
                                 <h4 class="form-section"><i class="ft-flag"></i> Access Rights</h4>
                                 <div class="row">
                                     <div class="col-sm-2">

@@ -6,7 +6,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { SharedModule } from "./shared/shared.module";
 import { ToastrModule } from 'ngx-toastr';
 import { AgmCoreModule } from '@agm/core';
-import { HttpClientModule, HttpClient } from '@angular/common/http';
+import {HttpClientModule, HttpClient, HTTP_INTERCEPTORS} from '@angular/common/http';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { StoreModule } from '@ngrx/store';
@@ -29,6 +29,7 @@ import {CalendarModule} from 'angular-calendar';
 
 import * as $ from 'jquery';
 import {CallanAuthApiService} from './shared/services/auth-api.service';
+import {TokenInterceptor} from './shared/interceptors/token.interceptor';
 
 
 export function createTranslateLoader(http: HttpClient) {
@@ -71,6 +72,11 @@ export function initializeApp(appConfig: AppConfig) {
         {   provide: APP_INITIALIZER,
             useFactory: initializeApp,
             deps: [AppConfig],
+            multi: true
+        },
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: TokenInterceptor,
             multi: true
         },
         {provide: CallanAuthService, useClass: CallanAuthApiService},
