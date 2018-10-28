@@ -1,13 +1,13 @@
 <div *ngIf="lessonEvent.isStarted(); else lessonIsUpcommingBlock">
     <div class="row">
         <div class="col-sm-12">
-            <span class="text">The <a href="javascript:void(0)" (click)="handleLessonEventView()">lesson</a> is started</span>
+            <span class="text">The <a href="javascript:void(0)" (click)="handleLessonEventView()">lesson</a> has been started</span>
         </div>
     </div>
 </div>
 
 <ng-template #lessonIsUpcommingBlock>
-    <div class="row" *ngIf="!isLessonTimeSpent; else lessonUpcommingCounterBlock">
+    <div class="row" *ngIf="isLessonTimeSpent; else lessonUpcommingCounterBlock">
         <div class="col-sm-12">
             <span class="text">The <a href="javascript:void(0)" (click)="handleLessonEventView()">lesson</a> time is NOW.</span>
             <a class="btn btn-raised btn-sm gradient-blackberry white"

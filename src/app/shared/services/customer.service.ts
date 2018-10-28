@@ -20,7 +20,9 @@ export abstract class CallanCustomerService extends CallanBaseService {
 
     protected authCustomer: CallanCustomer;
 
-    private currentCustomer = new BehaviorSubject<CallanCustomer>(null);
+    private currentCustomer: CallanCustomer;
+    private currentCustomer$ = new BehaviorSubject<CallanCustomer>(null);
+    // private currentCustomer$ = new BehaviorSubject<CallanCustomer>(null);
 
     static createCustomer(): CallanCustomer {
         return new CallanCustomer();
@@ -73,28 +75,48 @@ export abstract class CallanCustomerService extends CallanBaseService {
                         .subscribe(customer => {
                             this.setAuthCustomer(customer);
                             observer.next(customer);
+                            observer.complete();
                         }, err => {
                             observer.error(err);
+                            observer.complete();
                         });
                 } else {
                     observer.next(null);
+                    observer.complete();
                 }
 
             } else {
                 observer.next(this.authCustomer);
+                observer.complete();
             }
         });
     }
 
-    setCurrentCustomer(customer: CallanCustomer): BehaviorSubject<CallanCustomer> {
-        this.currentCustomer.next(customer);
+    /*
+    setCurrentCustomerOld(customer: CallanCustomer): BehaviorSubject<CallanCustomer> {
+        this.currentCustomer$.next(customer);
+        return this.currentCustomer$;
+    }
+    */
+
+    setCurrentCustomer(customer: CallanCustomer): CallanCustomer {
+        console.log('SetCurrentCustomer called');
+
+        if (!customer || !this.currentCustomer || this.currentCustomer.id !== customer.id) {
+            // to not double event of new customer
+            this.currentCustomer = customer;
+            this.currentCustomer$.next(customer);
+        }
+
         return this.currentCustomer;
     }
 
     /**
      * For all customers, except of admin, current customer is the same as auth.service's authCustomer
      */
-    getCurrentCustomer(): BehaviorSubject<CallanCustomer> {
+
+    /*
+    getCurrentCustomerOld(): BehaviorSubject<CallanCustomer> {
         // first, let's check authCustomer's rights
 
         this.getAuthCustomer().subscribe(customer => {
@@ -111,6 +133,31 @@ export abstract class CallanCustomerService extends CallanBaseService {
         });
 
         return this.currentCustomer;
+    }
+    */
+
+    getCurrentCustomer(): Observable<CallanCustomer> {
+        // first, let's check authCustomer's rights
+
+        return new Observable<CallanCustomer>(observer => {
+            this.getAuthCustomer().subscribe(customer => {
+                if (!CallanCustomerService.hasCustomerRole(customer, CallanRoleNameEnum.ADMIN)) {
+                    console.log('current customer set immediately because auth customer is not admin');
+                    this.setCurrentCustomer(customer);
+                } else {
+                    console.log('current customer probably is not set while auth customer admin');
+                }
+
+                // return just current value
+                observer.next(this.currentCustomer);
+                observer.complete();
+            });
+        });
+    }
+
+    // subscription to observe when customer changes
+    getCurrentCustomer$(): BehaviorSubject<CallanCustomer> {
+        return this.currentCustomer$;
     }
 
     initCustomer(customer: CallanCustomer) {

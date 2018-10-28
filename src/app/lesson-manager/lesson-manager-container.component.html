@@ -2,15 +2,6 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-faded">
     <div class="container-fluid">
         <div class="navbar-header">
-            <app-callan-lesson-event-announcement *ngIf="currentLessonEvent"
-                                                  [isLessonTimeSpent]="isCurrentLessonEventTimeSpent"
-                                                  [lessonEventRemainingMinutes]="currentLessonEventRemainingMinutes"
-                                                  [lessonEvent]="currentLessonEvent"
-                                                  (lessonStartEvent)="handleLessonEventStart()"
-                                                  (lessonViewEvent)="handleLessonEventView()"
-            >
-
-            </app-callan-lesson-event-announcement>
         </div>
     </div>
 </nav>
@@ -22,23 +13,29 @@
                 <section>
                     <app-callan-lesson-event *ngIf="currentLessonEvent && isLessonEventDetailsShown"
                                              [lessonEvent]="currentLessonEvent"
-                                             [isLessonTimeSpent]="isCurrentLessonEventTimeSpent"
                                              ></app-callan-lesson-event>
 
-                    <app-callan-courses-list *ngIf="!isDetailsShown" [allCourses$]="allCourses$"
+                    <app-callan-courses-list *ngIf="!isDetailsShown && !isCustomerCourseAddShown" [allCourses$]="allCourses$"
                                              [currentCustomerCourseProgresses$]="currentCustomerCourseProgresses$"
                                              [currentCourseProgress$]="currentCourseProgress$"
                                              (courseSelectEvent)="handleSelectCourseProgress($event)"
                                              (lessonEventCreateEvent)="handleLessonEventCreate($event)"></app-callan-courses-list>
 
-                    <div class="row" *ngIf="isAddButtonShown && !isDetailsShown && currentCustomer">
+                    <div class="row" *ngIf="isAddButtonShown && !isDetailsShown && currentCustomer && !isCustomerCourseAddShown">
                         <div class="col-sm-12">
                             <div class="mt-2">
-                                <a class="btn btn-raised gradient-mint white" href="javascript:void(0)">Add a new
+                                <a class="btn btn-raised gradient-mint white" href="javascript:void(0)" (click)="handleCourseProgressAdd()">Add a new
                                     course</a>
                             </div>
                         </div>
                     </div>
+
+                    <app-callan-customer-course-add [allCourses$]="allCourses$"
+                                                    [currentCustomerCourseProgresses$]="currentCustomerCourseProgresses$"
+                                                    [formErrors$]="formErrors$"
+                                                    (cancelEvent)="handleCustomerCourseAddCancel($event)"
+                                                    (courseAddEvent)="handleCustomerCourseAdd($event)"
+                                                    *ngIf="isCustomerCourseAddShown"></app-callan-customer-course-add>
 
                     <app-callan-lesson-events-calendar *ngIf="currentCourseProgress && isDetailsShown"
                                                    [courseProgress$]="currentCourseProgress$"

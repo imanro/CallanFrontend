@@ -51,6 +51,7 @@ export class CallanAuthContainerComponent implements OnInit, OnDestroy {
                 this.customerService.getAuthCustomer()
                     .subscribe(customer => {
 
+                        console.log('received!');
                         // now, we can redirect to main area
 
                         // redirection will depend on the customer's roles
@@ -102,7 +103,10 @@ export class CallanAuthContainerComponent implements OnInit, OnDestroy {
     }
 
     handleLogout() {
-        this.authService.logout().subscribe(() => {});
+        this.authService.logout().subscribe(() => {
+            this.customerService.setAuthCustomer(null);
+            this.customerService.setCurrentCustomer(null);
+        });
     }
 
     private createFormErrors() {

@@ -42,6 +42,7 @@ export class CallanCustomerManagerContainerComponent implements OnInit, OnDestro
         this.fetchCustomers();
         this.fetchRolesList();
 
+        /*
         this.currentCustomer$ = this.customerService.getCurrentCustomer()
             .pipe(
                 takeUntil(this.unsubscribe)
@@ -52,9 +53,12 @@ export class CallanCustomerManagerContainerComponent implements OnInit, OnDestro
                     this.currentCustomer = customer;
                 }
             });
+            */
+
+        this.setCurrentCustomer();
 
         // for developing purposes
-        this.handleCustomerCreate();
+        // this.handleCustomerCreate();
     }
 
     ngOnDestroy() {
@@ -64,6 +68,7 @@ export class CallanCustomerManagerContainerComponent implements OnInit, OnDestro
 
     handleSetCurrentCustomer(customer: CallanCustomer) {
         this.customerService.setCurrentCustomer(customer);
+        this.setCurrentCustomer();
     }
 
     handleCustomerCreate() {
@@ -120,6 +125,14 @@ export class CallanCustomerManagerContainerComponent implements OnInit, OnDestro
     handleDetailsReset() {
         this.isDetailsShown = false;
         this.formErrors$.next(null);
+    }
+
+    private setCurrentCustomer() {
+        this.customerService.getCurrentCustomer().subscribe(customer => {
+            console.log('here!!');
+            console.log('is details shown', this.isDetailsShown);
+            this.currentCustomer = customer;
+        });
     }
 
     private createFormErrors() {

@@ -19,6 +19,13 @@ import {CallanLessonEventStateEnum} from '../enums/lesson-event.state.enum';
 @Injectable()
 export abstract class CallanLessonService {
 
+    protected isLessonDetailsShown = false;
+    protected isLessonDetailsShown$ = new BehaviorSubject<boolean>(false);
+
+    static createCourseProgress(): CallanCourseProgress {
+        return new CallanCourseProgress();
+    }
+
     constructor(
         protected customerService?: CallanCustomerService
     ) {
@@ -28,12 +35,14 @@ export abstract class CallanLessonService {
 
     abstract getCourseProgresses(customer: CallanCustomer): Observable<CallanCourseProgress[]>;
 
+    abstract addCourseProgress(customer: CallanCustomer, course: CallanCourse): Observable<CallanCourseProgress>;
+
     abstract getAllCourses(): Observable<CallanCourse[]>;
 
     abstract getCourseProgress(id: number): Observable<CallanCourseProgress>;
 
     // CHECKME: signature (does the lessonEvents needed here?)
-    abstract getNearestLessonEvent(lessonEvents: CallanLessonEvent[]): CallanLessonEvent;
+    abstract getNearestLessonEvent(customer: CallanCustomer): Observable<CallanLessonEvent>;
 
     // CHECKME: signature (does the lessonEvents needed here?)
     abstract getDatesEnabled(lessonEvents: CallanLessonEvent[], previousDates: Date[]): Observable<Date[]>;
@@ -82,5 +91,30 @@ export abstract class CallanLessonService {
         };
 
         return calendarEvent;
+    }
+
+    getIsLessonDetailsShown() {
+        return this.isLessonDetailsShown;
+    }
+
+    getIsLessonDetailsShown$() {
+        return this.isLessonDetailsShown$;
+    }
+
+    setIsLessonDetailsShown(value) {
+        if (value !== this.isLessonDetailsShown) {
+            this.isLessonDetailsShown = value;
+            this.isLessonDetailsShown$.next(value);
+        }
+
+        return this.isLessonDetailsShown;
+    }
+
+    toggleIsLessonDetailsShown() {
+        if (this.isLessonDetailsShown) {
+            this.setIsLessonDetailsShown(false);
+        } else {
+            this.setIsLessonDetailsShown(true);
+        }
     }
 }

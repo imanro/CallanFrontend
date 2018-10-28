@@ -1,4 +1,5 @@
-import {Injectable} from '@angular/core';
+import {Inject, Injectable} from '@angular/core';
+import {AppConfig, IAppConfig} from '../../app.config';
 import {Observable} from 'rxjs';
 
 import {CallanBaseService} from './base.service';

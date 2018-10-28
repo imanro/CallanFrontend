@@ -9,17 +9,9 @@ import {CallanLessonEvent} from '../../shared/models/lesson-event.model';
 export class CallanLessonEventComponent implements OnInit {
 
     @Input() lessonEvent: CallanLessonEvent;
-    @Input() lessonEventRemainingMinutes: number;
-    @Input() isLessonTimeSpent = false;
-    @Input() isLessonStarted = false;
-
     @Output() lessonStartEvent = new EventEmitter<void>();
 
-    lessonEventRemainingDays = 0;
-    lessonEventRemainingHours = 0;
-
     constructor() {
-        console.log('constr');
     }
 
     handleLessonEventStart() {
@@ -27,16 +19,6 @@ export class CallanLessonEventComponent implements OnInit {
     }
 
     ngOnInit() {
-
-        this.lessonEventRemainingDays = Math.floor(this.lessonEventRemainingMinutes / 60 / 24);
-        if (this.lessonEventRemainingDays > 0) {
-            console.log('this case');
-            this.lessonEventRemainingHours = Math.floor(this.lessonEventRemainingMinutes / 60 % 24);
-        } else {
-            this.lessonEventRemainingHours = Math.floor(this.lessonEventRemainingMinutes / 60 );
-        }
-
-        console.log('DHM', this.lessonEventRemainingDays, this.lessonEventRemainingHours, this.lessonEventRemainingMinutes);
     }
 
 }

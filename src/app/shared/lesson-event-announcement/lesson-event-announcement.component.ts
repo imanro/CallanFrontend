@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import {CallanLessonEvent} from '../../shared/models/lesson-event.model';
+import {CallanLessonEvent} from '../models/lesson-event.model';
 
 @Component({
   selector: 'app-callan-lesson-event-announcement',
@@ -21,6 +21,9 @@ export class CallanLessonEventAnnouncementComponent implements OnInit {
     constructor() { }
 
   ngOnInit() {
+
+        console.log('aa?');
+
       this.lessonEventRemainingDays = Math.floor(this.lessonEventRemainingMinutes / 60 / 24);
       if (this.lessonEventRemainingDays > 0) {
           console.log('this case');

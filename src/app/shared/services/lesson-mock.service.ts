@@ -70,6 +70,31 @@ export class CallanLessonMockService extends CallanLessonService {
         )
     }
 
+    addCourseProgress(customer: CallanCustomer, course: CallanCourse): Observable<CallanCourseProgress> {
+        const d = this.appConfig.mockDelayMs;
+        return new Observable<CallanCourseProgress>(observer => {
+
+            const courseProgress = CallanLessonService.createCourseProgress();
+            courseProgress.customer = customer;
+            courseProgress.course = course;
+
+            const keys = Object.keys(mockProgresses);
+
+            let key;
+            if (keys.length > 0) {
+                key = keys[keys.length - 1] + 1;
+            } else {
+                key = 1;
+            }
+            mockProgresses[key] = courseProgress;
+            observer.next(courseProgress);
+
+            observer.complete();
+        }).pipe(
+            delay(d)
+        );
+    }
+
     getLessonEvents(customer: CallanCustomer): Observable<CallanLessonEvent[]> {
 
         // we need customers
@@ -82,38 +107,46 @@ export class CallanLessonMockService extends CallanLessonService {
                     const currentCustomer = results[0];
                     const allCustomers = results[1];
 
-                    let anotherCustomer: CallanCustomer;
+                    if (currentCustomer) {
+                        let anotherCustomer: CallanCustomer;
 
-                    for (const testCustomer of allCustomers) {
-                        if (testCustomer.id !== currentCustomer.id) {
-                            anotherCustomer = testCustomer;
-                            break;
+                        for (const testCustomer of allCustomers) {
+                            if (testCustomer.id !== currentCustomer.id) {
+                                anotherCustomer = testCustomer;
+                                break;
+                            }
                         }
+
+                        if (anotherCustomer === undefined) {
+                            throw new Error('could not assign another customer');
+                        }
+
+                        console.log('customers:', currentCustomer, anotherCustomer);
+
+                        const list = mockLessonEvents;
+
+                        for (const lessonEvent of list) {
+                            this.initLessonEvent(lessonEvent);
+                            lessonEvent.student = currentCustomer;
+                            lessonEvent.teacher = anotherCustomer;
+                        }
+
+                        console.log('alls done', list);
+                        observer.next(list);
                     }
-
-                    if (anotherCustomer === undefined) {
-                        throw new Error('could not assign another customer');
-                    }
-
-                    console.log('customers:', currentCustomer, anotherCustomer);
-
-                    const list = mockLessonEvents;
-
-                    for (const lessonEvent of list) {
-                        this.initLessonEvent(lessonEvent);
-                        lessonEvent.student = currentCustomer;
-                        lessonEvent.teacher = anotherCustomer;
-                    }
-
-                    console.log('alls done', list);
-                    observer.next(list);
                 });
         });
     }
 
-    getNearestLessonEvent(lessonEvents: CallanLessonEvent[]): CallanLessonEvent {
-        console.log('Now, there is', lessonEvents.length, 'lesson events in list' );
-        return lessonEvents[0];
+    getNearestLessonEvent(customer: CallanCustomer): Observable<CallanLessonEvent> {
+
+        return new Observable<CallanLessonEvent>(observer => {
+            this.getLessonEvents(customer).subscribe(lessonEvents => {
+                observer.next(lessonEvents[0]);
+                console.log(lessonEvents[0]);
+                observer.complete();
+            });
+        });
     }
 
     getDatesEnabled(lessonEvents: CallanLessonEvent[], previousDates: Date[]): Observable<Date[]> {

@@ -3,7 +3,6 @@
         <div class="content-wrapper">
             <div class="container-fluid">
 
-
                 <app-callan-customers-list [customers$]="customers$"
                                            (setCurrentCustomer)="handleSetCurrentCustomer($event)" *ngIf="!isDetailsShown"></app-callan-customers-list>
 
