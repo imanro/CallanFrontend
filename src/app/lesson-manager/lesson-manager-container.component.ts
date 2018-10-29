@@ -37,7 +37,6 @@ export class CallanLessonManagerContainerComponent implements OnInit, OnDestroy 
     currentCourseProgress$ = new BehaviorSubject<CallanCourseProgress>(null);
     currentCourseProgress: CallanCourseProgress;
 
-
     // we need this to be a subject
     lessonEvents$ = new BehaviorSubject<CallanLessonEvent[]>([]);
 
@@ -235,10 +234,15 @@ export class CallanLessonManagerContainerComponent implements OnInit, OnDestroy 
     }
 
     handleCustomerCourseAdd(course) {
-        console.log('try to add course', course);
-        this.lessonService.addCourseProgress(this.currentCustomer, course)
+
+        const progress = CallanLessonService.createCourseProgress();
+        progress.customer = this.currentCustomer;
+        progress.course = course;
+
+        this.lessonService.saveCourseProgress(progress)
             .subscribe(courseProgress => {
                 // re-read list
+                console.log('re-read');
                 this.assignCourseProgresses(this.currentCustomer);
                 this.isCustomerCourseAddShown = false;
                 this.toastrService.success('A new course has been added to your account', 'Success');

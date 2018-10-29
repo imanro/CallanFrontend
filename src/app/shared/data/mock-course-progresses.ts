@@ -61,10 +61,10 @@ const courseProgressData = [
     }
 ];
 
-const mockProgresses: { [id: number]: CallanCourseProgress } = {};
+const mockProgresses: CallanCourseProgress[] = [];
 
 for (const row of courseProgressData) {
-    mockProgresses[row.id] = Object.assign(new CallanCourseProgress(), row);
+    mockProgresses.push(Object.assign(new CallanCourseProgress(), row));
 }
 
 export { mockProgresses };

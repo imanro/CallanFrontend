@@ -1,6 +1,7 @@
 import {Inject, Injectable} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import {delay} from 'rxjs/operators';
+import {map, catchError, mergeMap} from 'rxjs/operators';
 import {combineLatest as observableCombineLatest} from 'rxjs/observable/combineLatest';
 
 import {AppConfig, IAppConfig} from '../../app.config';
@@ -16,75 +17,100 @@ import {CallanLessonEvent} from '../models/lesson-event.model';
 
 import {CallanLessonService} from './lesson.service';
 import {CallanCustomerService} from './customer.service';
+import {HttpClient} from '@angular/common/http';
+import {CallanError} from '../models/error.model';
 
 @Injectable()
-export class CallanLessonMockService extends CallanLessonService {
+export class CallanLessonApiService extends CallanLessonService {
 
     constructor(
         @Inject(AppConfig) protected appConfig: IAppConfig,
-        protected customerService: CallanCustomerService
+        protected customerService: CallanCustomerService,
+        protected http: HttpClient
     ) {
         super(appConfig);
     }
 
     getAllCourses(): Observable<CallanCourse[]> {
-        const d = this.appConfig.mockDelayMs;
-        return new Observable<CallanCourse[]>(observer => {
-            observer.next(mockCourses);
-            observer.complete();
-        }).pipe(
-            delay(d)
-        );
+        const url = this.getApiUrl('/Courses');
+
+        return this.http.get<CallanCourse[]>(url)
+            .pipe(
+                map<any, CallanCourse[]>(rows => {
+
+                    const courses: CallanCourse[] = [];
+
+                    for (const row of rows) {
+                        const course = CallanLessonService.createCourse();
+                        this.mapDataToCourse(course, row);
+                        courses.push(course);
+                    }
+
+                    return courses;
+                }),
+                catchError(this.handleHttpError<CallanCourse[]>())
+            );
     }
 
     getCourseProgresses(customer: CallanCustomer): Observable<CallanCourseProgress[]> {
-        return new Observable<CallanCourseProgress[]>(observer => {
-            const result = [];
-            for (const id in mockProgresses) {
-                if (mockProgresses.hasOwnProperty(id)) {
-                    const row = mockProgresses[id];
-                    if (row.customer.id === customer.id) {
-                        result.push(row);
-                    }
-                }
-            }
 
-            observer.next(result);
-            observer.complete();
-        })
+        const url = this.getApiUrl('/CourseProgresses?filter=' + JSON.stringify({
+            where: {customerId: customer.id},
+            include: ['Course', 'Customer']
+        }));
+
+        return this.http.get<CallanCourseProgress[]>(url)
+            .pipe(
+                map<any, CallanCourseProgress[]>(rows => {
+
+                    const progresses: CallanCourseProgress[] = [];
+
+                    for (const row of rows ) {
+                        const progress = CallanLessonService.createCourseProgress();
+                        this.mapDataToCourseProgress(progress, row);
+                        progresses.push(progress);
+                    }
+
+                    return progresses;
+                }),
+                catchError(this.handleHttpError<CallanCourseProgress[]>())
+            );
     }
 
     getCourseProgress(id: number): Observable<CallanCourseProgress> {
-        const d = this.appConfig.mockDelayMs;
-        return new Observable<CallanCourseProgress>(observer => {
 
-            if (mockProgresses[id] !== undefined) {
-                observer.next(mockProgresses[id]);
-            } else {
-                throw new Error('Unknown course progress id given: ' + id);
-            }
+        const url = this.getApiUrl('/CourseProgresses/' + id + '?filter=' + JSON.stringify({
+            include: ['Course', 'Customer']
+        }));
 
-            observer.complete();
-        }).pipe(
-            delay(d)
-        )
+        return this.http.get<CallanCourseProgress>(url)
+            .pipe(
+                map<any, CallanCourseProgress>(row => {
+                        const progress = CallanLessonService.createCourseProgress();
+                        this.mapDataToCourseProgress(progress, row);
+                        return progress;
+                }),
+                catchError(this.handleHttpError<CallanCourseProgress>())
+            );
     }
 
     saveCourseProgress(progress: CallanCourseProgress): Observable<CallanCourseProgress> {
-        const d = this.appConfig.mockDelayMs;
-        return new Observable<CallanCourseProgress>(observer => {
-            progress.id = mockProgresses.length + 1;
 
-            mockProgresses.push(progress);
-            observer.next(progress);
-            console.log('now:', mockProgresses);
+        const data = this.mapCourseProgressToData(progress);
 
-            observer.complete();
-        }).pipe(
-            delay(d)
-        );
+        const url = this.getApiUrl('/CourseProgresses');
+
+        console.log('We have prepared the following data:', data);
+
+        return this.http.post(url, data)
+            .pipe(
+                mergeMap(responseData => {
+                    console.log('The response is follow:', responseData);
+                    return this.getCourseProgress(responseData['id']);
+                }),
+                catchError(this.handleHttpError<CallanCourseProgress>())
+            );
     }
-
 
     getLessonEvents(customer: CallanCustomer): Observable<CallanLessonEvent[]> {
 
@@ -213,13 +239,43 @@ export class CallanLessonMockService extends CallanLessonService {
     }
 
     mapDataToCourse(course: CallanCourse, row: any): void {
+        course.id = row.id;
+        course.title = row.title;
     }
 
-    mapDataToCourseProgress(courseProgress: CallanCourseProgress, row: any): void {
+    mapDataToCourseProgress(courseProgress: CallanCourseProgress, row: any, isRelationsMandatory = true): void {
+        courseProgress.id = row.id;
+        courseProgress.completedLessonEventsCount = Number(row.completedLessonEventsCount);
 
+        if (row.Customer) {
+            const customer = CallanCustomerService.createCustomer();
+            this.customerService.mapDataToCustomer(customer, row.Customer);
+            courseProgress.customer = customer;
+        } else {
+            if (isRelationsMandatory) {
+                throw new CallanError('Customer data isn\'t present in API response')
+            }
+        }
+
+        if (row.Course) {
+            const course = CallanLessonService.createCourse();
+            this.mapDataToCourse(course, row.Course);
+            courseProgress.course = course;
+        } else {
+            if (isRelationsMandatory) {
+                throw new CallanError('Course data isn\'t present in API response')
+            }
+        }
     }
 
-    mapCourseProgressToData(courseProgress: CallanCourseProgress): object {
-        return {}
+    mapCourseProgressToData(progress: CallanCourseProgress): object {
+        const data: any = {};
+        data.id = progress.id;
+        data.completedLessonEventsCount = progress.completedLessonEventsCount;
+
+        data.customerId = progress.customer.id;
+        data.courseId = progress.course.id;
+
+        return data;
     }
 }

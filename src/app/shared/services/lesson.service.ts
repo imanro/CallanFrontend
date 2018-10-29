@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {Inject, Injectable} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 
 import {CallanCustomer} from '../models/customer.model';
@@ -6,18 +6,17 @@ import {CallanCourse} from '../models/course.model';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {CallanCourseProgress} from '../models/course-progress.model';
 import {CallanLessonEvent} from '../models/lesson-event.model';
-import {
-    CalendarEvent
-} from 'angular-calendar';
-import {CallanCustomerService} from './customer.service';
+import {CalendarEvent } from 'angular-calendar';
 
 import {combineLatest as observableCombineLatest} from 'rxjs/observable/combineLatest';
 import {CallanLesson} from '../models/lesson.model';
 import {CallanLessonEventStateEnum} from '../enums/lesson-event.state.enum';
+import {CallanBaseService} from './base.service';
+import {AppConfig, IAppConfig} from '../../app.config';
 
 
 @Injectable()
-export abstract class CallanLessonService {
+export abstract class CallanLessonService extends CallanBaseService {
 
     protected isLessonDetailsShown = false;
     protected isLessonDetailsShown$ = new BehaviorSubject<boolean>(false);
@@ -26,16 +25,21 @@ export abstract class CallanLessonService {
         return new CallanCourseProgress();
     }
 
+    static createCourse(): CallanCourse {
+        return new CallanCourse();
+    }
+
     constructor(
-        protected customerService?: CallanCustomerService
+        @Inject(AppConfig) protected appConfig: IAppConfig
     ) {
+        super(appConfig);
     }
 
     abstract getLessonEvents(customer: CallanCustomer): Observable<CallanLessonEvent[]>;
 
     abstract getCourseProgresses(customer: CallanCustomer): Observable<CallanCourseProgress[]>;
 
-    abstract addCourseProgress(customer: CallanCustomer, course: CallanCourse): Observable<CallanCourseProgress>;
+    abstract saveCourseProgress(progress: CallanCourseProgress): Observable<CallanCourseProgress>;
 
     abstract getAllCourses(): Observable<CallanCourse[]>;
 
@@ -49,9 +53,11 @@ export abstract class CallanLessonService {
 
     abstract changetLessonEventState(lessonEvent: CallanLessonEvent, state: number): Observable<boolean>;
 
-    createCourse(): CallanCourse {
-        return new CallanCourse();
-    }
+    abstract mapDataToCourse(course: CallanCourse, row: any): void;
+
+    abstract mapDataToCourseProgress(courseProgress: CallanCourseProgress, row: any): void;
+
+    abstract mapCourseProgressToData(courseProgress: CallanCourseProgress): object;
 
     createLesson(): CallanLesson {
         return new CallanLesson();

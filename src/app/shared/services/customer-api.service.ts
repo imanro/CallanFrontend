@@ -18,7 +18,7 @@ export class CallanCustomerApiService extends CallanCustomerService {
     constructor(
         @Inject(AppConfig) protected appConfig: IAppConfig,
         protected authService: CallanAuthService,
-        private http: HttpClient
+        protected http: HttpClient
     ) {
         super(appConfig, authService);
     }

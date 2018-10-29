@@ -30,6 +30,7 @@ import {CalendarModule} from 'angular-calendar';
 import * as $ from 'jquery';
 import {CallanAuthApiService} from './shared/services/auth-api.service';
 import {TokenInterceptor} from './shared/interceptors/token.interceptor';
+import {CallanLessonApiService} from './shared/services/lesson-api.service';
 
 
 export function createTranslateLoader(http: HttpClient) {
@@ -85,7 +86,8 @@ export function initializeApp(appConfig: AppConfig) {
         AppConfig,
         //{provide: CallanCustomerService, useClass: CallanCustomerMockService},
         {provide: CallanCustomerService, useClass: CallanCustomerApiService},
-        {provide: CallanLessonService, useClass: CallanLessonMockService},
+        // {provide: CallanLessonService, useClass: CallanLessonMockService},
+        {provide: CallanLessonService, useClass: CallanLessonApiService},
     ],
     bootstrap: [AppComponent]
 })
