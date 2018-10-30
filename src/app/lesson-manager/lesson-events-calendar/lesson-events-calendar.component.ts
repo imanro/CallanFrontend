@@ -24,6 +24,7 @@ import {
 } from 'angular-calendar';
 import {CallanLessonEvent} from '../../shared/models/lesson-event.model';
 import {CallanLessonService} from '../../shared/services/lesson.service';
+import {CallanCustomer} from '../../shared/models/customer.model';
 
 
 @Component({
@@ -33,13 +34,15 @@ import {CallanLessonService} from '../../shared/services/lesson.service';
 })
 export class CallanLessonEventsCalendarComponent implements OnInit, OnDestroy {
 
-    @Input() courseProgress$: BehaviorSubject<CallanCourseProgress>;
+    @Input() courseProgress: CallanCourseProgress;
+
+    @Input() student: CallanCustomer;
 
     @Input() lessonEvents$: BehaviorSubject<CallanLessonEvent[]>;
 
     @Output() cancelEvent = new EventEmitter<void>();
 
-    @Output() lessonEventCreateEvent = new EventEmitter<Date>();
+    @Output() lessonEventCreateEvent = new EventEmitter<CallanLessonEvent>();
 
     // FIXME
     @ViewChild('eventModalContent') eventModalContent: TemplateRef<any>;
@@ -82,7 +85,7 @@ export class CallanLessonEventsCalendarComponent implements OnInit, OnDestroy {
 
             if (events) {
                 for (const lessonEvent of events) {
-                    this.calendarEvents.push(this.lessonService.convertLessonEventToCalendarEvent(lessonEvent));
+                    this.calendarEvents.push(CallanLessonService.convertLessonEventToCalendarEvent(lessonEvent));
                 }
             }
 
@@ -95,11 +98,6 @@ export class CallanLessonEventsCalendarComponent implements OnInit, OnDestroy {
             });
         });
 
-        this.courseProgress$.pipe(
-            takeUntil(this.unsubscribe)
-        ).subscribe(courseProgress => {
-            console.log('ccp: ', courseProgress);
-        });
 
         this.hoursEnabled = [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
         console.log(this.datesEnabled);
@@ -147,10 +145,20 @@ export class CallanLessonEventsCalendarComponent implements OnInit, OnDestroy {
         }
 
         console.log('confirmed', this.currentHourSegment.date);
-        this.lessonEventCreateEvent.next(this.currentHourSegment.date);
+        const lessonEvent = this.createLessonEvent(this.currentHourSegment.date);
+        this.lessonEventCreateEvent.next(lessonEvent);
     }
 
     handleClickCancel($event) {
         this.cancelEvent.next();
+    }
+
+    private createLessonEvent(time: any) {
+        console.log('Time of lesson:', time);
+        const lessonEvent = CallanLessonService.createLessonEvent();
+        lessonEvent.courseProgress = this.courseProgress;
+        lessonEvent.student = this.student;
+        lessonEvent.startTime = time;
+        return lessonEvent;
     }
 }

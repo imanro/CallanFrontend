@@ -39,6 +39,7 @@ export class CallanLessonManagerContainerComponent implements OnInit, OnDestroy 
 
     // we need this to be a subject
     lessonEvents$ = new BehaviorSubject<CallanLessonEvent[]>([]);
+    currentCourseLessonEvents$ = new BehaviorSubject<CallanLessonEvent[]>([]);
 
     currentLessonEvent: CallanLessonEvent;
 
@@ -83,9 +84,11 @@ export class CallanLessonManagerContainerComponent implements OnInit, OnDestroy 
                                 const customer = results[0];
                                 const courseProgress = results[1];
 
+                                console.log('valuef', courseProgress, customer);
 
                                 if (customer && customer.id === courseProgress.customer.id) {
-                                    this.currentCourseProgress$.next(courseProgress);
+                                    console.log('assigning');
+                                    this.setCurrentCourseProgress(courseProgress);
                                     this.isInitialRouteProcessed = true;
                                 }
                             });
@@ -144,7 +147,6 @@ export class CallanLessonManagerContainerComponent implements OnInit, OnDestroy 
             this.currentCustomer = customer;
 
             if (customer) {
-                console.log('acle');
                 this.assignCourseProgresses(customer);
                 this.assignLessonEvents(customer);
                 this.assignCurrentLessonEvent(customer);
@@ -159,6 +161,7 @@ export class CallanLessonManagerContainerComponent implements OnInit, OnDestroy 
             )
             .subscribe(courseProgress => {
                 this.currentCourseProgress = courseProgress;
+                this.assignCurrentCourseLessonEvents(courseProgress)
             });
     }
 
@@ -194,9 +197,18 @@ export class CallanLessonManagerContainerComponent implements OnInit, OnDestroy 
     }
 
     private assignLessonEvents(customer) {
-        this.lessonService.getLessonEvents(customer).subscribe(lessonEvents => {
+        this.lessonService.getLessonEvents(null, customer).subscribe(lessonEvents => {
             this.lessonEvents$.next(lessonEvents);
         });
+    }
+
+    private assignCurrentCourseLessonEvents(courseProgress) {
+        if (courseProgress) {
+            this.lessonService.getLessonEvents(courseProgress)
+                .subscribe(lessonEvents => {
+                    this.currentCourseLessonEvents$.next(lessonEvents);
+                });
+        }
     }
 
     private setCurrentCourseProgress(courseProgress: CallanCourseProgress) {
@@ -246,6 +258,7 @@ export class CallanLessonManagerContainerComponent implements OnInit, OnDestroy 
                 this.assignCourseProgresses(this.currentCustomer);
                 this.isCustomerCourseAddShown = false;
                 this.toastrService.success('A new course has been added to your account', 'Success');
+
             }, err => {
 
                 this.isSaving = false;
@@ -268,20 +281,35 @@ export class CallanLessonManagerContainerComponent implements OnInit, OnDestroy 
             });
     }
 
-    handleLessonEventCreateEvent(date: any) {
+    handleLessonEventCreateEvent(lessonEvent: CallanLessonEvent) {
 
-        console.log('weve received', date);
-
-        const lessonEvent = this.lessonService.createLessonEvent();
-        this.lessonService.initLessonEvent(lessonEvent);
-
-        // lessonEvent.title = 'Newly created event';
-        lessonEvent.startTime = date;
-
+        console.log('weve received', lessonEvent);
+        // add some required info
+        CallanLessonService.initLessonEvent(lessonEvent);
         console.log('weve created', lessonEvent);
 
-        const eventsList = this.lessonEvents$.getValue();
-        eventsList.push(lessonEvent);
-        this.lessonEvents$.next(eventsList);
+        this.lessonService.saveLessonEvent(lessonEvent)
+            .subscribe(() => {
+                console.log('Lesson events updated');
+               this.assignLessonEvents(this.currentCustomer);
+                this.toastrService.success('You have successfully planed the lesson!', 'Success');
+               this.isDetailsShown = false;
+            }, err => {
+                if (err instanceof CallanError) {
+                    if (err.httpStatus === 401 || err.httpStatus === 403) {
+                        throw err.error;
+                    } else {
+                        this.toastrService.warning('Something went wrong, sorry', 'Warning');
+                        const formErrors = this.createFormErrors();
+                        const message = err.message;
+                        formErrors.common.push(message);
+                        formErrors.assignServerFieldErrors(err.formErrors);
+                        this.formErrors$.next(formErrors);
+                    }
+
+                } else {
+                    throw err;
+                }
+            });
     }
 }

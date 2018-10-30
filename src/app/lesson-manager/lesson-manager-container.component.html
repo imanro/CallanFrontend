@@ -39,8 +39,9 @@
                                                     *ngIf="isCustomerCourseAddShown"></app-callan-customer-course-add>
 
                     <app-callan-lesson-events-calendar *ngIf="currentCourseProgress && isDetailsShown"
-                                                   [courseProgress$]="currentCourseProgress$"
-                                                   [lessonEvents$]="lessonEvents$"
+                                                   [courseProgress]="currentCourseProgress"
+                                                   [student]="currentCustomer"
+                                                   [lessonEvents$]="currentCourseLessonEvents$"
                                                    (cancelEvent)="handleLessonEventCreateCancel($event)"
                                                    (lessonEventCreateEvent)="handleLessonEventCreateEvent($event)"></app-callan-lesson-events-calendar>
 

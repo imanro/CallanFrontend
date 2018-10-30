@@ -37,6 +37,15 @@ export class CallanLessonEventsListComponent implements OnInit {
                     title: 'Duration, min',
                     filter: false
                 },
+                courseProgress: {
+                    title: 'Course',
+                    filter: false,
+                    valuePrepareFunction: function (value) {
+                        console.log(value, 'ttttable');
+                        return value ? value.course.title : '';
+                    }
+                },
+                /*
                 lesson: {
                     title: 'Lesson',
                     filter: false,
@@ -44,6 +53,7 @@ export class CallanLessonEventsListComponent implements OnInit {
                         return value ? (value.title + (value.course ? ' (' + value.course.title + ')' : '')) : '';
                     }
                 },
+                */
                 student: {
                     title: 'Student',
                     filter: false,

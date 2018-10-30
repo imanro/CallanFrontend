@@ -1,6 +1,6 @@
 import {Inject, Injectable} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
-import {delay} from 'rxjs/operators';
+import {delay, mergeMap} from 'rxjs/operators';
 import {combineLatest as observableCombineLatest} from 'rxjs/observable/combineLatest';
 
 import {AppConfig, IAppConfig} from '../../app.config';
@@ -16,6 +16,8 @@ import {CallanLessonEvent} from '../models/lesson-event.model';
 
 import {CallanLessonService} from './lesson.service';
 import {CallanCustomerService} from './customer.service';
+import {CallanLesson} from '../models/lesson.model';
+import {CallanCourseStage} from '../models/course-stage.model';
 
 @Injectable()
 export class CallanLessonMockService extends CallanLessonService {
@@ -85,8 +87,22 @@ export class CallanLessonMockService extends CallanLessonService {
         );
     }
 
+    saveLessonEvent(lessonEvent: CallanLessonEvent): Observable<CallanLessonEvent> {
+        const d = this.appConfig.mockDelayMs;
+        return new Observable<CallanLessonEvent>(observer => {
+            lessonEvent.id = mockLessonEvents.length + 1;
 
-    getLessonEvents(customer: CallanCustomer): Observable<CallanLessonEvent[]> {
+            mockLessonEvents.push(lessonEvent);
+            observer.next(lessonEvent);
+            console.log('now:', mockLessonEvents);
+
+            observer.complete();
+        }).pipe(
+            delay(d)
+        )
+    }
+
+    getLessonEvents(courseProgress: CallanCourseProgress, customer: CallanCustomer = null): Observable<CallanLessonEvent[]> {
 
         // we need customers
         return new Observable<CallanLessonEvent[]>(observer => {
@@ -117,7 +133,7 @@ export class CallanLessonMockService extends CallanLessonService {
                         const list = mockLessonEvents;
 
                         for (const lessonEvent of list) {
-                            this.initLessonEvent(lessonEvent);
+                            CallanLessonService.initLessonEvent(lessonEvent);
                             lessonEvent.student = currentCustomer;
                             lessonEvent.teacher = anotherCustomer;
                         }
@@ -129,10 +145,27 @@ export class CallanLessonMockService extends CallanLessonService {
         });
     }
 
+    getLessonEvent(id: number): Observable<CallanLessonEvent> {
+        return new Observable<CallanLessonEvent>(observer => {
+            this.customerService.getCurrentCustomer()
+                .subscribe(customer => {
+
+                    this.getLessonEvents(null)
+                        .subscribe(lessonEvents => {
+                            if (lessonEvents.length > 0) {
+                                observer.next(lessonEvents[0]);
+                            } else {
+                                observer.next(null);
+                            }
+                        })
+                });
+        });
+    }
+
     getNearestLessonEvent(customer: CallanCustomer): Observable<CallanLessonEvent> {
 
         return new Observable<CallanLessonEvent>(observer => {
-            this.getLessonEvents(customer).subscribe(lessonEvents => {
+            this.getLessonEvents(null, customer).subscribe(lessonEvents => {
                 observer.next(lessonEvents[0]);
                 console.log(lessonEvents[0]);
                 observer.complete();
@@ -221,5 +254,21 @@ export class CallanLessonMockService extends CallanLessonService {
 
     mapCourseProgressToData(courseProgress: CallanCourseProgress): object {
         return {}
+    }
+
+    mapDataToLessonEvent(lessonEvent: CallanLessonEvent, row: any): void {
+
+    }
+
+    mapLessonEventToData(lessonEvent: CallanLessonEvent): object {
+        return {}
+    }
+
+    mapDataToLesson(lesson: CallanLesson, row: any): void {
+
+    }
+
+    mapDataToCourseStage(courseStage: CallanCourseStage, row: any): void {
+
     }
 }

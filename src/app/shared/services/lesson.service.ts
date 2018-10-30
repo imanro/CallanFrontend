@@ -13,6 +13,7 @@ import {CallanLesson} from '../models/lesson.model';
 import {CallanLessonEventStateEnum} from '../enums/lesson-event.state.enum';
 import {CallanBaseService} from './base.service';
 import {AppConfig, IAppConfig} from '../../app.config';
+import {CallanCourseStage} from '../models/course-stage.model';
 
 
 @Injectable()
@@ -29,17 +30,62 @@ export abstract class CallanLessonService extends CallanBaseService {
         return new CallanCourse();
     }
 
+    static createCourseStage(): CallanCourseStage {
+        return new CallanCourseStage();
+    }
+
+    static createLessonEvent(): CallanLessonEvent {
+        return new CallanLessonEvent();
+    }
+
+    static createLesson(): CallanLesson {
+        return new CallanLesson();
+    }
+
+    static initLessonEvent(lessonEvent: CallanLessonEvent) {
+        lessonEvent.duration = 60;
+        lessonEvent.title = '';
+        lessonEvent.state = CallanLessonEventStateEnum.PLANNED;
+    }
+
+    static convertLessonEventToCalendarEvent(lessonEvent: CallanLessonEvent): CalendarEvent {
+
+        const endMinutes = lessonEvent.duration % 60;
+        const endHours = Math.floor(lessonEvent.duration / 60);
+
+        const endDate = new Date(lessonEvent.startTime);
+        endDate.setHours(lessonEvent.startTime.getHours() + endHours);
+        endDate.setMinutes(lessonEvent.startTime.getMinutes() + endMinutes);
+
+        console.log('end date now:', endDate, endMinutes, endHours, lessonEvent.duration);
+
+        return {
+            start: lessonEvent.startTime,
+            end: endDate,
+            title: lessonEvent.title,
+            color: {
+                primary: '#ad2121',
+                secondary:
+                    '#FAE3E3'
+            }
+        };
+    }
+
     constructor(
         @Inject(AppConfig) protected appConfig: IAppConfig
     ) {
         super(appConfig);
     }
 
-    abstract getLessonEvents(customer: CallanCustomer): Observable<CallanLessonEvent[]>;
+    abstract getLessonEvents(courseProgress: CallanCourseProgress, customer?: CallanCustomer): Observable<CallanLessonEvent[]>;
+
+    abstract getLessonEvent(id: number): Observable<CallanLessonEvent>;
 
     abstract getCourseProgresses(customer: CallanCustomer): Observable<CallanCourseProgress[]>;
 
     abstract saveCourseProgress(progress: CallanCourseProgress): Observable<CallanCourseProgress>;
+
+    abstract saveLessonEvent(lessonEvent: CallanLessonEvent): Observable<CallanLessonEvent>;
 
     abstract getAllCourses(): Observable<CallanCourse[]>;
 
@@ -59,49 +105,13 @@ export abstract class CallanLessonService extends CallanBaseService {
 
     abstract mapCourseProgressToData(courseProgress: CallanCourseProgress): object;
 
-    createLesson(): CallanLesson {
-        return new CallanLesson();
-    }
+    abstract mapDataToLessonEvent(lessonEvent: CallanLessonEvent, row: any): void;
 
-    createLessonEvent(): CallanLessonEvent {
-        return new CallanLessonEvent();
-    }
+    abstract mapLessonEventToData(lessonEvent: CallanLessonEvent): object;
 
+    abstract mapDataToLesson(lesson: CallanLesson, row: any): void;
 
-    initLessonEvent(lessonEvent: CallanLessonEvent) {
-        lessonEvent.duration = 60;
-        lessonEvent.title = '';
-        lessonEvent.state = CallanLessonEventStateEnum.PLANNED;
-    }
-
-    convertLessonEventToCalendarEvent(lessonEvent: CallanLessonEvent): CalendarEvent {
-
-        const endMinutes = lessonEvent.duration % 60;
-        const endHours = Math.floor(lessonEvent.duration / 60);
-
-        const endDate = new Date(lessonEvent.startTime);
-        endDate.setHours(lessonEvent.startTime.getHours() + endHours);
-        endDate.setMinutes(lessonEvent.startTime.getMinutes() + endMinutes);
-
-        console.log('end date now:', endDate, endMinutes, endHours, lessonEvent.duration);
-
-        const calendarEvent = {
-            start: lessonEvent.startTime,
-            end: endDate,
-            title: lessonEvent.title,
-            color: {
-                primary: '#ad2121',
-                secondary:
-                    '#FAE3E3'
-            }
-        };
-
-        return calendarEvent;
-    }
-
-    getIsLessonDetailsShown() {
-        return this.isLessonDetailsShown;
-    }
+    abstract mapDataToCourseStage(courseStage: CallanCourseStage, row: any): void;
 
     getIsLessonDetailsShown$() {
         return this.isLessonDetailsShown$;
