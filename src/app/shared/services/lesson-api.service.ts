@@ -96,20 +96,11 @@ export class CallanLessonApiService extends CallanLessonService {
             );
     }
 
-    getLessonEvents(courseProgress: CallanCourseProgress, customer: CallanCustomer = null): Observable<CallanLessonEvent[]> {
-
-        let wherePart;
-
-        if (courseProgress) {
-            wherePart = {courseProgressId: courseProgress.id};
-        } else if (customer) {
-            wherePart = {studentId: customer.id};
-        } else {
-            throw new CallanError('Either courseProgress or customer is mandatory');
-        }
+    getLessonEvents(courseProgress: CallanCourseProgress): Observable<CallanLessonEvent[]> {
 
         const url = this.getApiUrl('/LessonEvents?filter=' + JSON.stringify({
-            where: wherePart,
+            where: {courseProgressId: courseProgress.id},
+            order: ['startTime ASC'],
             include: ['Teacher', 'Student', {CourseProgress: ['Course']}, {Lesson: ['Course']}]
         }));
 
@@ -132,6 +123,58 @@ export class CallanLessonApiService extends CallanLessonService {
 
     }
 
+    getLessonEventsByStudent(student: CallanCustomer = null): Observable<CallanLessonEvent[]> {
+
+        const url = this.getApiUrl('/LessonEvents?filter=' + JSON.stringify({
+            where: {studentId: student.id},
+            order: ['startTime ASC'],
+            include: ['Teacher', 'Student', {CourseProgress: ['Course']}, {Lesson: ['Course']}]
+        }));
+
+        return this.http.get<CallanLessonEvent[]>(url)
+            .pipe(
+                map<any, CallanLessonEvent[]>(rows => {
+
+                    const lessonEvents: CallanLessonEvent[] = [];
+
+                    for (const row of rows) {
+                        const lessonEvent = CallanLessonService.createLessonEvent();
+                        this.mapDataToLessonEvent(lessonEvent, row);
+                        lessonEvents.push(lessonEvent);
+                    }
+
+                    return lessonEvents;
+                }),
+                catchError(this.handleHttpError<CallanLessonEvent[]>())
+            );
+    }
+
+    getLessonEventsByTeacher(teacher: CallanCustomer = null): Observable<CallanLessonEvent[]> {
+
+        const url = this.getApiUrl('/LessonEvents?filter=' + JSON.stringify({
+            where: {teacherId: teacher.id},
+            order: ['startTime ASC'],
+            include: ['Teacher', 'Student', {CourseProgress: ['Course']}, {Lesson: ['Course']}]
+        }));
+
+        return this.http.get<CallanLessonEvent[]>(url)
+            .pipe(
+                map<any, CallanLessonEvent[]>(rows => {
+
+                    const lessonEvents: CallanLessonEvent[] = [];
+
+                    for (const row of rows) {
+                        const lessonEvent = CallanLessonService.createLessonEvent();
+                        this.mapDataToLessonEvent(lessonEvent, row);
+                        lessonEvents.push(lessonEvent);
+                    }
+
+                    return lessonEvents;
+                }),
+                catchError(this.handleHttpError<CallanLessonEvent[]>())
+            );
+    }
+
     getLessonEvent(id: number): Observable<CallanLessonEvent> {
         const url = this.getApiUrl('/LessonEvents/' + id + '?filter=' + JSON.stringify({
             include: ['Teacher', 'Student', {CourseProgress: ['Course']}, {Lesson: ['Course']}]
@@ -149,10 +192,12 @@ export class CallanLessonApiService extends CallanLessonService {
             );
     }
 
-    getNearestLessonEvent(customer: CallanCustomer): Observable<CallanLessonEvent> {
+    getNearestStudentLessonEvent(student: CallanCustomer): Observable<CallanLessonEvent> {
+
+        // Process this case: query the lesson event which status is not completed and time is not passed
 
         return new Observable<CallanLessonEvent>(observer => {
-            this.getLessonEvents(null, customer).subscribe(lessonEvents => {
+            this.getLessonEventsByStudent(student).subscribe(lessonEvents => {
                 observer.next(lessonEvents[0]);
                 console.log(lessonEvents[0]);
                 observer.complete();

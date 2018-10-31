@@ -102,7 +102,7 @@ export class CallanLessonMockService extends CallanLessonService {
         )
     }
 
-    getLessonEvents(courseProgress: CallanCourseProgress, customer: CallanCustomer = null): Observable<CallanLessonEvent[]> {
+    getLessonEvents(courseProgress: CallanCourseProgress): Observable<CallanLessonEvent[]> {
 
         // we need customers
         return new Observable<CallanLessonEvent[]>(observer => {
@@ -145,6 +145,14 @@ export class CallanLessonMockService extends CallanLessonService {
         });
     }
 
+    getLessonEventsByStudent(student: CallanCustomer): Observable<CallanLessonEvent[]> {
+        return this.getLessonEvents(null);
+    }
+
+    getLessonEventsByTeacher(teacher: CallanCustomer): Observable<CallanLessonEvent[]> {
+        return this.getLessonEventsByStudent(teacher);
+    }
+
     getLessonEvent(id: number): Observable<CallanLessonEvent> {
         return new Observable<CallanLessonEvent>(observer => {
             this.customerService.getCurrentCustomer()
@@ -162,10 +170,10 @@ export class CallanLessonMockService extends CallanLessonService {
         });
     }
 
-    getNearestLessonEvent(customer: CallanCustomer): Observable<CallanLessonEvent> {
+    getNearestStudentLessonEvent(student: CallanCustomer): Observable<CallanLessonEvent> {
 
         return new Observable<CallanLessonEvent>(observer => {
-            this.getLessonEvents(null, customer).subscribe(lessonEvents => {
+            this.getLessonEventsByStudent(null).subscribe(lessonEvents => {
                 observer.next(lessonEvents[0]);
                 console.log(lessonEvents[0]);
                 observer.complete();

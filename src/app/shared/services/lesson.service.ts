@@ -8,7 +8,6 @@ import {CallanCourseProgress} from '../models/course-progress.model';
 import {CallanLessonEvent} from '../models/lesson-event.model';
 import {CalendarEvent } from 'angular-calendar';
 
-import {combineLatest as observableCombineLatest} from 'rxjs/observable/combineLatest';
 import {CallanLesson} from '../models/lesson.model';
 import {CallanLessonEventStateEnum} from '../enums/lesson-event.state.enum';
 import {CallanBaseService} from './base.service';
@@ -71,13 +70,11 @@ export abstract class CallanLessonService extends CallanBaseService {
         };
     }
 
-    constructor(
-        @Inject(AppConfig) protected appConfig: IAppConfig
-    ) {
-        super(appConfig);
-    }
+    abstract getLessonEvents(courseProgress: CallanCourseProgress): Observable<CallanLessonEvent[]>;
 
-    abstract getLessonEvents(courseProgress: CallanCourseProgress, customer?: CallanCustomer): Observable<CallanLessonEvent[]>;
+    abstract getLessonEventsByStudent(student: CallanCustomer): Observable<CallanLessonEvent[]>;
+
+    abstract getLessonEventsByTeacher(teacher: CallanCustomer): Observable<CallanLessonEvent[]>;
 
     abstract getLessonEvent(id: number): Observable<CallanLessonEvent>;
 
@@ -92,7 +89,7 @@ export abstract class CallanLessonService extends CallanBaseService {
     abstract getCourseProgress(id: number): Observable<CallanCourseProgress>;
 
     // CHECKME: signature (does the lessonEvents needed here?)
-    abstract getNearestLessonEvent(customer: CallanCustomer): Observable<CallanLessonEvent>;
+    abstract getNearestStudentLessonEvent(customer: CallanCustomer): Observable<CallanLessonEvent>;
 
     // CHECKME: signature (does the lessonEvents needed here?)
     abstract getDatesEnabled(lessonEvents: CallanLessonEvent[], previousDates: Date[]): Observable<Date[]>;
@@ -113,11 +110,17 @@ export abstract class CallanLessonService extends CallanBaseService {
 
     abstract mapDataToCourseStage(courseStage: CallanCourseStage, row: any): void;
 
-    getIsLessonDetailsShown$() {
+    constructor(
+        @Inject(AppConfig) protected appConfig: IAppConfig
+    ) {
+        super(appConfig);
+    }
+
+    getIsLessonDetailsShown$(): BehaviorSubject<boolean> {
         return this.isLessonDetailsShown$;
     }
 
-    setIsLessonDetailsShown(value) {
+    setIsLessonDetailsShown(value): boolean {
         if (value !== this.isLessonDetailsShown) {
             this.isLessonDetailsShown = value;
             this.isLessonDetailsShown$.next(value);
@@ -126,7 +129,7 @@ export abstract class CallanLessonService extends CallanBaseService {
         return this.isLessonDetailsShown;
     }
 
-    toggleIsLessonDetailsShown() {
+    toggleIsLessonDetailsShown(): void {
         if (this.isLessonDetailsShown) {
             this.setIsLessonDetailsShown(false);
         } else {

@@ -2,19 +2,19 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 
-import {CallanLessonManagerContainerComponent} from './lesson-manager-container.component';
+import {CallanLessonManagerStudentContainerComponent} from './lesson-manager-student-container.component';
 
 const routes: Routes = [
     {
         path: '',
-        component: CallanLessonManagerContainerComponent,
+        component: CallanLessonManagerStudentContainerComponent,
         data: {
             title: 'Lessons'
         },
     },
     {
         path: ':courseProgressId',
-        component: CallanLessonManagerContainerComponent,
+        component: CallanLessonManagerStudentContainerComponent,
         data: {
             title: 'Course'
         }

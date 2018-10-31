@@ -87,7 +87,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     }
 
     private assignCurrentLessonEvent(customer) {
-        this.lessonService.getNearestLessonEvent(customer).subscribe(lessonEvent => {
+        this.lessonService.getNearestStudentLessonEvent(customer).subscribe(lessonEvent => {
             this.currentLessonEvent = lessonEvent;
             this.assignCurrentLessonEventRemainingMinutes(lessonEvent);
         });

@@ -1,5 +1,5 @@
-import {Component, OnDestroy, OnInit, ChangeDetectorRef, ApplicationRef, Inject} from '@angular/core';
-import {Observable} from 'rxjs/Observable';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Subscription} from 'rxjs/Subscription';
 import {Location} from '@angular/common';
@@ -8,25 +8,22 @@ import {ToastrService} from 'ngx-toastr';
 import {combineLatest as observableCombineLatest} from 'rxjs/observable/combineLatest';
 import {takeUntil} from 'rxjs/operators';
 
-import {AppConfig, IAppConfig} from '../app.config';
-
+import {AppConfig} from '../app.config';
 import {CallanCourse} from '../shared/models/course.model';
 import {CallanLessonService} from '../shared/services/lesson.service';
 import {CallanCustomer} from '../shared/models/customer.model';
 import {CallanCustomerService} from '../shared/services/customer.service';
 import {CallanCourseProgress} from '../shared/models/course-progress.model';
-import {ActivatedRoute} from '@angular/router';
 import {CallanLessonEvent} from '../shared/models/lesson-event.model';
 import {CallanError} from '../shared/models/error.model';
 import {CallanFormErrors} from '../shared/models/form-errors.model';
-import {CallanFormHelper} from '../shared/helpers/form-helper';
 
 @Component({
     selector: 'app-callan-lesson-manager-container',
-    templateUrl: './lesson-manager-container.component.html',
-    styleUrls: ['./lesson-manager-container.component.scss']
+    templateUrl: './lesson-manager-student-container.component.html',
+    styleUrls: ['./lesson-manager-student-container.component.scss']
 })
-export class CallanLessonManagerContainerComponent implements OnInit, OnDestroy {
+export class CallanLessonManagerStudentContainerComponent implements OnInit, OnDestroy {
 
     allCourses$ = new BehaviorSubject<CallanCourse[]>([]);
     allCoursesSub$: Subscription; // CHECKME
@@ -59,7 +56,7 @@ export class CallanLessonManagerContainerComponent implements OnInit, OnDestroy 
     private unsubscribe: Subject<void> = new Subject();
 
     constructor(
-        @Inject(AppConfig) private appConfig: IAppConfig,
+        private appConfig: AppConfig,
         private customerService: CallanCustomerService,
         private lessonService: CallanLessonService,
         private location: Location,
@@ -178,26 +175,13 @@ export class CallanLessonManagerContainerComponent implements OnInit, OnDestroy 
     }
 
     private assignCurrentLessonEvent(customer) {
-        this.lessonService.getNearestLessonEvent(customer).subscribe(lessonEvent => {
+        this.lessonService.getNearestStudentLessonEvent(customer).subscribe(lessonEvent => {
             this.currentLessonEvent = lessonEvent;
         });
-
-        // + additional staff
-        /*
-        this.lessonService.getCurrentLessonEvent$()
-            .subscribe(lessonEvent => {
-                console.log('rcvd', lessonEvent);
-                if(lessonEvent) {
-                    console.log(lessonEvent.state);
-                }
-            //    this.currentLessonEvent = null;
-            // this.currentLessonEvent = lessonEvent;
-        });
-        */
     }
 
     private assignLessonEvents(customer) {
-        this.lessonService.getLessonEvents(null, customer).subscribe(lessonEvents => {
+        this.lessonService.getLessonEventsByStudent(customer).subscribe(lessonEvents => {
             this.lessonEvents$.next(lessonEvents);
         });
     }

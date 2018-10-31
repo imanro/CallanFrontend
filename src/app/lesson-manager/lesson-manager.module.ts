@@ -9,7 +9,7 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {CalendarModule} from 'angular-calendar';
 import {CalendarWeekHoursViewModule} from '@imanro/angular-calendar-week-hours-view';
 
-import {CallanLessonManagerContainerComponent} from './lesson-manager-container.component';
+import {CallanLessonManagerStudentContainerComponent} from './lesson-manager-student-container.component';
 import {CallanCoursesListComponent} from './courses-list/courses-list.component';
 import {CallanCourseProgressDetailsComponent} from './course-progress-details/course-progress-details.component';
 import { CallanLessonEventsCalendarComponent } from './lesson-events-calendar/lesson-events-calendar.component';
@@ -18,7 +18,7 @@ import { CallanLessonEventsListComponent } from './lesson-events-list/lesson-eve
 import { CallanCustomerCourseAddComponent } from './customer-course-add/customer-course-add.component';
 
 @NgModule({
-    declarations: [CallanLessonManagerContainerComponent,
+    declarations: [CallanLessonManagerStudentContainerComponent,
         CallanCoursesListComponent,
         CallanCourseProgressDetailsComponent,
         CallanLessonEventsCalendarComponent,
