@@ -290,27 +290,39 @@ export class CallanLessonApiService extends CallanLessonService {
 
     saveLessonEvent(lessonEvent: CallanLessonEvent): Observable<CallanLessonEvent> {
         const data = this.mapLessonEventToData(lessonEvent);
-
-        const url = this.getApiUrl('/LessonEvents');
-
         console.log('We have prepared the following data:', data);
 
-        return this.http.post(url, data)
-            .pipe(
-                mergeMap(responseData => {
-                    console.log('The response is follow:', responseData);
-                    return this.getLessonEvent(responseData['id']);
-                }),
-                catchError(this.handleHttpError<CallanLessonEvent>())
-            );
+        if (lessonEvent.id) {
+            // Peforming PUT
+            const url = this.getApiUrl('/LessonEvents/' + lessonEvent.id);
+            return this.http.put(url, data)
+                .pipe(
+                    mergeMap(responseData => {
+                        console.log('The response is follow:', responseData);
+                        this.getIsLessonEventsUpdated$().next();
+                        return this.getLessonEvent(responseData['id']);
+                    }),
+                    catchError(this.handleHttpError<CallanLessonEvent>())
+                );
+
+        } else {
+            // Performing POST
+            const url = this.getApiUrl('/LessonEvents');
+            return this.http.post(url, data)
+                .pipe(
+                    mergeMap(responseData => {
+                        console.log('The response is follow:', responseData);
+                        this.getIsLessonEventsUpdated$().next();
+                        return this.getLessonEvent(responseData['id']);
+                    }),
+                    catchError(this.handleHttpError<CallanLessonEvent>())
+                );
+        }
     }
 
-    changetLessonEventState(lessonEvent: CallanLessonEvent, state: number): Observable<boolean> {
+    changetLessonEventState(lessonEvent: CallanLessonEvent, state: number): Observable<CallanLessonEvent> {
         lessonEvent.state = state;
-        return new Observable<boolean>(observer => {
-            observer.next(true);
-            observer.complete();
-        });
+        return this.saveLessonEvent(lessonEvent);
     }
 
     mapDataToCourse(course: CallanCourse, row: any): void {
@@ -345,7 +357,6 @@ export class CallanLessonApiService extends CallanLessonService {
 
     mapCourseProgressToData(progress: CallanCourseProgress): object {
         const data: any = {};
-        data.id = progress.id;
         data.completedLessonEventsCount = progress.completedLessonEventsCount;
 
         data.customerId = progress.customer.id;
@@ -388,7 +399,6 @@ export class CallanLessonApiService extends CallanLessonService {
     mapLessonEventToData(lessonEvent: CallanLessonEvent): object {
         const data: any = {};
 
-        data.id = lessonEvent.id;
         data.duration = lessonEvent.duration;
         data.state = lessonEvent.state;
         data.startTime = lessonEvent.startTime.toISOString();

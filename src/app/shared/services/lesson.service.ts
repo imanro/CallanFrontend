@@ -13,13 +13,17 @@ import {CallanLessonEventStateEnum} from '../enums/lesson-event.state.enum';
 import {CallanBaseService} from './base.service';
 import {AppConfig, IAppConfig} from '../../app.config';
 import {CallanCourseStage} from '../models/course-stage.model';
+import {Subject} from 'rxjs';
 
 
 @Injectable()
 export abstract class CallanLessonService extends CallanBaseService {
 
     protected isLessonDetailsShown = false;
+
     protected isLessonDetailsShown$ = new BehaviorSubject<boolean>(false);
+
+    protected isLessonEventsUpdated$ = new Subject<void>();
 
     static createCourseProgress(): CallanCourseProgress {
         return new CallanCourseProgress();
@@ -94,7 +98,7 @@ export abstract class CallanLessonService extends CallanBaseService {
     // CHECKME: signature (does the lessonEvents needed here?)
     abstract getDatesEnabled(lessonEvents: CallanLessonEvent[], previousDates: Date[]): Observable<Date[]>;
 
-    abstract changetLessonEventState(lessonEvent: CallanLessonEvent, state: number): Observable<boolean>;
+    abstract changetLessonEventState(lessonEvent: CallanLessonEvent, state: number): Observable<CallanLessonEvent>;
 
     abstract mapDataToCourse(course: CallanCourse, row: any): void;
 
@@ -118,6 +122,10 @@ export abstract class CallanLessonService extends CallanBaseService {
 
     getIsLessonDetailsShown$(): BehaviorSubject<boolean> {
         return this.isLessonDetailsShown$;
+    }
+
+    getIsLessonEventsUpdated$(): Subject<void> {
+        return this.isLessonEventsUpdated$;
     }
 
     setIsLessonDetailsShown(value): boolean {

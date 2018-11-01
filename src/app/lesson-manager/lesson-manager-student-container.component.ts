@@ -104,6 +104,20 @@ export class CallanLessonManagerStudentContainerComponent implements OnInit, OnD
             this.isLessonEventDetailsShown = value;
         });
 
+        this.lessonService.getIsLessonEventsUpdated$().pipe(
+            takeUntil(this.unsubscribe)
+        ).subscribe(() => {
+            console.log('Lesson events updated, fetching the new info');
+            if (this.currentCustomer) {
+                this.assignLessonEvents(this.currentCustomer);
+                this.assignCurrentLessonEvent(this.currentCustomer);
+            }
+
+            if (this.currentCourseProgress) {
+                this.assignCurrentCourseLessonEvents(this.currentCourseProgress);
+            }
+        });
+
         this.assignCurrentCustomer();
 
         // courses
@@ -275,7 +289,6 @@ export class CallanLessonManagerStudentContainerComponent implements OnInit, OnD
         this.lessonService.saveLessonEvent(lessonEvent)
             .subscribe(() => {
                 console.log('Lesson events updated');
-               this.assignLessonEvents(this.currentCustomer);
                 this.toastrService.success('You have successfully planed the lesson!', 'Success');
                this.isDetailsShown = false;
             }, err => {

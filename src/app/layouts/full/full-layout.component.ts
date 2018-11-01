@@ -17,8 +17,11 @@ export class FullLayoutComponent implements OnInit {
 
     ngOnInit() {
         //sidebar toggle event listner
+        /*
         this.elementRef.nativeElement.querySelector('#sidebarToggle')
             .addEventListener('click', this.onClick.bind(this));
+        */
+
         //customizer events
 
         /*

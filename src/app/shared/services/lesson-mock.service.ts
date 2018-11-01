@@ -245,10 +245,10 @@ export class CallanLessonMockService extends CallanLessonService {
         });
     }
 
-    changetLessonEventState(lessonEvent: CallanLessonEvent, state: number): Observable<boolean> {
+    changetLessonEventState(lessonEvent: CallanLessonEvent, state: number): Observable<CallanLessonEvent> {
         lessonEvent.state = state;
-        return new Observable<boolean>(observer => {
-            observer.next(true);
+        return new Observable<CallanLessonEvent>(observer => {
+            observer.next(lessonEvent);
             observer.complete();
         });
     }
