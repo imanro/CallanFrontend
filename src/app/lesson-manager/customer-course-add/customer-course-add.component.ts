@@ -36,7 +36,6 @@ export class CallanCustomerCourseAddComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        console.log('init');
 
         observableCombineLatest(
             this.allCourses$,
@@ -77,6 +76,8 @@ export class CallanCustomerCourseAddComponent implements OnInit, OnDestroy {
                     }
                 }
             });
+
+        this.commonFormErrors = [];
     }
 
     private buildForm() {

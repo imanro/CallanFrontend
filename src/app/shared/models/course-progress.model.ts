@@ -9,4 +9,5 @@ export class CallanCourseProgress extends CallanBaseModel {
     course: CallanCourse;
     lastLessonEvent?: CallanLessonEvent;
     completedLessonEventsCount: number;
+    lessonEventsBalance: number;
 }

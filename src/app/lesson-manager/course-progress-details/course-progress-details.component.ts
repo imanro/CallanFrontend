@@ -1,5 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {CallanCourseProgress} from '../../shared/models/course-progress.model';
+import {CallanCustomer} from '../../shared/models/customer.model';
 
 @Component({
     selector: 'app-callan-course-progress-details',
@@ -9,15 +10,24 @@ import {CallanCourseProgress} from '../../shared/models/course-progress.model';
 export class CallanCourseProgressDetailsComponent implements OnInit {
 
     @Input() courseProgress: CallanCourseProgress;
-    @Output() lessonEventCreateEvent = new EventEmitter<void>();
+    @Input() isTopUpLessonEventsBalanceButtonShown;
+    @Input() isLessonEventsCreateButtonShown;
 
-    constructor() {
+    @Output() lessonEventCreateEvent = new EventEmitter<void>();
+    @Output() topUpLessonEventsBalanceEvent = new EventEmitter<CallanCourseProgress>();
+
+    constructor(
+    ) {
     }
 
     ngOnInit() {
     }
 
-    onClickLessonEventsCreate($event) {
+    handleTopUpLessonEventsBalance() {
+        this.topUpLessonEventsBalanceEvent.next(this.courseProgress);
+    }
+
+    handleLessonEventsCreate() {
         this.lessonEventCreateEvent.next();
     }
 }

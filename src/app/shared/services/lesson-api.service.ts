@@ -274,18 +274,29 @@ export class CallanLessonApiService extends CallanLessonService {
 
         const data = this.mapCourseProgressToData(progress);
 
-        const url = this.getApiUrl('/CourseProgresses');
-
         console.log('We have prepared the following data:', data);
 
-        return this.http.post(url, data)
-            .pipe(
-                mergeMap(responseData => {
-                    console.log('The response is follow:', responseData);
-                    return this.getCourseProgress(responseData['id']);
-                }),
-                catchError(this.handleHttpError<CallanCourseProgress>())
-            );
+        if (progress.id) {
+            const url = this.getApiUrl('/CourseProgresses/' + progress.id);
+            return this.http.put(url, data)
+                .pipe(
+                    mergeMap(responseData => {
+                        console.log('The response is follow:', responseData);
+                        return this.getCourseProgress(responseData['id']);
+                    }),
+                    catchError(this.handleHttpError<CallanCourseProgress>())
+                );
+        } else {
+            const url = this.getApiUrl('/CourseProgresses');
+            return this.http.post(url, data)
+                .pipe(
+                    mergeMap(responseData => {
+                        console.log('The response is follow:', responseData);
+                        return this.getCourseProgress(responseData['id']);
+                    }),
+                    catchError(this.handleHttpError<CallanCourseProgress>())
+                );
+        }
     }
 
     saveLessonEvent(lessonEvent: CallanLessonEvent): Observable<CallanLessonEvent> {
@@ -333,6 +344,7 @@ export class CallanLessonApiService extends CallanLessonService {
     mapDataToCourseProgress(courseProgress: CallanCourseProgress, row: any, isRelationsMandatory = true): void {
         courseProgress.id = row.id;
         courseProgress.completedLessonEventsCount = Number(row.completedLessonEventsCount);
+        courseProgress.lessonEventsBalance = Number(row.lessonEventsBalance);
 
         if (row.Customer) {
             const customer = CallanCustomerService.createCustomer();
@@ -357,7 +369,18 @@ export class CallanLessonApiService extends CallanLessonService {
 
     mapCourseProgressToData(progress: CallanCourseProgress): object {
         const data: any = {};
-        data.completedLessonEventsCount = progress.completedLessonEventsCount;
+
+        if (progress.id) {
+            data.id = progress.id;
+        }
+
+        if (progress.completedLessonEventsCount !== undefined) {
+            data.completedLessonEventsCount = progress.completedLessonEventsCount;
+        }
+
+        if (progress.lessonEventsBalance !== undefined) {
+            data.lessonEventsBalance = progress.lessonEventsBalance;
+        }
 
         data.customerId = progress.customer.id;
         data.courseId = progress.course.id;
@@ -366,8 +389,6 @@ export class CallanLessonApiService extends CallanLessonService {
     }
 
     mapDataToLessonEvent(lessonEvent: CallanLessonEvent, row: any): void {
-        console.log('row is', row);
-
         lessonEvent.id = row.id;
         lessonEvent.duration = row.duration;
         lessonEvent.startTime = new Date(row.startTime);

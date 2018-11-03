@@ -28,10 +28,10 @@
                             <p class="d-none">User Settings</p>
                         </a>
                         <div ngbDropdownMenu aria-labelledby="dropdownBasic3">
-                            <span class="dropdown-item py-1" *ngIf="authCustomer">
+                            <a class="dropdown-item py-1" href="javascript:;" *ngIf="authCustomer" [routerLink]="['/profile']">
                                 <i class="ft-user mr-2"></i>
                                 <span>{{authCustomer.firstName}} {{authCustomer.lastName}}</span>
-                            </span>
+                            </a>
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="javascript:;" [routerLink]="['/auth/login']">
                                 <i class="ft-power mr-2"></i>

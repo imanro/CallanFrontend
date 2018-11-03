@@ -24,7 +24,7 @@ export class CallanCustomerApiService extends CallanCustomerService {
     }
 
     getCustomers(): Observable<CallanCustomer[]> {
-        const url = this.getApiUrl('/Customers?filter=' + JSON.stringify({include: 'roles'}));
+        const url = this.getApiUrl('/Customers?filter=' + JSON.stringify({include: ['roles']}));
 
         return this.http.get<CallanCustomer[]>(url)
             .pipe(

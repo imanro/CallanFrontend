@@ -16,6 +16,7 @@ import { CallanLessonEventsCalendarComponent } from './lesson-events-calendar/le
 import { CallanLessonEventComponent } from './lesson-event/lesson-event.component';
 import { CallanLessonEventsListComponent } from './lesson-events-list/lesson-events-list.component';
 import { CallanCustomerCourseAddComponent } from './customer-course-add/customer-course-add.component';
+import { LessonEventsBalanceDetailsComponent } from './lesson-events-balance-details/lesson-events-balance-details.component';
 
 @NgModule({
     declarations: [CallanLessonManagerStudentContainerComponent,
@@ -24,7 +25,8 @@ import { CallanCustomerCourseAddComponent } from './customer-course-add/customer
         CallanLessonEventsCalendarComponent,
         CallanLessonEventComponent,
         CallanLessonEventsListComponent,
-        CallanCustomerCourseAddComponent
+        CallanCustomerCourseAddComponent,
+        LessonEventsBalanceDetailsComponent
     ],
     imports: [
         CommonModule,

@@ -62,10 +62,13 @@ export abstract class CallanLessonService extends CallanBaseService {
 
         console.log('end date now:', endDate, endMinutes, endHours, lessonEvent.duration);
 
+        const subTitle = lessonEvent.courseProgress ? lessonEvent.courseProgress.course.title : '';
+        const title = lessonEvent.title ? (subTitle ? lessonEvent.title + '(' + subTitle + ')' : '') : subTitle;
+
         return {
             start: lessonEvent.startTime,
             end: endDate,
-            title: lessonEvent.title,
+            title: title,
             color: {
                 primary: '#ad2121',
                 secondary:

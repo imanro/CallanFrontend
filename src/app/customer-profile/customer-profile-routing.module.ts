@@ -1,16 +1,15 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import {CustomerProfileContainerComponent} from './customer-profile-container.component';
 
-import { ChatComponent } from './chat.component';
 
 const routes: Routes = [
     {
         path: '',
-        component: ChatComponent,
+        component: CustomerProfileContainerComponent,
         data: {
-            title: 'Chat'
+            title: 'Customers'
         },
-
     }
 ];
 
@@ -18,6 +17,7 @@ const routes: Routes = [
     imports: [RouterModule.forChild(routes)],
     exports: [RouterModule],
 })
-export class ChatRoutingModule { }
 
-export const routedComponents = [ChatComponent];
+export class CallanCustomerProfileRoutingModule {
+
+}

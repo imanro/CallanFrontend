@@ -11,17 +11,21 @@
         <div class="px-3">
           <div class="form-body">
             <form [formGroup]="courseAddForm" (ngSubmit)="handleCourseAdd()">
-            <div class="row">
-              <div class="col-sm-6">
-                <div class="form-group">
-                  <label for="all_courses"> Select a course</label>
-                  <select class="form-control" id="all_courses" [formControlName]="'course'">
-                    <option *ngFor="let course of courses" id="{{course.id}}" [ngValue]="course" >{{course.title}}</option>
-                  </select>
-                  <small class="form-text text-muted danger" *ngIf="courseAddForm.get('course').hasError('server') && courseAddForm.get('course').touched">{{courseAddForm.get('course').getError('server')}}</small>
+              <div class="row">
+                <div class="col-sm-6">
+                  <div class="form-group">
+                    <label for="all_courses"> Select a course</label>
+                    <select class="form-control" id="all_courses" [formControlName]="'course'">
+                      <option *ngFor="let course of courses" id="{{course.id}}" [ngValue]="course">{{course.title}}
+                      </option>
+                    </select>
+                    <small class="form-text text-muted danger"
+                           *ngIf="courseAddForm.get('course').hasError('server') && courseAddForm.get('course').touched">
+                      {{courseAddForm.get('course').getError('server')}}
+                    </small>
+                  </div>
                 </div>
               </div>
-            </div>
 
               <ul *ngIf="commonFormErrors.length > 0" class="pt-20 form-errors-wrapper">
                 <li *ngFor="let error of commonFormErrors" class="form-text text-muted danger">{{error}}</li>
@@ -37,7 +41,7 @@
               </div>
             </form>
           </div>
-         </div>
+        </div>
       </div>
     </div>
   </div>

@@ -10,5 +10,9 @@ export const MAIN_ROUTES: Routes = [
     {
         path: 'lessons',
         loadChildren: './lesson-manager/lesson-manager.module#CallanLessonManagerModule'
+    },
+    {
+        path: 'profile',
+        loadChildren: './customer-profile/customer-profile.module#CallanCustomerProfileModule'
     }
 ];

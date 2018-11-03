@@ -1,0 +1,17 @@
+<div class="main-panel">
+  <div class="main-content">
+    <div class="content-wrapper">
+      <div class="container-fluid">
+
+
+        <div class="row" *ngIf="currentCustomer">
+          <div class="col-sm-12">
+            <h4 class="mt-3">{{currentCustomer.firstName}} {{currentCustomer.lastName}}</h4>
+          </div>
+        </div>
+
+        <!-- THINK: replace currentCustomer arg with lessonBalance property -->
+      </div>
+    </div>
+  </div>
+</div>

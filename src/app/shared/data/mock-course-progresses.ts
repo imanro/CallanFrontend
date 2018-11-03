@@ -44,20 +44,23 @@ const courseProgressData = [
         customer: customer1,
         course: courseCallan,
         lastLessonEvent: lastLessonEvent1,
-        completedLessonEventsCount: 2
+        completedLessonEventsCount: 2,
+        lessonEventsBalance: 1
     },
     {
         id: 2,
         customer: customer2,
         course: courseCallan,
         lastLessonEvent: lastLessonEvent2,
-        completedLessonEventsCount: 34
+        completedLessonEventsCount: 34,
+        lessonEventsBalance: 2
     },
     {
         id: 3,
         customer: customer2,
         course: courseBusinessEnglish,
-        completedLessonEventsCount: 19
+        completedLessonEventsCount: 19,
+        lessonEventsBalance: 0
     }
 ];
 

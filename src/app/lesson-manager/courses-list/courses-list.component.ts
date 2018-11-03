@@ -16,8 +16,12 @@ export class CallanCoursesListComponent implements OnInit {
     @Input() allCourses$: Observable<CallanCourse[]>;
     @Input() currentCustomerCourseProgresses$: BehaviorSubject<CallanCourseProgress[]>;
     @Input() currentCourseProgress$: BehaviorSubject<CallanCourseProgress>;
+    @Input() isTopUpLessonEventsBalanceButtonShown;
+    @Input() isLessonEventsCreateButtonShown;
+
     @Output() courseSelectEvent = new EventEmitter<CallanCourseProgress>();
-    @Output() lessonEventCreateEvent = new EventEmitter<void>();
+    @Output() topUpLessonEventsBalanceEvent = new EventEmitter<void>();
+    @Output() lessonEventCreateEvent = new EventEmitter<CallanCourseProgress>();
 
     currentCourseProgress: CallanCourseProgress;
 
@@ -51,7 +55,7 @@ export class CallanCoursesListComponent implements OnInit {
         return null;
     }
 
-    onCourseProgressChange($event: NgbPanelChangeEvent) {
+    handleCourseProgressChange($event: NgbPanelChangeEvent) {
         const progress = this.getCourseProgress(parseInt($event.panelId));
 
         if (progress) {
@@ -61,7 +65,11 @@ export class CallanCoursesListComponent implements OnInit {
         }
     }
 
-    onLessonEventsCreate($event) {
+    handleLessonEventsCreate() {
         this.lessonEventCreateEvent.next();
+    }
+
+    handleTopUpLessonEventsBalance($event) {
+        this.topUpLessonEventsBalanceEvent.next($event);
     }
 }

@@ -54,6 +54,8 @@ export abstract class CallanBaseService {
                                 friendlyError.message = container.message;
                             }
 
+                            // 401: invalid access token: throw this error
+
                             // fieldErrors processing
                             if (error.status === 422) {
                                 if (container.details && container.details.messages) {

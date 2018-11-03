@@ -41,7 +41,6 @@ export class CallanLessonEventsListComponent implements OnInit {
                     title: 'Course',
                     filter: false,
                     valuePrepareFunction: function (value) {
-                        console.log(value, 'ttttable');
                         return value ? value.course.title : '';
                     }
                 },

@@ -1,0 +1,42 @@
+
+<div class="row">
+  <div class="col-sm-12">
+    <div class="card">
+      <div class="card-body">
+        <div class="px-3">
+
+            <form [formGroup]="lessonEventsBalanceForm" (ngSubmit)="handleLessonEventsBalanceSave()" class="form-horizontal">
+              <div class="form-body">
+                <h4 class="form-section">
+                  <i class="ft-info"></i>
+                  Amount of remaining lessons for the customer</h4>
+              <div class="row">
+                <div class="col-sm-6">
+                  <div class="form-group row">
+                    <label for="lastName" class="label-control col-sm-3">Balance</label>
+                    <input type="text" id="lastName" class="form-control col-sm-9"  [formControlName]="'lessonEventsBalance'">
+                    <small class="form-text text-muted danger offset-sm-3" *ngIf="lessonEventsBalanceForm.get('lessonEventsBalance').hasError('required') && lessonEventsBalanceForm.get('lessonEventsBalance').touched">This field is required</small>
+                    <small class="form-text text-muted danger offset-sm-3" *ngIf="lessonEventsBalanceForm.get('lessonEventsBalance').hasError('server') && lessonEventsBalanceForm.get('lessonEventsBalance').touched">{{lessonEventsBalanceForm.get('lessonEventsBalance').getError('server')}}</small>
+                  </div>
+                </div>
+              </div>
+
+              <ul *ngIf="commonFormErrors.length > 0" class="pt-20 form-errors-wrapper">
+                <li *ngFor="let error of commonFormErrors" class="form-text text-muted danger">{{error}}</li>
+              </ul>
+
+              <div class="form-actions">
+                <button type="submit" class="btn btn-raised btn-primary mr-1" [disabled]="lessonEventsBalanceForm.invalid">
+                  Save
+                </button>
+                <button type="button" class="btn btn-raised btn-warning" (click)="handleCancel()">
+                  Cancel
+                </button>
+              </div>
+              </div>
+            </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
