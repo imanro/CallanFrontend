@@ -14,7 +14,7 @@ import {CallanAuthContainerComponent} from './auth-container.component';
         CommonModule,
         FormsModule,
         ReactiveFormsModule,
-        CallanAuthRoutingModule,
+        CallanAuthRoutingModule
     ],
     providers: [],
 })
