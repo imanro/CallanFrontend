@@ -36,11 +36,12 @@ export class SidebarComponent implements OnInit {
 
             if (CallanCustomerService.hasCustomerRole(customer, CallanRoleNameEnum.ADMIN)) {
 
-                choosenRoutes.push(...['/customers', '/lessons']);
+                choosenRoutes.push(...['/customers', '/lessons', '/schedule']);
 
                 console.log('will redirect to customers');
-            } else if (CallanCustomerService.hasCustomerRole(customer, CallanRoleNameEnum.STUDENT) ||
-                CallanCustomerService.hasCustomerRole(customer, CallanRoleNameEnum.TEACHER)) {
+            } else if(CallanCustomerService.hasCustomerRole(customer, CallanRoleNameEnum.TEACHER)) {
+                choosenRoutes.push(...['/lessons', '/schedule']);
+            } else if (CallanCustomerService.hasCustomerRole(customer, CallanRoleNameEnum.STUDENT)) {
                 choosenRoutes.push(...['/lessons']);
             } else if (CallanCustomerService.hasCustomerRole(customer, CallanRoleNameEnum.SUPPORT)) {
                 choosenRoutes.push(...['/claims']);
