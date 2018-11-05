@@ -15,7 +15,7 @@ import {CallanCustomer} from '../shared/models/customer.model';
 import {CallanCustomerService} from '../shared/services/customer.service';
 import {CallanCourseProgress} from '../shared/models/course-progress.model';
 import {CallanLessonEvent} from '../shared/models/lesson-event.model';
-import {CallanError} from '../shared/models/error.model';
+import {AppError} from '../shared/models/error.model';
 import {CallanFormErrors} from '../shared/models/form-errors.model';
 import {CallanRoleNameEnum} from '../shared/enums/role.name.enum';
 
@@ -206,7 +206,7 @@ export class CallanLessonManagerStudentContainerComponent implements OnInit, OnD
 
                 this.isSaving = false;
 
-                if (err instanceof CallanError) {
+                if (err instanceof AppError) {
                     if (err.httpStatus === 401 || err.httpStatus === 403) {
                         throw err.error;
                     } else {
@@ -238,7 +238,7 @@ export class CallanLessonManagerStudentContainerComponent implements OnInit, OnD
                 this.assignCourseProgresses(this.currentCustomer);
                 this.isLessonEventsCalendarShown = false;
             }, err => {
-                if (err instanceof CallanError) {
+                if (err instanceof AppError) {
                     if (err.httpStatus === 401 || err.httpStatus === 403) {
                         throw err.error;
                     } else {
@@ -276,7 +276,7 @@ export class CallanLessonManagerStudentContainerComponent implements OnInit, OnD
 
                        this.isSaving = false;
 
-                       if (err instanceof CallanError) {
+                       if (err instanceof AppError) {
                            if (err.httpStatus === 401 || err.httpStatus === 403) {
                                throw err.error;
                            } else {

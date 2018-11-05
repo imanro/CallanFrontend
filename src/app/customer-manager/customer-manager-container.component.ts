@@ -8,7 +8,7 @@ import {CallanRole} from '../shared/models/role.model';
 import {CallanFormErrors} from '../shared/models/form-errors.model';
 import {CallanFormHelper} from '../shared/helpers/form-helper';
 import {ToastrService} from 'ngx-toastr';
-import {CallanError} from '../shared/models/error.model';
+import {AppError} from '../shared/models/error.model';
 import {takeUntil} from 'rxjs/operators';
 
 @Component({
@@ -102,7 +102,7 @@ export class CallanCustomerManagerContainerComponent implements OnInit, OnDestro
 
                     this.isSaving = false;
 
-                    if (err instanceof CallanError) {
+                    if (err instanceof AppError) {
                         if (err.httpStatus === 401 || err.httpStatus === 403) {
                             throw err.error;
                         } else {

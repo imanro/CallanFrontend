@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 
 import {CallanBaseService} from './base.service';
-import {CallanError} from '../models/error.model';
+import {AppError} from '../models/error.model';
 
 @Injectable()
 export abstract class CallanAuthService extends CallanBaseService {
@@ -38,7 +38,7 @@ export abstract class CallanAuthService extends CallanBaseService {
                     observer.complete();
 
                 } else {
-                    const err = new CallanError();
+                    const err = new AppError();
                     err.message = 'Unable to login';
                     observer.error(err);
                 }

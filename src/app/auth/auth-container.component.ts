@@ -5,7 +5,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {BehaviorSubject, Subject} from 'rxjs';
 import {CallanAuthService} from '../shared/services/auth.service';
 import {CallanFormErrors} from '../shared/models/form-errors.model';
-import {CallanError} from '../shared/models/error.model';
+import {AppError} from '../shared/models/error.model';
 import {CallanCustomerService} from '../shared/services/customer.service';
 import {CallanRoleNameEnum} from '../shared/enums/role.name.enum';
 
@@ -87,7 +87,7 @@ export class CallanAuthContainerComponent implements OnInit, OnDestroy {
 
         }, err => {
 
-                if (err instanceof CallanError) {
+                if (err instanceof AppError) {
 
                     // error on login stage
                     const formErrors = this.createFormErrors();

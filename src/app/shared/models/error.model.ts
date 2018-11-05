@@ -1,4 +1,4 @@
-export class CallanError {
+export class AppError {
 
     error?: any;
     message: string;

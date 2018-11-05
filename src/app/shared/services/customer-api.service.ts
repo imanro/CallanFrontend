@@ -9,7 +9,7 @@ import {CallanCustomer} from '../models/customer.model';
 import {AppConfig, IAppConfig} from '../../app.config';
 import {CallanRole} from '../models/role.model';
 import {CallanRoleNameEnum} from '../enums/role.name.enum';
-import {CallanError} from '../models/error.model';
+import {AppError} from '../models/error.model';
 import {CallanAuthService} from './auth.service';
 
 @Injectable()
@@ -143,7 +143,7 @@ export class CallanCustomerApiService extends CallanCustomerService {
                     role.name = row['name'];
                     break;
                 default:
-                    throw new CallanError('Unknown role given');
+                    throw new AppError('Unknown role given');
             }
 
 

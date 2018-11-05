@@ -1,4 +1,4 @@
-import { NgModule, APP_INITIALIZER} from '@angular/core';
+import {NgModule, APP_INITIALIZER, ErrorHandler} from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -31,6 +31,7 @@ import * as $ from 'jquery';
 import {CallanAuthApiService} from './shared/services/auth-api.service';
 import {TokenInterceptor} from './shared/interceptors/token.interceptor';
 import {CallanLessonApiService} from './shared/services/lesson-api.service';
+import {AppErrorHandler} from './app-error-handler';
 
 
 export function createTranslateLoader(http: HttpClient) {
@@ -74,6 +75,10 @@ export function initializeApp(appConfig: AppConfig) {
             useFactory: initializeApp,
             deps: [AppConfig],
             multi: true
+        },
+        {
+            provide: ErrorHandler,
+            useClass: AppErrorHandler
         },
         {
             provide: HTTP_INTERCEPTORS,

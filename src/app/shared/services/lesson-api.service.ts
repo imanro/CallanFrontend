@@ -18,7 +18,7 @@ import {CallanLessonEvent} from '../models/lesson-event.model';
 import {CallanLessonService} from './lesson.service';
 import {CallanCustomerService} from './customer.service';
 import {HttpClient} from '@angular/common/http';
-import {CallanError} from '../models/error.model';
+import {AppError} from '../models/error.model';
 import {CallanLesson} from '../models/lesson.model';
 import {CallanCourseStage} from '../models/course-stage.model';
 
@@ -352,7 +352,7 @@ export class CallanLessonApiService extends CallanLessonService {
             courseProgress.customer = customer;
         } else {
             if (isRelationsMandatory) {
-                throw new CallanError('Customer data isn\'t present in API response')
+                throw new AppError('Customer data isn\'t present in API response')
             }
         }
 
@@ -362,7 +362,7 @@ export class CallanLessonApiService extends CallanLessonService {
             courseProgress.course = course;
         } else {
             if (isRelationsMandatory) {
-                throw new CallanError('Course data isn\'t present in API response')
+                throw new AppError('Course data isn\'t present in API response')
             }
         }
     }
@@ -426,7 +426,7 @@ export class CallanLessonApiService extends CallanLessonService {
         data.courseProgressId = lessonEvent.courseProgress.id;
 
         if (!lessonEvent.teacher && !lessonEvent.student) {
-            throw new CallanError('Either student or teacher should be set for lessonEvent');
+            throw new AppError('Either student or teacher should be set for lessonEvent');
         } else {
 
             if (lessonEvent.teacher) {

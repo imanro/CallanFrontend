@@ -3,7 +3,7 @@ import {AppConfig, IAppConfig} from '../../app.config';
 import {Observable} from 'rxjs';
 import {throwError} from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';
-import {CallanError} from '../models/error.model';
+import {AppError} from '../models/error.model';
 
 @Injectable()
 export abstract class CallanBaseService {
@@ -34,7 +34,7 @@ export abstract class CallanBaseService {
             } else {
                 console.log('no fallback data');
 
-                const friendlyError = new CallanError();
+                const friendlyError = new AppError();
                 friendlyError.error = error;
 
                 if (error instanceof HttpErrorResponse ){
