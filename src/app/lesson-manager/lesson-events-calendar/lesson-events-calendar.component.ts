@@ -117,11 +117,13 @@ export class CallanLessonEventsCalendarComponent implements OnInit, OnDestroy {
             this.eventModalData.body = '<p>Next lesson will start at:</p> <p><strong>' +
                 moment($event.date).format('D.MM.YYYY h:mm A') + '</strong></p>';
 
+
             this.currentModal = this.modalService.open(this.eventModalContent, {
                 centered: true,
                 backdrop: true,
                 size: 'lg'
             });
+
         }
     }
 

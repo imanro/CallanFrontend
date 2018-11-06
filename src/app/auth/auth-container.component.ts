@@ -4,7 +4,7 @@ import {Location} from '@angular/common';
 import {ActivatedRoute, Router} from '@angular/router';
 import {BehaviorSubject, Subject} from 'rxjs';
 import {CallanAuthService} from '../shared/services/auth.service';
-import {CallanFormErrors} from '../shared/models/form-errors.model';
+import {AppFormErrors} from '../shared/models/form-errors.model';
 import {AppError} from '../shared/models/error.model';
 import {CallanCustomerService} from '../shared/services/customer.service';
 import {CallanRoleNameEnum} from '../shared/enums/role.name.enum';
@@ -19,7 +19,7 @@ import {CallanRoleNameEnum} from '../shared/enums/role.name.enum';
 export class CallanAuthContainerComponent implements OnInit, OnDestroy {
 
     view: string;
-    formErrors$ = new BehaviorSubject<CallanFormErrors>(null);
+    formErrors$ = new BehaviorSubject<AppFormErrors>(null);
     private unsubscribe: Subject<void> = new Subject();
 
     constructor(
@@ -110,7 +110,7 @@ export class CallanAuthContainerComponent implements OnInit, OnDestroy {
     }
 
     private createFormErrors() {
-        return new CallanFormErrors();
+        return new AppFormErrors();
     }
 
     private setView(currentUrl) {

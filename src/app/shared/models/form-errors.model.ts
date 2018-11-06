@@ -1,4 +1,4 @@
-export class CallanFormErrors {
+export class AppFormErrors {
     common: any[] = [];
     fields: {[key: string]: any}[] = [];
 

@@ -5,7 +5,7 @@ import {CallanCourse} from '../../shared/models/course.model';
 import {CallanCourseProgress} from '../../shared/models/course-progress.model';
 import {combineLatest as observableCombineLatest} from 'rxjs/observable/combineLatest';
 import {takeUntil} from 'rxjs/operators';
-import {CallanFormErrors} from '../../shared/models/form-errors.model';
+import {AppFormErrors} from '../../shared/models/form-errors.model';
 import {CallanFormHelper} from '../../shared/helpers/form-helper';
 
 @Component({
@@ -17,7 +17,7 @@ export class CallanCustomerCourseAddComponent implements OnInit, OnDestroy {
 
     @Input() allCourses$: Observable<CallanCourse[]>;
     @Input() currentCustomerCourseProgresses$: BehaviorSubject<CallanCourseProgress[]>;
-    @Input() formErrors$ =  new BehaviorSubject<CallanFormErrors>(null);
+    @Input() formErrors$ =  new BehaviorSubject<AppFormErrors>(null);
     @Input() isSaving = false;
 
     @Output() courseAddEvent = new EventEmitter<CallanCourse>();

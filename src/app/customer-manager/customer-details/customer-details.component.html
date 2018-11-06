@@ -86,11 +86,12 @@
                             </ul>
 
                             <div class="form-actions">
-                                <button type="submit" class="btn btn-raised btn-primary mr-1" [disabled]="customerForm.invalid">
-                                    Save
-                                </button>
-                                <button type="button" class="btn btn-raised btn-warning" (click)="handleCancel()">
+                                <button type="button" class="btn btn-raised btn-warning mr-1" (click)="handleCancel()">
                                     Cancel
+                                </button>
+
+                                <button type="submit" class="btn btn-raised btn-primary" [disabled]="customerForm.invalid">
+                                    Save
                                 </button>
                             </div>
                         </form>

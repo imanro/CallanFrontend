@@ -1,9 +1,9 @@
-import {CallanFormErrors} from '../models/form-errors.model';
+import {AppFormErrors} from '../models/form-errors.model';
 import {FormControl, FormGroup} from '@angular/forms';
 
 export class CallanFormHelper {
 
-    static bindErrors(errors: CallanFormErrors, form: FormGroup, fieldMap?: any, skipFields?: any): any[] {
+    static bindErrors(errors: AppFormErrors, form: FormGroup, fieldMap?: any, skipFields?: any): any[] {
 
         let unmapped = [];
 
@@ -50,7 +50,7 @@ export class CallanFormHelper {
 
     }
 
-    static addFormError(errors: CallanFormErrors, field: string, message: string) {
+    static addFormError(errors: AppFormErrors, field: string, message: string) {
 
         for (const checkField of errors.fields) {
             if (checkField.name === field) {
