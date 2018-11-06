@@ -42,6 +42,5 @@ import { CallanLessonEventAnnouncementComponent} from './lesson-event-announceme
         NotificationSidebarComponent,
         ToggleFullscreenDirective
     ]
-
 })
 export class SharedModule { }

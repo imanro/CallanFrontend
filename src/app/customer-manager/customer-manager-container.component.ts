@@ -5,7 +5,7 @@ import {CallanCustomerService} from '../shared/services/customer.service';
 import {Subscription} from 'rxjs/Subscription';
 import {BehaviorSubject, Subject} from 'rxjs';
 import {CallanRole} from '../shared/models/role.model';
-import {CallanFormErrors} from '../shared/models/form-errors.model';
+import {AppFormErrors} from '../shared/models/form-errors.model';
 import {CallanFormHelper} from '../shared/helpers/form-helper';
 import {ToastrService} from 'ngx-toastr';
 import {AppError} from '../shared/models/error.model';
@@ -27,7 +27,7 @@ export class CallanCustomerManagerContainerComponent implements OnInit, OnDestro
     isDetailsShown = false;
     isSaving = false;
 
-    formErrors$ = new BehaviorSubject<CallanFormErrors>(null);
+    formErrors$ = new BehaviorSubject<AppFormErrors>(null);
 
     private unsubscribe: Subject<void> = new Subject();
 
@@ -136,7 +136,7 @@ export class CallanCustomerManagerContainerComponent implements OnInit, OnDestro
     }
 
     private createFormErrors() {
-        return new CallanFormErrors();
+        return new AppFormErrors();
     }
 
     private fetchCustomers() {

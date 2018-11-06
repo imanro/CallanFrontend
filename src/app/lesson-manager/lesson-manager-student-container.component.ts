@@ -16,7 +16,7 @@ import {CallanCustomerService} from '../shared/services/customer.service';
 import {CallanCourseProgress} from '../shared/models/course-progress.model';
 import {CallanLessonEvent} from '../shared/models/lesson-event.model';
 import {AppError} from '../shared/models/error.model';
-import {CallanFormErrors} from '../shared/models/form-errors.model';
+import {AppFormErrors} from '../shared/models/form-errors.model';
 import {CallanRoleNameEnum} from '../shared/enums/role.name.enum';
 
 @Component({
@@ -55,7 +55,7 @@ export class CallanLessonManagerStudentContainerComponent implements OnInit, OnD
 
     isSaving = false;
 
-    formErrors$ = new BehaviorSubject<CallanFormErrors>(null);
+    formErrors$ = new BehaviorSubject<AppFormErrors>(null);
 
     // checkme
     private isInitialRouteProcessed = true;
@@ -297,7 +297,7 @@ export class CallanLessonManagerStudentContainerComponent implements OnInit, OnD
     }
 
     private createFormErrors() {
-        return new CallanFormErrors();
+        return new AppFormErrors();
     }
 
     private setCurrentCourseProgress(courseProgress: CallanCourseProgress) {

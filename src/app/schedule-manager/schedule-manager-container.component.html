@@ -3,11 +3,11 @@
     <div class="content-wrapper">
       <div class="container-fluid">
         <app-callan-schedule-ranges-list *ngIf="view === viewNameEnum.DEFAULT"></app-callan-schedule-ranges-list>
-        <app-callan-schedule-range-details (cancelEvent)="handleRangeDetailsCancel()" *ngIf="view === viewNameEnum.RANGE_DETAILS"></app-callan-schedule-range-details>
+        <app-callan-schedule-range-details [scheduleRange]="currentScheduleRange" (cancelEvent)="handleScheduleRangeDetailsCancel()" (scheduleRangeSaveEvent)="handleScheduleRangeDetailsSave($event)" *ngIf="view === viewNameEnum.RANGE_DETAILS"></app-callan-schedule-range-details>
 
         <div class="row" *ngIf="view === viewNameEnum.DEFAULT">
           <div class="col-sm-12">
-            <a class="btn btn-raised gradient-summer white" href="javascript:void(0)" (click)="handleShowRangeDetails()">Add a new time range</a>
+            <a class="btn btn-raised gradient-summer white" href="javascript:void(0)" (click)="handleShowScheduleRangeDetails()">Add a new time range</a>
           </div>
         </div>
 

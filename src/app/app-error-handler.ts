@@ -36,7 +36,7 @@ export class AppErrorHandler implements ErrorHandler {
                 this.logoutAndRedirect();
             } else {
                 console.log('This is another kind of error', error, typeof(error), error.message);
-                throw error;
+                // throw error;
             }
         }
     }

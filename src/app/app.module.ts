@@ -32,6 +32,9 @@ import {CallanAuthApiService} from './shared/services/auth-api.service';
 import {TokenInterceptor} from './shared/interceptors/token.interceptor';
 import {CallanLessonApiService} from './shared/services/lesson-api.service';
 import {AppErrorHandler} from './app-error-handler';
+import {CallanScheduleMockService} from './shared/services/schedule-mock.service';
+import {CallanScheduleService} from './shared/services/schedule.service';
+import {AppPipesModule} from './core/pipes/pipes.module';
 
 
 export function createTranslateLoader(http: HttpClient) {
@@ -89,10 +92,11 @@ export function initializeApp(appConfig: AppConfig) {
         AuthGuard,
         DragulaService,
         AppConfig,
-        //{provide: CallanCustomerService, useClass: CallanCustomerMockService},
+        // {provide: CallanCustomerService, useClass: CallanCustomerMockService},
         {provide: CallanCustomerService, useClass: CallanCustomerApiService},
         // {provide: CallanLessonService, useClass: CallanLessonMockService},
         {provide: CallanLessonService, useClass: CallanLessonApiService},
+        {provide: CallanScheduleService, useClass: CallanScheduleMockService},
     ],
     bootstrap: [AppComponent]
 })

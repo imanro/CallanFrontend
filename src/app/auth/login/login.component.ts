@@ -4,7 +4,7 @@ import {takeUntil} from 'rxjs/operators';
 
 import {CallanCustomer} from '../../shared/models/customer.model';
 import {CallanCustomerService} from '../../shared/services/customer.service';
-import {CallanFormErrors} from '../../shared/models/form-errors.model';
+import {AppFormErrors} from '../../shared/models/form-errors.model';
 import {BehaviorSubject, Subject} from 'rxjs';
 import {CallanFormHelper} from '../../shared/helpers/form-helper';
 
@@ -16,7 +16,7 @@ import {CallanFormHelper} from '../../shared/helpers/form-helper';
 
 export class CallanLoginComponent implements OnInit, OnDestroy {
 
-    @Input() formErrors$ =  new BehaviorSubject<CallanFormErrors>(null);
+    @Input() formErrors$ =  new BehaviorSubject<AppFormErrors>(null);
     @Output() loginEvent = new EventEmitter<CallanCustomer>();
 
     loginForm: FormGroup;
@@ -38,7 +38,7 @@ export class CallanLoginComponent implements OnInit, OnDestroy {
             .pipe(takeUntil(this.unsubscribe))
             .subscribe(formErrors => {
 
-                if(formErrors) {
+                if (formErrors) {
                     const unmapped = CallanFormHelper.bindErrors(formErrors, this.loginForm);
 
                     if (unmapped.length > 0) {

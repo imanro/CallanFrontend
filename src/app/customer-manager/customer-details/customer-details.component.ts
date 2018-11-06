@@ -7,7 +7,7 @@ import * as _ from 'lodash';
 import {CallanRole} from '../../shared/models/role.model';
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
-import {CallanFormErrors} from '../../shared/models/form-errors.model';
+import {AppFormErrors} from '../../shared/models/form-errors.model';
 import {CallanFormHelper} from '../../shared/helpers/form-helper';
 
 @Component({
@@ -19,7 +19,7 @@ export class CallanCustomerDetailsComponent implements OnInit, OnDestroy {
 
     @Input() customer: CallanCustomer;
     @Input() rolesList$ = new BehaviorSubject<CallanRole[]>([]);
-    @Input() formErrors$ =  new BehaviorSubject<CallanFormErrors>(null);
+    @Input() formErrors$ =  new BehaviorSubject<AppFormErrors>(null);
     @Input() isSaving = false;
 
     @Output() customerSaveEvent = new EventEmitter<CallanCustomer>();
@@ -52,7 +52,6 @@ export class CallanCustomerDetailsComponent implements OnInit, OnDestroy {
         }
 
         this.commonFormErrors = [];
-
 
         this.rolesList$.subscribe(() => {
             this.setAssignedRoles();

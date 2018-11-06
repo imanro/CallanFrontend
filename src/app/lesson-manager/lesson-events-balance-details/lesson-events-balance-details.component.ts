@@ -6,7 +6,7 @@ import {CallanCourseProgress} from '../../shared/models/course-progress.model';
 import {combineLatest as observableCombineLatest} from 'rxjs/observable/combineLatest';
 import * as _ from 'lodash';
 import {takeUntil} from 'rxjs/operators';
-import {CallanFormErrors} from '../../shared/models/form-errors.model';
+import {AppFormErrors} from '../../shared/models/form-errors.model';
 import {CallanFormHelper} from '../../shared/helpers/form-helper';
 
 @Component({
@@ -19,7 +19,7 @@ export class LessonEventsBalanceDetailsComponent implements OnInit, OnDestroy
 
     @Input() courseProgress: CallanCourseProgress;
 
-    @Input() formErrors$ =  new BehaviorSubject<CallanFormErrors>(null);
+    @Input() formErrors$ =  new BehaviorSubject<AppFormErrors>(null);
 
     @Output() cancelEvent = new EventEmitter<void>();
 
