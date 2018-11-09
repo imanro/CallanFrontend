@@ -1,8 +1,10 @@
-import {Component, OnInit, EventEmitter, Input, Output} from '@angular/core';
+import {Component, OnInit, EventEmitter, Input, Output, OnDestroy} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import {LocalDataSource} from 'ng2-smart-table';
 
 import {CallanCustomer} from '../../shared/models/customer.model';
+import {takeUntil} from 'rxjs/operators';
+import {Subject} from 'rxjs';
 
 @Component({
     selector: 'app-callan-customers-list',
@@ -10,13 +12,15 @@ import {CallanCustomer} from '../../shared/models/customer.model';
     styleUrls: ['./callan-customers-list.component.scss']
 })
 
-export class CallanCustomersListComponent implements OnInit {
+export class CallanCustomersListComponent implements OnInit, OnDestroy {
 
     @Input() customers$: Observable<CallanCustomer[]>;
     @Output() setCurrentCustomer = new EventEmitter<any>();
 
     source: LocalDataSource;
     settings: any;
+
+    private unsubscribe: Subject<void> = new Subject();
 
     constructor() {
         this.source = new LocalDataSource();
@@ -83,15 +87,24 @@ export class CallanCustomersListComponent implements OnInit {
         };
     }
 
+    ngOnInit() {
+        this.customers$
+            .pipe(
+                takeUntil(this.unsubscribe)
+            )
+            .subscribe(customers => {
+                this.source.load(customers);
+                // console.log(customers);
+            });
+    }
+
+    ngOnDestroy() {
+        this.unsubscribe.next();
+        this.unsubscribe.complete();
+    }
+
     onCustom(event) {
         // emit the data
         this.setCurrentCustomer.next(event.data);
-    }
-
-    ngOnInit() {
-        this.customers$.subscribe(customers => {
-            this.source.load(customers);
-            // console.log(customers);
-        });
     }
 }

@@ -34,19 +34,7 @@ export class CallanLoginComponent implements OnInit, OnDestroy {
 
         this.commonFormErrors = [];
 
-        this.formErrors$
-            .pipe(takeUntil(this.unsubscribe))
-            .subscribe(formErrors => {
-
-                if (formErrors) {
-                    const unmapped = CallanFormHelper.bindErrors(formErrors, this.loginForm);
-
-                    if (unmapped.length > 0) {
-                        this.commonFormErrors = [];
-                        this.commonFormErrors = this.commonFormErrors.concat(unmapped);
-                    }
-                }
-            });
+        this.subscribeOnFormErrors();
     }
 
     ngOnDestroy() {
@@ -80,5 +68,21 @@ export class CallanLoginComponent implements OnInit, OnDestroy {
         customer.password = formModel.password;
 
         return customer;
+    }
+
+    private subscribeOnFormErrors() {
+        this.formErrors$
+            .pipe(takeUntil(this.unsubscribe))
+            .subscribe(formErrors => {
+
+                if (formErrors) {
+                    const unmapped = CallanFormHelper.bindErrors(formErrors, this.loginForm);
+
+                    if (unmapped.length > 0) {
+                        this.commonFormErrors = [];
+                        this.commonFormErrors = this.commonFormErrors.concat(unmapped);
+                    }
+                }
+            });
     }
 }

@@ -7,7 +7,7 @@ import {CallanScheduleRange} from '../models/schedule-range.model';
 
 export class CallanScheduleMockService extends CallanScheduleService {
 
-    getScheduleRanges(customer: CallanCustomer, type: string): Observable<CallanScheduleRange[]> {
+    getScheduleRanges(customer: CallanCustomer): Observable<CallanScheduleRange[]> {
         const d = this.appConfig.mockDelayMs;
         return new Observable<CallanScheduleRange[]>(observer => {
            observer.next(mockScheduleRanges);
@@ -35,6 +35,7 @@ export class CallanScheduleMockService extends CallanScheduleService {
     saveScheduleRange(scheduleRange: CallanScheduleRange): Observable<CallanScheduleRange> {
         const d = this.appConfig.mockDelayMs;
         return new Observable<CallanScheduleRange>(observer => {
+            scheduleRange.id = mockScheduleRanges.length > 0 ? mockScheduleRanges[mockScheduleRanges.length - 1].id + 1 : 1;
             mockScheduleRanges.push(scheduleRange);
             observer.next(scheduleRange);
             observer.complete();
