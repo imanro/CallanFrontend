@@ -20,7 +20,7 @@ import {takeUntil} from 'rxjs/operators';
 export class CallanCustomerManagerContainerComponent implements OnInit, OnDestroy {
 
     customers$ = new BehaviorSubject<CallanCustomer[]>([]);
-    rolesList$ = new BehaviorSubject<CallanRole[]>([]);
+    rolesList: CallanRole[];
 
     currentCustomer$: Subscription;
     currentCustomer: CallanCustomer;
@@ -38,23 +38,8 @@ export class CallanCustomerManagerContainerComponent implements OnInit, OnDestro
     }
 
     ngOnInit() {
-        // this.customers$ = this.customerService.getCustomers();
         this.fetchCustomers();
         this.fetchRolesList();
-
-        /*
-        this.currentCustomer$ = this.customerService.getCurrentCustomer()
-            .pipe(
-                takeUntil(this.unsubscribe)
-            )
-            .subscribe(customer => {
-                if (customer) {
-                    // console.log('customer assigned');
-                    this.currentCustomer = customer;
-                }
-            });
-            */
-
         this.setCurrentCustomer();
 
         // for developing purposes
@@ -148,7 +133,7 @@ export class CallanCustomerManagerContainerComponent implements OnInit, OnDestro
     private fetchRolesList() {
         this.customerService.getRoles().subscribe(roles => {
             console.log('roles received');
-            this.rolesList$.next(roles);
+            this.rolesList = roles;
         });
     }
 

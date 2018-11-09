@@ -311,7 +311,11 @@ export class CallanLessonManagerStudentContainerComponent implements OnInit, OnD
     }
 
     private assignAuthCustomer() {
-        this.customerService.getAuthCustomer().subscribe(customer => {
+        this.customerService.getAuthCustomer()
+            .pipe(
+                takeUntil(this.unsubscribe)
+            )
+            .subscribe(customer => {
             this.authCustomer = customer;
 
             // special logic for Admin...
@@ -322,7 +326,11 @@ export class CallanLessonManagerStudentContainerComponent implements OnInit, OnD
     }
 
     private assignCurrentCustomer() {
-        this.customerService.getCurrentCustomer().subscribe(customer => {
+        this.customerService.getCurrentCustomer()
+            .pipe(
+                takeUntil(this.unsubscribe)
+            )
+            .subscribe(customer => {
             this.currentCustomer = customer;
 
             if (customer) {
@@ -335,7 +343,8 @@ export class CallanLessonManagerStudentContainerComponent implements OnInit, OnD
 
 
     private assignAllCourses() {
-        this.lessonService.getAllCourses().subscribe(courses => {
+        this.lessonService.getAllCourses()
+            .subscribe(courses => {
             this.allCourses$.next(courses);
         });
     }

@@ -31,39 +31,24 @@ export class ScheduleRangeDetailsComponent implements OnInit, OnDestroy {
     scheduleRangeDetailsForm: FormGroup;
     commonFormErrors = [];
 
+    scheduleRangeRegularityEnum: any;
+
     private unsubscribe: Subject<void> = new Subject();
 
     constructor(
         private fb: FormBuilder
     ) {
         this.buildForm();
-
-        this.formErrors$
-            .pipe(takeUntil(this.unsubscribe))
-            .subscribe(formErrors => {
-
-                if (formErrors) {
-                    console.log('Errors received');
-
-                    const unmapped = CallanFormHelper.bindErrors(formErrors, this.scheduleRangeDetailsForm);
-                    console.log('unmapped:', unmapped);
-
-                    if (unmapped.length > 0) {
-                        this.commonFormErrors = [];
-                        this.commonFormErrors = this.commonFormErrors.concat(unmapped);
-                        console.log('common Form errors now', this.commonFormErrors);
-                    }
-                }
-            });
-
         this.commonFormErrors = [];
+        this.scheduleRangeRegularityEnum = CallanScheduleRangeRegularityEnum;
     }
 
     ngOnInit() {
+
+        this.assignFormErrors();
         this.assignDaysOfWeekList();
         this.assignRegularitiesList();
         this.assignTypesList();
-
         this.setFormValues();
     }
 
@@ -123,27 +108,47 @@ export class ScheduleRangeDetailsComponent implements OnInit, OnDestroy {
         return saveScheduleRange;
     }
 
-    private assignRegularitiesList(): void {
+    private assignFormErrors() {
+        this.formErrors$
+            .pipe(takeUntil(this.unsubscribe))
+            .subscribe(formErrors => {
+
+                if (formErrors) {
+                    console.log('Errors received');
+
+                    const unmapped = CallanFormHelper.bindErrors(formErrors, this.scheduleRangeDetailsForm);
+                    console.log('unmapped:', unmapped);
+
+                    if (unmapped.length > 0) {
+                        this.commonFormErrors = [];
+                        this.commonFormErrors = this.commonFormErrors.concat(unmapped);
+                        console.log('common Form errors now', this.commonFormErrors);
+                    }
+                }
+            });
+    }
+
+    private assignRegularitiesList() {
         this.regularitiesList = {};
         this.regularitiesList[CallanScheduleRangeRegularityEnum.REGULAR] = 'Regular';
         this.regularitiesList[CallanScheduleRangeRegularityEnum.AD_HOC] = 'Ad hoc';
     }
 
-    private assignTypesList(): any {
+    private assignTypesList() {
         this.typesList = {};
         this.typesList[CallanScheduleRangeTypeEnum.INCLUSIVE] = 'Inclusive';
         this.typesList[CallanScheduleRangeTypeEnum.EXCLUSIVE] = 'Exclusive';
     }
 
-    private assignDaysOfWeekList(): any {
+    private assignDaysOfWeekList() {
         this.daysOfWeekList = {
-            0: 'Sunday',
             1: 'Monday',
             2: 'Tuesday',
             3: 'Wednesday',
             4: 'Thursday',
             5: 'Friday',
-            6: 'Saturday'
+            6: 'Saturday',
+            0: 'Sunday',
         };
     }
 

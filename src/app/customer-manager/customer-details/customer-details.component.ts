@@ -18,7 +18,7 @@ import {CallanFormHelper} from '../../shared/helpers/form-helper';
 export class CallanCustomerDetailsComponent implements OnInit, OnDestroy {
 
     @Input() customer: CallanCustomer;
-    @Input() rolesList$ = new BehaviorSubject<CallanRole[]>([]);
+    @Input() rolesList: CallanRole[];
     @Input() formErrors$ =  new BehaviorSubject<AppFormErrors>(null);
     @Input() isSaving = false;
 
@@ -53,10 +53,9 @@ export class CallanCustomerDetailsComponent implements OnInit, OnDestroy {
 
         this.commonFormErrors = [];
 
-        this.rolesList$.subscribe(() => {
-            this.setAssignedRoles();
-            this.setExistingRoles();
-        });
+
+        this.setAssignedRoles();
+        this.setExistingRoles();
 
         this.formErrors$
             .pipe(takeUntil(this.unsubscribe))
@@ -205,7 +204,7 @@ export class CallanCustomerDetailsComponent implements OnInit, OnDestroy {
     }
 
     private setAssignedRoles() {
-        this.assignedRoles = this.rolesList$.getValue().filter(role => {
+        this.assignedRoles = this.rolesList.filter(role => {
             for (const check of this.customer.roles) {
                 if (check.id === role.id) {
                     return true;
@@ -219,7 +218,7 @@ export class CallanCustomerDetailsComponent implements OnInit, OnDestroy {
     }
 
     private setExistingRoles() {
-        this.existingRoles = this.rolesList$.getValue().filter(role => {
+        this.existingRoles = this.rolesList.filter(role => {
             for (const check of this.assignedRoles) {
                 if (check.id === role.id) {
                     return false;
