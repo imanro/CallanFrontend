@@ -1,10 +1,10 @@
 {
-  "dirty": true,
-  "raw": "7b6df61-dirty",
-  "hash": "7b6df61",
+  "dirty": false,
+  "raw": "f2e4d94",
+  "hash": "f2e4d94",
   "distance": null,
   "tag": null,
   "semver": null,
-  "suffix": "7b6df61-dirty",
+  "suffix": "f2e4d94",
   "semverString": null
 }
