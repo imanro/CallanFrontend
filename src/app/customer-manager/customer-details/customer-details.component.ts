@@ -45,6 +45,9 @@ export class CallanCustomerDetailsComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
+
+        console.log('initialized with', this.customer, 'and', this.rolesList);
+
         this.formTitle = this.customer.isNew() ? 'Create customer' : 'Customer details';
 
         if (this.customer) {
