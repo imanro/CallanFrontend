@@ -21,6 +21,7 @@ export abstract class CallanCustomerService extends CallanBaseService {
     protected authCustomer: CallanCustomer;
 
     private currentCustomer: CallanCustomer;
+
     private currentCustomer$ = new BehaviorSubject<CallanCustomer>(null);
     // private currentCustomer$ = new BehaviorSubject<CallanCustomer>(null);
 
@@ -160,10 +161,34 @@ export abstract class CallanCustomerService extends CallanBaseService {
         return this.currentCustomer$;
     }
 
-    initCustomer(customer: CallanCustomer) {
-        if (environment.name === CallanEnvironmentNameEnum.DEV) {
-            this.initCustomerDev(customer);
-        }
+    initNewCustomer(customer: CallanCustomer): Observable<void> {
+
+        return new Observable<void>(observer => {
+            customer.roles = [];
+
+            this.getRoles().subscribe(roles => {
+
+                for (const role of roles){
+                    if (role.name === CallanRoleNameEnum.STUDENT) {
+                        customer.roles.push(role);
+                    }
+                }
+
+                console.log('Customer initialized');
+
+                if (environment.name === CallanEnvironmentNameEnum.DEV) {
+                    this.initNewCustomerDev(customer).subscribe(() => {
+                        console.log('Customer initialized for dev');
+                        observer.next();
+                        observer.complete();
+                    });
+                } else {
+                    observer.next();
+                    observer.complete();
+                }
+            });
+
+        });
     }
 
     abstract mapDataToCustomer(customer: CallanCustomer, row: any): void;
@@ -174,13 +199,15 @@ export abstract class CallanCustomerService extends CallanBaseService {
 
     abstract mapRoleToData(role: CallanRole): object;
 
-    initCustomerDev(customer: CallanCustomer) {
-        customer.email = 'simon@bbc.com';
-        customer.firstName = 'Simon';
-        customer.lastName = 'McCoy';
+    initNewCustomerDev(customer: CallanCustomer): Observable<void> {
 
-        const roleStudent = mockRoles[1];
+        return new Observable<void>(observer => {
+            customer.email = 'simon@bbc.com';
+            customer.firstName = 'Simon';
+            customer.lastName = 'McCoy';
 
-        customer.roles = [roleStudent];
+            observer.next();
+            observer.complete();
+        });
     }
 }
