@@ -1,15 +1,34 @@
+<ng-template #modalContent let-close="close">
+  <div class="modal-header">
+    <h5 class="modal-title">{{title}}</h5>
+    <button type="button" class="close" (click)="activeModal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p [innerHTML]="body"></p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-secondary" (click)="acitveModal.close(false)">Cancel</button>
+
+    <button type="button" class="btn btn-outline-primary" (click)="activeModal.close(true)">OK</button>
+  </div>
+</ng-template>
+
+
 <div class="main-panel">
   <div class="main-content">
     <div class="content-wrapper">
       <div class="container-fluid">
-        <app-callan-schedule-ranges-list *ngIf="view === viewNameEnum.DEFAULT" [scheduleRanges$]="scheduleRanges$"></app-callan-schedule-ranges-list>
-        <app-callan-schedule-range-details [scheduleRange]="currentScheduleRange" (cancelEvent)="handleScheduleRangeDetailsCancel()" (scheduleRangeSaveEvent)="handleScheduleRangeDetailsSave($event)" *ngIf="view === viewNameEnum.RANGE_DETAILS"></app-callan-schedule-range-details>
-
         <div class="row" *ngIf="view === viewNameEnum.DEFAULT">
           <div class="col-sm-12">
             <a class="btn btn-raised gradient-summer white" href="javascript:void(0)" (click)="handleShowScheduleRangeDetails()">Add a new time range</a>
           </div>
         </div>
+
+        <app-callan-schedule-ranges-list *ngIf="view === viewNameEnum.DEFAULT" [scheduleRanges$]="scheduleRanges$" [currentDate]="currentDate" (scheduleRangeDeleteEvent)="handleScheduleRangeDelete($event)"></app-callan-schedule-ranges-list>
+        <app-callan-schedule-range-details [scheduleRange]="currentScheduleRange" (cancelEvent)="handleScheduleRangeDetailsCancel()" (scheduleRangeSaveEvent)="handleScheduleRangeSave($event)" *ngIf="view === viewNameEnum.RANGE_DETAILS"></app-callan-schedule-range-details>
+        <app-callan-schedule-range-calendar [customer]="currentCustomer" [currentDate]="currentDate" [datesEnabled]="datesEnabled" [refresh$]="refresh$" (setCurrentDateEvent)="handleSetCurrentDate($event)" *ngIf="view === viewNameEnum.DEFAULT && currentCustomer && currentDate"></app-callan-schedule-range-calendar>
 
       </div>
     </div>

@@ -35,7 +35,7 @@ export class AppErrorHandler implements ErrorHandler {
                 console.log('Seems like token-related error, logging out');
                 this.logoutAndRedirect();
             } else {
-                console.log('This is another kind of error', error, typeof(error), error.message);
+                console.log('This is another kind of error', error.message, error, typeof(error), error.message);
                 // throw error;
             }
         }

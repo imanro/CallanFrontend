@@ -2,7 +2,7 @@ import {Component, EventEmitter, Input, Output, OnInit, ViewChild, TemplateRef, 
 import {CallanCourseProgress} from '../../shared/models/course-progress.model';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {NgbModal, NgbModalRef} from '@ng-bootstrap/ng-bootstrap/modal/modal.module';
-import {Subject} from 'rxjs/Subject';
+import {Subject, timer as observableTimer} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 import * as moment from 'moment';
 
@@ -25,6 +25,7 @@ import {
 import {CallanLessonEvent} from '../../shared/models/lesson-event.model';
 import {CallanLessonService} from '../../shared/services/lesson.service';
 import {CallanCustomer} from '../../shared/models/customer.model';
+import {CallanScheduleService} from '../../shared/services/schedule.service';
 
 
 @Component({
@@ -47,7 +48,7 @@ export class CallanLessonEventsCalendarComponent implements OnInit, OnDestroy {
     // FIXME
     @ViewChild('eventModalContent') eventModalContent: TemplateRef<any>;
 
-    private eventModalData = {
+    eventModalData = {
         title: '',
         body: ''
     };
@@ -57,50 +58,26 @@ export class CallanLessonEventsCalendarComponent implements OnInit, OnDestroy {
     calendarEvents: CalendarEvent[] = [];
     currentHourSegment: {date: Date};
 
-    calendarView = 'week';
-    currentDate = new Date();
 
-    hoursEnabled: number[];
+    currentDate: Date;
+
     datesEnabled: Date[];
     hourSegments = 1;
-    calendarRefresh$ = new BehaviorSubject<void>(null);
+    calendarRefresh$ = new Subject();
 
     private unsubscribe: Subject<void> = new Subject();
 
     constructor(
         private lessonService: CallanLessonService,
+        private scheduleService: CallanScheduleService,
         private modalService: NgbModal
     ) {
 
     }
 
     ngOnInit() {
-        console.log('now, lessons events is', this.lessonEvents$);
-
-        this.lessonEvents$.pipe(
-            takeUntil(this.unsubscribe)
-        ).subscribe(events => {
-
-            this.calendarEvents = [];
-
-            if (events) {
-                for (const lessonEvent of events) {
-                    this.calendarEvents.push(CallanLessonService.convertLessonEventToCalendarEvent(lessonEvent));
-                }
-            }
-
-            console.log('Lesson Events were updated', events);
-            console.log(this.calendarEvents);
-
-            this.lessonService.getDatesEnabled(events, this.datesEnabled).subscribe(dates => {
-                this.datesEnabled = dates;
-                this.calendarRefresh$.next(null);
-            });
-        });
-
-
-        this.hoursEnabled = [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
-        console.log(this.datesEnabled);
+        this.setCurrentDate(new Date(), false);
+        this.subscribeOnLessonEvents();
     }
 
     ngOnDestroy() {
@@ -151,8 +128,62 @@ export class CallanLessonEventsCalendarComponent implements OnInit, OnDestroy {
         this.lessonEventCreateEvent.next(lessonEvent);
     }
 
-    handleClickCancel($event) {
+    handleClickCancel() {
         this.cancelEvent.next();
+    }
+
+    handleShowPreviousWeek() {
+        this.currentDate.setDate(this.currentDate.getDate() - 7);
+        this.setCurrentDate(this.currentDate);
+    }
+
+    handleShowNextWeek() {
+        this.currentDate.setDate(this.currentDate.getDate() + 7);
+        this.setCurrentDate(this.currentDate);
+    }
+
+    handleShowCurrentWeek() {
+        this.setCurrentDate(new Date());
+    }
+
+    private setCurrentDate(date: Date, isAssignDates = true) {
+        this.currentDate = date;
+
+        if (isAssignDates) {
+            this.assignDatesEnabled(date);
+        }
+    }
+
+    private subscribeOnLessonEvents() {
+        this.lessonEvents$.pipe(
+            takeUntil(this.unsubscribe)
+        ).subscribe(events => {
+
+            this.calendarEvents = [];
+
+            if (events) {
+                for (const lessonEvent of events) {
+                    this.calendarEvents.push(CallanLessonService.convertLessonEventToCalendarEvent(lessonEvent));
+                }
+            }
+
+            console.log('dates came');
+            this.assignDatesEnabled(this.currentDate);
+        });
+    }
+
+    private assignDatesEnabled(currentDate: Date) {
+
+        const range = CallanScheduleService.getWeekDatesRangeForDate(currentDate);
+
+        // we need to getHoursAvailable also includes already booked times
+        this.scheduleService.getHoursAvailable(range[0], range[1], null, true).subscribe(dates => {
+            this.datesEnabled = dates;
+
+            observableTimer(100).subscribe(() => {
+                this.calendarRefresh$.next();
+            });
+        });
     }
 
     private createLessonEvent(time: any) {

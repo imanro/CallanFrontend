@@ -65,6 +65,11 @@ export class ScheduleRangeDetailsComponent implements OnInit, OnDestroy {
         this.scheduleRangeSaveEvent.next(saveScheduleRange);
     }
 
+    // to compare form value with constant
+    toNumber(value: any): number {
+        return Number(value);
+    }
+
     private buildForm() {
         this.scheduleRangeDetailsForm = this.fb.group({
             type: ['', Validators.required],
@@ -73,6 +78,18 @@ export class ScheduleRangeDetailsComponent implements OnInit, OnDestroy {
             startMinutes: ['', Validators.required],
             endMinutes: ['', Validators.required],
             date: ['']
+        });
+
+        this.scheduleRangeDetailsForm.valueChanges.subscribe(() => {
+            this.commonFormErrors = [];
+        });
+
+        this.scheduleRangeDetailsForm.get('startMinutes').valueChanges.subscribe(value => {
+           this.fixEndMinutes(value);
+        });
+
+        this.scheduleRangeDetailsForm.get('endMinutes').valueChanges.subscribe(value => {
+            this.fixStartMinutes(value);
         });
     }
 
@@ -97,12 +114,12 @@ export class ScheduleRangeDetailsComponent implements OnInit, OnDestroy {
         const formModel = this.scheduleRangeDetailsForm.value;
 
         saveScheduleRange.dayOfWeek = formModel.dayOfWeek;
-        saveScheduleRange.regularity = formModel.regularity;
+        saveScheduleRange.regularity = Number(formModel.regularity);
+        saveScheduleRange.type = Number(formModel.type);
 
         saveScheduleRange.startMinutes = this.convertNgbTimeStructToMinutes(formModel.startMinutes);
         saveScheduleRange.endMinutes = this.convertNgbTimeStructToMinutes(formModel.endMinutes);
 
-        saveScheduleRange.type = formModel.type;
         saveScheduleRange.date = this.convertNgbDateStructToDate(formModel.date);
 
         return saveScheduleRange;
@@ -136,8 +153,8 @@ export class ScheduleRangeDetailsComponent implements OnInit, OnDestroy {
 
     private assignTypesList() {
         this.typesList = {};
-        this.typesList[CallanScheduleRangeTypeEnum.INCLUSIVE] = 'Inclusive';
-        this.typesList[CallanScheduleRangeTypeEnum.EXCLUSIVE] = 'Exclusive';
+        this.typesList[CallanScheduleRangeTypeEnum.INCLUSIVE] = 'Working time';
+        this.typesList[CallanScheduleRangeTypeEnum.EXCLUSIVE] = 'Break time';
     }
 
     private assignDaysOfWeekList() {
@@ -170,5 +187,23 @@ export class ScheduleRangeDetailsComponent implements OnInit, OnDestroy {
         date.setDate(struct.day);
         date.setMonth(struct.month - 1);
         return date;
+    }
+
+    private fixEndMinutes(startValue: NgbTimeStruct): void {
+        const endValue: NgbTimeStruct = this.scheduleRangeDetailsForm.get('endMinutes').value;
+        if (startValue.hour > endValue.hour || (startValue.hour === endValue.hour && startValue.minute >= endValue.minute)) {
+            if (startValue.hour < 23) {
+                this.scheduleRangeDetailsForm.patchValue({'endMinutes': {hour: startValue.hour + 1, minute: startValue.minute, second: endValue.second}}, {emitEvent: false});
+            }
+        }
+    }
+
+    private fixStartMinutes(endValue: NgbTimeStruct): void {
+        const startValue: NgbTimeStruct = this.scheduleRangeDetailsForm.get('startMinutes').value;
+        if (endValue.hour < startValue.hour || (endValue.hour === startValue.hour && endValue.minute <= startValue.minute)) {
+            if (endValue.hour > 0) {
+                this.scheduleRangeDetailsForm.patchValue({'startMinutes': {hour: endValue.hour - 1, minute: endValue.minute, second: startValue.second}}, {emitEvent: false});
+            }
+        }
     }
 }

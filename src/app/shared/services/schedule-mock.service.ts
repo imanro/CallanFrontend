@@ -36,12 +36,63 @@ export class CallanScheduleMockService extends CallanScheduleService {
         const d = this.appConfig.mockDelayMs;
         return new Observable<CallanScheduleRange>(observer => {
             scheduleRange.id = mockScheduleRanges.length > 0 ? mockScheduleRanges[mockScheduleRanges.length - 1].id + 1 : 1;
+            scheduleRange.dayOfWeek = Number(scheduleRange.dayOfWeek);
             mockScheduleRanges.push(scheduleRange);
             observer.next(scheduleRange);
             observer.complete();
         }).pipe(
             delay(d)
         );
+    }
+
+    deleteScheduleRange(scheduleRange: CallanScheduleRange): Observable<boolean> {
+
+        const d = this.appConfig.mockDelayMs;
+
+        return new Observable<boolean>(observer => {
+            if (mockScheduleRanges.length > 0) {
+
+                let index = null;
+                for (let i = 0; i < mockScheduleRanges.length; i++){
+                    const testRange = mockScheduleRanges[i];
+
+                    if (testRange.id === scheduleRange.id) {
+                        index = i;
+                        break;
+                    }
+
+                    if (index !== null) {
+                        delete mockScheduleRanges[index];
+                    }
+
+                    observer.next(true);
+                }
+            } else {
+                observer.next(false);
+            }
+
+            observer.complete();
+        }).pipe(
+            delay(d)
+        );
+    }
+
+    getHoursAvailable(startDate: Date, endDate: Date, customer?: CallanCustomer, isLookupLessonEvents = false): Observable<Date[]> {
+
+        return new Observable<Date[]>(observer => {
+            const segment1 = new Date();
+
+            const result: Date[] = [];
+            result.push(segment1);
+            observer.next(result);
+        });
+    }
+
+    mapDataToScheduleRange(scheduleRange: CallanScheduleRange, row: any): void {
+    }
+
+    mapScheduleRangeToData(scheduleRange: CallanScheduleRange): object {
+        return {};
     }
 
 }

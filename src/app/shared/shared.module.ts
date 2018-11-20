@@ -23,7 +23,7 @@ import { CallanLessonEventAnnouncementComponent} from './lesson-event-announceme
         NotificationSidebarComponent,
         ToggleFullscreenDirective,
         NgbModule,
-        TranslateModule
+        TranslateModule,
     ],
     imports: [
         RouterModule,
@@ -40,7 +40,7 @@ import { CallanLessonEventAnnouncementComponent} from './lesson-event-announceme
         SidebarComponent,
         CustomizerComponent,
         NotificationSidebarComponent,
-        ToggleFullscreenDirective
+        ToggleFullscreenDirective,
     ]
 })
 export class SharedModule { }

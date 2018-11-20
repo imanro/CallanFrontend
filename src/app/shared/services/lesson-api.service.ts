@@ -1,14 +1,8 @@
-import {Inject, Injectable} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
-import {delay} from 'rxjs/operators';
 import {map, catchError, mergeMap} from 'rxjs/operators';
-import {combineLatest as observableCombineLatest} from 'rxjs/observable/combineLatest';
+import {AppConfig} from '../../app.config';
 
-import {AppConfig, IAppConfig} from '../../app.config';
-
-import {mockCourses} from '../data/mock-courses';
-import {mockProgresses} from '../data/mock-course-progresses';
-import {mockLessonEvents} from '../data/mock-lesson-events';
 
 import {CallanCustomer} from '../models/customer.model';
 import {CallanCourse} from '../models/course.model';
@@ -26,7 +20,7 @@ import {CallanCourseStage} from '../models/course-stage.model';
 export class CallanLessonApiService extends CallanLessonService {
 
     constructor(
-        @Inject(AppConfig) protected appConfig: IAppConfig,
+        protected appConfig: AppConfig,
         protected customerService: CallanCustomerService,
         protected http: HttpClient
     ) {
@@ -210,7 +204,7 @@ export class CallanLessonApiService extends CallanLessonService {
         return new Observable<Date[]>(observer => {
             const baseDate = new Date();
 
-            baseDate.setDate(baseDate.getDate() + 1);
+            baseDate.setDate(baseDate.getDate() - 3);
             baseDate.setHours(9);
             baseDate.setMinutes(0);
             baseDate.setMinutes(0);

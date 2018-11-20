@@ -1,4 +1,4 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {Observable, Subject} from 'rxjs';
 import {CallanScheduleRange} from '../../shared/models/schedule-range.model';
 import {takeUntil} from 'rxjs/operators';
@@ -9,15 +9,22 @@ import {CallanDayOfWeekEnum} from '../../shared/enums/day-of-week.enum';
 
 @Component({
     selector: 'app-callan-schedule-ranges-list',
-    templateUrl: './callan-schedule-ranges-list.component.html',
-    styleUrls: ['./callan-schedule-ranges-list.component.scss']
+    templateUrl: './schedule-ranges-list.component.html',
+    styleUrls: ['./schedule-ranges-list.component.scss']
 })
 export class CallanScheduleRangesListComponent implements OnInit, OnDestroy {
 
     @Input() scheduleRanges$: Observable<CallanScheduleRange[]>;
 
+    @Input() currentDate: Date;
+
+    @Output() scheduleRangeDeleteEvent = new EventEmitter<CallanScheduleRange>();
+
     scheduleRangesRegularInclusive: {[dayNumber: number]: CallanScheduleRange[]} ;
-    scheduleRangesRegularSummarized: {[dayNumber: number]: CallanScheduleRange[]} ;
+    scheduleRangesRegularExclusive: {[dayNumber: number]: CallanScheduleRange[]} ;
+
+    scheduleRangesAdHocInclusive: {[dayNumber: number]: CallanScheduleRange[]} ;
+    scheduleRangesAdHocExclusive: {[dayNumber: number]: CallanScheduleRange[]} ;
 
     dayOfWeekEnum: any;
     dayOfWeekTitles: {[dayNumber: string]: string};
@@ -40,25 +47,39 @@ export class CallanScheduleRangesListComponent implements OnInit, OnDestroy {
             )
             .subscribe(scheduleRanges => {
 
-                console.log('R:', scheduleRanges);
-
-                const grouped = CallanScheduleService.groupScheduleRanges(
+                this.scheduleRangesRegularInclusive = CallanScheduleService.groupScheduleRanges(
                     scheduleRanges,
-                    CallanScheduleRangeRegularityEnum.REGULAR
+                    CallanScheduleRangeRegularityEnum.REGULAR,
+                    CallanScheduleRangeTypeEnum.INCLUSIVE
                 );
 
+                this.scheduleRangesRegularExclusive = CallanScheduleService.groupScheduleRanges(
+                    scheduleRanges,
+                    CallanScheduleRangeRegularityEnum.REGULAR,
+                    CallanScheduleRangeTypeEnum.EXCLUSIVE
+                );
 
-                console.log('G:', grouped);
+                this.scheduleRangesAdHocInclusive = CallanScheduleService.groupScheduleRanges(
+                    scheduleRanges,
+                    CallanScheduleRangeRegularityEnum.AD_HOC,
+                    CallanScheduleRangeTypeEnum.INCLUSIVE
+                );
 
-                this.scheduleRangesRegularInclusive = CallanScheduleService.splitGrouopedScheduleRanges(grouped);
-
-                console.log('S:', this.scheduleRangesRegularInclusive);
+                this.scheduleRangesAdHocExclusive = CallanScheduleService.groupScheduleRanges(
+                    scheduleRanges,
+                    CallanScheduleRangeRegularityEnum.AD_HOC,
+                    CallanScheduleRangeTypeEnum.EXCLUSIVE
+                );
             });
     }
 
     ngOnDestroy() {
         this.unsubscribe.next();
         this.unsubscribe.complete();
+    }
+
+    handleScheduleRangeDelete(scheduleRange: CallanScheduleRange) {
+        this.scheduleRangeDeleteEvent.next(scheduleRange);
     }
 
     private assignDayOfWeekTitles() {

@@ -19,13 +19,13 @@
   <div class="col-sm-12 mt-2">
 
   <div class="btn-group d-none d-sm-none d-md-none d-lg-block">
-  <a class="btn btn-raised btn-primary" mwlCalendarPreviousView [view]="calendarView" [(viewDate)]="currentDate">
+  <a class="btn btn-raised btn-primary" (click)="handleShowPreviousWeek()">
     Previous
   </a>
-  <a class="btn btn-raised btn-danger" mwlCalendarToday [viewDate]="currentDate">
+  <a class="btn btn-raised btn-danger" (click)="handleShowCurrentWeek()">
     Today
   </a>
-  <a class="btn btn-raised btn-primary" mwlCalendarNextView [view]="calendarView" [(viewDate)]="currentDate">
+  <a class="btn btn-raised btn-primary" (click)="handleShowNextWeek()">
     Next
   </a>
 </div>
@@ -42,8 +42,8 @@
         [dayEndHour]="23"
         [weekStartsOn]="1"
         [headerColVisible]="false"
-        [hoursEnabled]="hoursEnabled"
         [datesEnabled]="datesEnabled"
+        [disableSegmentsInPast]="true"
         [refresh]="calendarRefresh$"
         (hourSegmentClicked)="handleClickHourSegment($event)"
         (eventClicked)="handleLessonEventClicked($event)"
