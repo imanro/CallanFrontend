@@ -1,14 +1,16 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {ToastrService} from 'ngx-toastr';
 import {CallanScheduleManagerViewEnum} from '../shared/enums/schedule-manager.view.enum';
 import {CallanScheduleRange} from '../shared/models/schedule-range.model';
 import {CallanScheduleService} from '../shared/services/schedule.service';
 import {AppError} from '../shared/models/error.model';
-import {BehaviorSubject, Observable, Subject} from 'rxjs';
+import {BehaviorSubject, Observable, Subject, timer as observableTimer} from 'rxjs';
 import {AppFormErrors} from '../shared/models/form-errors.model';
 import {CallanCustomer} from '../shared/models/customer.model';
 import {CallanCustomerService} from '../shared/services/customer.service';
 import {takeUntil} from 'rxjs/operators';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {AppModalContentComponent} from '../shared-modules/modal-content/modal-content.component';
 
 @Component({
     selector: 'app-schedule-manager-container',
@@ -21,27 +23,39 @@ export class CallanScheduleManagerContainerComponent implements OnInit, OnDestro
     viewNameEnum: any;
 
     currentCustomer: CallanCustomer;
+    datesEnabled: Date[] = [];
     scheduleRanges$ = new BehaviorSubject<CallanScheduleRange[]>([]);
     currentScheduleRange: CallanScheduleRange;
+    currentDate: Date;
 
     formErrors$ = new BehaviorSubject<AppFormErrors>(null);
 
+    refresh$ = new Subject<void>();
+
     isSaving = false;
+
+    @ViewChild('modalContent') modalContent: TemplateRef<any>;
+
+    modalData = {
+        title: '',
+        body: ''
+    };
 
     private unsubscribe: Subject<void> = new Subject();
 
     constructor(
         private scheduleService: CallanScheduleService,
         private customerService: CallanCustomerService,
-        private toastrService: ToastrService
+        private toastrService: ToastrService,
+        private modalService: NgbModal
     ) {
         this.viewNameEnum = CallanScheduleManagerViewEnum;
-
         console.log('tof:', typeof(this.viewNameEnum));
     }
 
     ngOnInit() {
         this.assignCurrentCustomer();
+        this.assignCurrentDate();
     }
 
     ngOnDestroy() {
@@ -61,8 +75,10 @@ export class CallanScheduleManagerContainerComponent implements OnInit, OnDestro
         this.view = CallanScheduleManagerViewEnum.RANGE_DETAILS;
     }
 
-    handleScheduleRangeDetailsSave(scheduleRange: CallanScheduleRange) {
+    handleScheduleRangeSave(scheduleRange: CallanScheduleRange) {
         console.log('To save', scheduleRange);
+        scheduleRange.customer = this.currentCustomer;
+
         this.scheduleService.saveScheduleRange(scheduleRange).subscribe(() => {
 
             this.isSaving = false;
@@ -70,9 +86,11 @@ export class CallanScheduleManagerContainerComponent implements OnInit, OnDestro
             // this.fetchScheduleRanges();
             this.toastrService.success('Time range has been successfully saved', 'Success');
             this.view = CallanScheduleManagerViewEnum.DEFAULT;
+            // re-read
+            this.assignScheduleRanges();
+            this.assignDatesEnabled(this.currentDate);
 
         }, err => {
-
             this.isSaving = false;
 
             if (err instanceof AppError) {
@@ -93,6 +111,44 @@ export class CallanScheduleManagerContainerComponent implements OnInit, OnDestro
         });
     }
 
+    handleScheduleRangeDelete(scheduleRange: CallanScheduleRange) {
+
+        this.modalData.title = 'Confirm';
+        this.modalData.body = 'Are you sure you want to delete this range?';
+
+        const modalRef = this.modalService.open(AppModalContentComponent, {
+            centered: true,
+            backdrop: true,
+            size: 'lg'
+        });
+
+        modalRef.componentInstance.title = 'Confirm';
+        modalRef.componentInstance.body = 'Are you sure you want to delete this range?';
+
+        modalRef.result.then((userResponse) => {
+
+            if (userResponse) {
+                this.scheduleService.deleteScheduleRange(scheduleRange).subscribe(() => {
+                        this.toastrService.success('Time range has been successfully deleted', 'Success');
+                        this.assignScheduleRanges();
+                        this.assignDatesEnabled(this.currentDate);
+                    },
+                    err => {
+                        this.toastrService.error('Something went wrong', 'Error');
+                    }
+                );
+            }
+        }, () => {
+            // just do nothing
+        });
+    }
+
+    handleSetCurrentDate(date) {
+        console.log('received');
+        this.setCurrentDate(date);
+        this.assignDatesEnabled(date);
+    }
+
     private assignCurrentCustomer() {
         this.customerService.getCurrentCustomer()
             .pipe(
@@ -104,8 +160,14 @@ export class CallanScheduleManagerContainerComponent implements OnInit, OnDestro
                 if (customer) {
                     console.log('Customer has been assigned');
                     this.assignScheduleRanges();
+                    this.setCurrentDate(new Date());
+                    this.assignDatesEnabled(this.currentDate);
                 }
             });
+    }
+
+    private setCurrentDate(date: Date) {
+        this.currentDate = date;
     }
 
     private assignScheduleRanges() {
@@ -114,8 +176,31 @@ export class CallanScheduleManagerContainerComponent implements OnInit, OnDestro
                 .subscribe(scheduleRanges => {
                     console.log('and, here is ranges', scheduleRanges);
                     this.scheduleRanges$.next(scheduleRanges);
+                    this.refresh$.next();
                 });
         }
+    }
+
+    private assignDatesEnabled(date: Date) {
+        // CHECK, why customer isnt presented
+        const range = CallanScheduleService.getWeekDatesRangeForDate(date);
+        console.log('created range', range);
+
+        if (this.currentCustomer) {
+            this.scheduleService.getHoursAvailable(range[0], range[1], this.currentCustomer).subscribe(dates => {
+                // this.datesEnabled$.next(dates);
+                this.datesEnabled = dates;
+
+                // we need this indeed
+                observableTimer(100).subscribe(() => {
+                    this.refresh$.next();
+                });
+            });
+        }
+    }
+
+    private assignCurrentDate() {
+        this.currentDate = new Date();
     }
 
     private createFormErrors() {

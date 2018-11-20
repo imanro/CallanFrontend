@@ -1,4 +1,4 @@
 export enum CallanScheduleRangeTypeEnum {
-    INCLUSIVE = 'inclusive',
-    EXCLUSIVE = 'exclusive'
+    INCLUSIVE = 1,
+    EXCLUSIVE = 2
 }

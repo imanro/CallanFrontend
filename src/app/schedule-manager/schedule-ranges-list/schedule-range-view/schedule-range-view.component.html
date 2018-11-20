@@ -1,0 +1,13 @@
+<div class="row range-cont no-gutters" *ngFor="let scheduleRange of scheduleRanges">
+    <div class="col-6 col-sm-10 col-lg-9 data pt-2 pb-2 pl-2 pl-md-3">
+        <i class="ft-clock  row-icon" [ngClass]="scheduleRange.type === scheduleRangeTypeEnum.EXCLUSIVE? 'warning exclusive' : 'success inclusive'"></i>
+        <span class="time">{{staticScheduleService.convertMinutesToTimeString(scheduleRange.startMinutes)}}</span>
+        &mdash;
+        <span class="time">{{staticScheduleService.convertMinutesToTimeString(scheduleRange.endMinutes)}}</span>
+
+        <span class="date ml-1" *ngIf="scheduleRange.regularity === scheduleRangeRegularityEnum.AD_HOC && scheduleRange.date">[{{scheduleRange.date| date:'shortDate'}}]</span>
+    </div>
+    <div class="col-4 col-sm-2 col-lg-3 actions text-right pt-2 pb-2 pl-1 pr-2">
+        <i class="ft-trash mr-1 danger control" (click)="handleScheduleRangeDelete(scheduleRange)"></i>
+    </div>
+</div>

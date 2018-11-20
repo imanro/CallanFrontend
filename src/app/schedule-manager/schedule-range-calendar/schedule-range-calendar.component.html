@@ -1,0 +1,32 @@
+<div class="row">
+  <div class="col-sm-12 mt-2">
+
+    <div class="btn-group d-none d-sm-none d-md-none d-lg-block">
+      <a class="btn btn-raised btn-primary" (click)="handleShowPreviousWeek()">
+        Previous
+      </a>
+      <a class="btn btn-raised btn-danger" (click)="handleShowCurrentWeek()">
+        Today
+      </a>
+      <a class="btn btn-raised btn-primary" (click)="handleShowNextWeek()">
+        Next
+      </a>
+    </div>
+  </div>
+</div>
+
+<iq-calendar-week-hours-view
+        [viewDate]="currentDate"
+        [datesEnabled]="datesEnabled"
+        [hourSegments]="hourSegmentsAmount"
+
+        [hourSegmentHeight]="50"
+        [dayStartHour]="0"
+
+        [dayEndHour]="23"
+        [weekStartsOn]="1"
+        [headerColVisible]="false"
+        [refresh]="refresh$"
+>
+</iq-calendar-week-hours-view>
+

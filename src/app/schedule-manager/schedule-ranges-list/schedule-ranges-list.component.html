@@ -1,0 +1,48 @@
+<h3 class="mb-3">Week schedule</h3>
+
+<h4>Regular schedule</h4>
+
+<div class="row mb-3" *ngIf="scheduleRangesRegularInclusive">
+    <div class="col-sm-12 col-md-6 col-lg-6 col-xl-4" *ngFor="let dayNumber of dayOfWeekOrder">
+
+        <div class="card" [ngClass]="{'current': currentDate.getDay() === dayNumber}">
+
+
+            <div class="card-header">
+                <h5 class="card-title">{{dayOfWeekTitles[dayNumber]}}</h5>
+            </div>
+            <div class="card-body">
+                <div *ngIf="scheduleRangesRegularInclusive[dayNumber] !== undefined" class="ranges-list">
+                    <app-schedule-range-view [scheduleRanges]="scheduleRangesRegularInclusive[dayNumber]" (scheduleRangeDeleteEvent)="handleScheduleRangeDelete($event)"></app-schedule-range-view>
+                </div>
+                <div *ngIf="scheduleRangesRegularExclusive[dayNumber] !== undefined" class="ranges-list">
+                    <app-schedule-range-view [scheduleRanges]="scheduleRangesRegularExclusive[dayNumber]" (scheduleRangeDeleteEvent)="handleScheduleRangeDelete($event)"></app-schedule-range-view>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<h4>Ad-hoc hours</h4>
+
+<div class="row" *ngIf="scheduleRangesRegularInclusive">
+    <div class="col-sm-12 col-md-6 col-lg-6 col-xl-4" *ngFor="let dayNumber of dayOfWeekOrder">
+
+        <div class="card" [ngClass]="{'current': currentDate.getDay() === dayNumber}">
+
+            <div class="card-header">
+                <h5 class="card-title">{{dayOfWeekTitles[dayNumber]}}</h5>
+            </div>
+            <div class="card-body">
+                <div *ngIf="scheduleRangesAdHocInclusive[dayNumber] !== undefined" class="ranges-list">
+                    <app-schedule-range-view [scheduleRanges]="scheduleRangesAdHocInclusive[dayNumber]" (scheduleRangeDeleteEvent)="handleScheduleRangeDelete($event)"></app-schedule-range-view>
+                </div>
+                <div *ngIf="scheduleRangesAdHocExclusive[dayNumber] !== undefined" class="ranges-list">
+                    <app-schedule-range-view [scheduleRanges]="scheduleRangesAdHocExclusive[dayNumber]" (scheduleRangeDeleteEvent)="handleScheduleRangeDelete($event)"></app-schedule-range-view>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

@@ -15,7 +15,12 @@ export abstract class CallanBaseService {
 
     protected getApiUrl(path: string): string {
         return this.appConfig.apiUrl + path;
+    }
 
+    protected buildQueryString(params: any): string {
+        return Object.keys(params)
+            .map(k => encodeURIComponent(k) + '=' + encodeURIComponent(params[k]))
+            .join('&');
     }
 
     protected handleHttpError<T>(fallbackData?: any) {

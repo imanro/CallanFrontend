@@ -1,0 +1,29 @@
+:host {
+
+  .control {
+    cursor: pointer;
+  }
+
+  .time {
+    white-space: nowrap;
+  }
+
+  .row-icon {
+    margin-right: 1rem;
+  }
+
+  .range-cont {
+    border-top: solid 1px #ccc;
+
+    .icon {
+      font-size: 24px;
+    }
+
+    .data {
+    }
+
+    .actions {
+      white-space: nowrap
+    }
+  }
+}

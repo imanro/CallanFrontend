@@ -15,88 +15,31 @@ export abstract class CallanScheduleService extends CallanBaseService {
         const sortedStruct = {};
         for (const scheduleRange of scheduleRanges) {
             if (scheduleRange.regularity === regularity && (!type || scheduleRange.type === type)) {
-                if (sortedStruct[scheduleRange.dayOfWeek] === undefined) {
-                    sortedStruct[scheduleRange.dayOfWeek] = [];
-                }
 
-                sortedStruct[scheduleRange.dayOfWeek].push(scheduleRange);
-            }
-        }
+                let dayOfWeek;
 
-        return sortedStruct;
-    }
+                if (regularity === CallanScheduleRangeRegularityEnum.AD_HOC) {
+                    if (!scheduleRange.date) {
+                        console.warn('Skipping adhoc schedule range without date', scheduleRange);
+                        continue;
 
-    static splitGrouopedScheduleRanges(groupedScheduleRanges: { [dayNumber: number]: CallanScheduleRange[] }):
-        { [dayNumber: number]: CallanScheduleRange[] } {
-
-        const sortedStruct: { [dayNumber: number]: CallanScheduleRange[] } = {};
-
-        for (const dayNumber in groupedScheduleRanges) {
-            if (groupedScheduleRanges.hasOwnProperty(dayNumber)) {
-                const scheduleRanges = groupedScheduleRanges[dayNumber];
-
-                const inclusives: CallanScheduleRange[] = scheduleRanges.filter(function (scheduleRange) {
-                    return scheduleRange.type === CallanScheduleRangeTypeEnum.INCLUSIVE
-                });
-                const exclusives: CallanScheduleRange[] = scheduleRanges.filter(function (scheduleRange) {
-                    return scheduleRange.type === CallanScheduleRangeTypeEnum.EXCLUSIVE
-                });
-
-                const inclusiveIntersects = CallanScheduleService.intersectScheduleRangesInclusive(inclusives);
-                sortedStruct[dayNumber] = inclusiveIntersects;
-
-                // first, count intersection of inclusive ranges. If neighbor ranges are intersects (start time of 2nd
-                // is <= end time of 1st), create common range from two (just by setting End time of first to
-                // End time of 2nd IF ITS bigger and skipping of second's)
-
-                // than, by each non-intersecting range
-
-                // by each exclusive range
-
-                // if not processed
-
-                // if exclusive begun earlier, put it first, register as processed
-
-                // if its end time is bigger than inclusive's, skip inclusive
-
-                // if not (end time intersects with inclusive), set new start time of inclusive, put inclusive in stack
-            }
-        }
-
-        return sortedStruct;
-    }
-
-    static intersectScheduleRangesInclusive(scheduleRanges: CallanScheduleRange[]) {
-        const inclusiveIntersects = [];
-        const processedInclusive = {};
-
-        for (const range1 of scheduleRanges) {
-
-            if (processedInclusive[range1.id] === undefined) {
-                console.log('DAY:', range1.dayOfWeek);
-                for (const range2 of scheduleRanges) {
-                    if (range1.id !== range2.id && range2.dayOfWeek === range1.dayOfWeek) {
-                        if (range2.startMinutes <= range1.endMinutes) {
-                            console.log('INTERSECTS');
-                            // intersects
-                            if (range2.endMinutes > range1.endMinutes) {
-                                console.log('FIXING');
-                                range1.endMinutes = range2.endMinutes;
-                                processedInclusive[range2.id] = true;
-                            }
-
-                            // dont process crossing range anyway
-                            processedInclusive[range2.id] = true;
-                        }
+                    } else {
+                        dayOfWeek = scheduleRange.date.getDay();
                     }
+
+                } else {
+                    dayOfWeek = scheduleRange.dayOfWeek;
                 }
 
-                inclusiveIntersects.push(range1);
-                processedInclusive[range1.id] = true;
-            }
+                if (sortedStruct[dayOfWeek] === undefined) {
+                    sortedStruct[dayOfWeek] = [];
+                }
 
+                sortedStruct[dayOfWeek].push(scheduleRange);
+            }
         }
-        return inclusiveIntersects;
+
+        return sortedStruct;
     }
 
     static convertMinutesToTimeString(minutes, isMilitaryFormat = false) {
@@ -124,6 +67,33 @@ export abstract class CallanScheduleService extends CallanBaseService {
         }
     }
 
+    static getWeekDatesRangeForDate(date: Date): Date[] {
+        // checking request's date's day number
+
+        console.log('date on input:', date);
+
+        const dateFrom = new Date(date.getTime());
+        const dateTo = new Date(date.getTime());
+
+        dateFrom.setHours(0);
+        dateFrom.setMinutes(0);
+        dateFrom.setSeconds(0);
+
+        dateTo.setHours(23);
+        dateTo.setMinutes(59);
+        dateTo.setSeconds(59);
+
+        let dayOfWeek = date.getDay();
+        if (dayOfWeek === 0) {
+            dayOfWeek = 7;
+        }
+
+        dateFrom.setDate(date.getDate() - (dayOfWeek - 1));
+        dateTo.setDate(date.getDate() + (7 - dayOfWeek));
+
+        return [dateFrom, dateTo];
+    }
+
     initScheduleRange(scheduleRange: CallanScheduleRange) {
 
         const currentDate = new Date();
@@ -144,5 +114,13 @@ export abstract class CallanScheduleService extends CallanBaseService {
 
     abstract getScheduleRange(id: number): Observable<CallanScheduleRange>;
 
+    abstract getHoursAvailable(startDate: Date, endDate: Date, customer?: CallanCustomer, isLookupLessonEvents?: boolean): Observable<Date[]>;
+
     abstract saveScheduleRange(scheduleRange: CallanScheduleRange): Observable<CallanScheduleRange>;
+
+    abstract deleteScheduleRange(scheduleRange: CallanScheduleRange): Observable<boolean>;
+
+    abstract mapDataToScheduleRange(scheduleRange: CallanScheduleRange, row: any): void;
+
+    abstract mapScheduleRangeToData(scheduleRange: CallanScheduleRange): object;
 }

@@ -5,8 +5,8 @@ export class CallanScheduleRange extends CallanBaseModel {
     id: number;
     customer: CallanCustomer;
     date?: Date;
-    type: string; // inclusive/exclusive
-    regularity: string; // regular / ad-hoc
+    type: number; // inclusive/exclusive
+    regularity: number; // regular / ad-hoc
     dayOfWeek: number;
     startMinutes: number; // in minutes
     endMinutes: number;
