@@ -80,10 +80,11 @@ export class CallanScheduleApiService extends CallanScheduleService {
     saveScheduleRange(scheduleRange: CallanScheduleRange): Observable<CallanScheduleRange> {
 
         let data;
-
+console.log('here');
         try {
             data = this.mapScheduleRangeToData(scheduleRange);
         } catch (err) {
+            console.log('h');
             return throwError(err);
         }
         console.log('We have prepared the following data:', data);

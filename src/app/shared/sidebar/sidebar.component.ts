@@ -35,11 +35,8 @@ export class SidebarComponent implements OnInit {
             const choosenRoutes = [];
 
             if (CallanCustomerService.hasCustomerRole(customer, CallanRoleNameEnum.ADMIN)) {
-
                 choosenRoutes.push(...['/customers', '/lessons', '/schedule']);
-
-                console.log('will redirect to customers');
-            } else if(CallanCustomerService.hasCustomerRole(customer, CallanRoleNameEnum.TEACHER)) {
+            } else if (CallanCustomerService.hasCustomerRole(customer, CallanRoleNameEnum.TEACHER)) {
                 choosenRoutes.push(...['/lessons', '/schedule']);
             } else if (CallanCustomerService.hasCustomerRole(customer, CallanRoleNameEnum.STUDENT)) {
                 choosenRoutes.push(...['/lessons']);
@@ -48,8 +45,6 @@ export class SidebarComponent implements OnInit {
             } else {
                 choosenRoutes.push(...['/lessons']);
             }
-
-
 
             for (const name of choosenRoutes) {
                 for (const route of ROUTES) {
@@ -63,11 +58,5 @@ export class SidebarComponent implements OnInit {
         });
 
         // this.menuItems = ROUTES.filter(menuItem => menuItem);
-    }
-
-    //NGX Wizard - skip url change
-    ngxWizardFunction(path: string) {
-        if (path.indexOf('forms/ngx') !== -1)
-            this.router.navigate(['forms/ngx/wizard'], { skipLocationChange: false });
     }
 }

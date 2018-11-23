@@ -29,17 +29,9 @@ export class CallanScheduleManagerContainerComponent implements OnInit, OnDestro
     currentDate: Date;
 
     formErrors$ = new BehaviorSubject<AppFormErrors>(null);
-
     refresh$ = new Subject<void>();
 
     isSaving = false;
-
-    @ViewChild('modalContent') modalContent: TemplateRef<any>;
-
-    modalData = {
-        title: '',
-        body: ''
-    };
 
     private unsubscribe: Subject<void> = new Subject();
 
@@ -54,8 +46,8 @@ export class CallanScheduleManagerContainerComponent implements OnInit, OnDestro
     }
 
     ngOnInit() {
+        this.setCurrentDate(new Date());
         this.assignCurrentCustomer();
-        this.assignCurrentDate();
     }
 
     ngOnDestroy() {
@@ -113,9 +105,6 @@ export class CallanScheduleManagerContainerComponent implements OnInit, OnDestro
 
     handleScheduleRangeDelete(scheduleRange: CallanScheduleRange) {
 
-        this.modalData.title = 'Confirm';
-        this.modalData.body = 'Are you sure you want to delete this range?';
-
         const modalRef = this.modalService.open(AppModalContentComponent, {
             centered: true,
             backdrop: true,
@@ -144,7 +133,6 @@ export class CallanScheduleManagerContainerComponent implements OnInit, OnDestro
     }
 
     handleSetCurrentDate(date) {
-        console.log('received');
         this.setCurrentDate(date);
         this.assignDatesEnabled(date);
     }
@@ -160,7 +148,6 @@ export class CallanScheduleManagerContainerComponent implements OnInit, OnDestro
                 if (customer) {
                     console.log('Customer has been assigned');
                     this.assignScheduleRanges();
-                    this.setCurrentDate(new Date());
                     this.assignDatesEnabled(this.currentDate);
                 }
             });
@@ -197,10 +184,6 @@ export class CallanScheduleManagerContainerComponent implements OnInit, OnDestro
                 });
             });
         }
-    }
-
-    private assignCurrentDate() {
-        this.currentDate = new Date();
     }
 
     private createFormErrors() {
