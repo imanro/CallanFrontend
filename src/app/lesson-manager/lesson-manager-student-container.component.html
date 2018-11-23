@@ -11,39 +11,40 @@
             <div class="container-fluid">
 
                 <section>
-                    <app-callan-lesson-event *ngIf="currentLessonEvent && isLessonEventDetailsShown"
-                                             [lessonEvent]="currentLessonEvent"
-                                             ></app-callan-lesson-event>
+                    <app-callan-lesson-event
+                            [lessonEvent]="currentLessonEvent"
+                            *ngIf="currentLessonEvent && isLessonEventDetailsShown"
+                    ></app-callan-lesson-event>
 
-                    <app-callan-courses-list [allCourses$]="allCourses$"
-                                             [currentCustomerCourseProgresses$]="courseProgresses$"
-                                             [isLessonEventsCreateButtonShown]="isLessonEventsCreateButtonShown"
-                                             [isTopUpLessonEventsBalanceButtonShown]="isTopUpLessonEventsBalanceButtonShown"
-                                             [currentCourseProgress$]="currentCourseProgress$"
-                                             (courseSelectEvent)="handleSelectCourseProgress($event)"
-                                             (lessonEventCreateEvent)="handleLessonEventCreate($event)"
-                                             (topUpLessonEventsBalanceEvent)="handleTopUpLessonEventsBalance($event)"
-                                             *ngIf="!isLessonEventsCalendarShown && !isCustomerCourseAddShown && !isLessonEventsBalanceDetailsShown"
+                    <app-callan-courses-list
+                            [allCourses$]="allCourses$"
+                            [currentCustomerCourseProgresses$]="courseProgresses$"
+                            [isLessonEventsCreateButtonShown]="isLessonEventsCreateButtonShown"
+                            [isTopUpLessonEventsBalanceButtonShown]="isTopUpLessonEventsBalanceButtonShown"
+                            [currentCourseProgress$]="currentCourseProgress$"
+                            (courseSelectEvent)="handleSelectCourseProgress($event)"
+                            (lessonEventCreateEvent)="handleLessonEventCreate($event)"
+                            (topUpLessonEventsBalanceEvent)="handleLessonEventsBalanceShown($event)"
+                            *ngIf="view === viewNameEnum.DEFAULT"
                     ></app-callan-courses-list>
 
-
                     <div class="row"
-                         *ngIf="isAddButtonShown && !isLessonEventsCalendarShown && currentCustomer && !isCustomerCourseAddShown && !isLessonEventsBalanceDetailsShown"
+                         *ngIf="view === viewNameEnum.DEFAULT && isCustomerCourseAddButtonShown && currentCustomer"
                     >
                         <div class="col-sm-12">
                             <div class="mt-2">
-                                <a class="btn btn-raised gradient-mint white" href="javascript:void(0)" (click)="handleCourseProgressAdd()">Add a new
-                                    course</a>
+                                <a class="btn btn-raised gradient-mint white" href="javascript:void(0)" (click)="handleCustomerCourseAddShow()">Add a new course</a>
                             </div>
                         </div>
                     </div>
 
-                    <app-callan-customer-course-add [allCourses$]="allCourses$"
-                                                    [currentCustomerCourseProgresses$]="courseProgresses$"
-                                                    [formErrors$]="formErrors$"
-                                                    (cancelEvent)="handleCustomerCourseAddCancel()"
-                                                    (courseAddEvent)="handleCustomerCourseAdd($event)"
-                                                    *ngIf="isCustomerCourseAddShown"
+                    <app-callan-customer-course-add
+                            [allCourses$]="allCourses$"
+                            [currentCustomerCourseProgresses$]="courseProgresses$"
+                            [formErrors$]="formErrors$"
+                            (cancelEvent)="handleCustomerCourseAddCancel()"
+                            (courseAddEvent)="handleCustomerCourseAdd($event)"
+                            *ngIf="view === viewNameEnum.CUSTOMER_COURSE_ADD"
                     ></app-callan-customer-course-add>
 
                     <app-lesson-events-balance-details
@@ -51,18 +52,32 @@
                             [formErrors$]="formErrors$"
                             (cancelEvent)="handleLessonEventsBalanceDetailsCancel()"
                             (lessonEventsBalanceSaveEvent)="handleLessonEventsBalanceSave($event)"
-                            *ngIf="isLessonEventsBalanceDetailsShown"
+                            *ngIf="view === viewNameEnum.BALANCE_DETAILS"
                     ></app-lesson-events-balance-details>
 
-                    <app-callan-lesson-events-calendar *ngIf="currentCourseProgress && isLessonEventsCalendarShown"
-                                                   [courseProgress]="currentCourseProgress"
-                                                   [student]="currentCustomer"
-                                                   [lessonEvents$]="currentCourseLessonEvents$"
-                                                   (cancelEvent)="handleLessonEventCreateCancel()"
-                                                   (lessonEventCreateEvent)="handleLessonEventCreateEvent($event)"
+                    <app-callan-lesson-events-calendar
+                            [courseProgress]="currentCourseProgress"
+                            [calendarEvents]="calendarEvents"
+                            [datesEnabled]="datesEnabled"
+                            [refresh$]="refresh$"
+                            [currentDate]="currentDate"
+                            [student]="currentCustomer"
+                            [lessonEvents$]="currentCourseLessonEvents$"
+                            (cancelEvent)="handleLessonEventCreateCancel()"
+                            (lessonEventCreateEvent)="lessonEventSave($event)"
+                            (showCurrentWeekEvent)="handleCalendarShowCurrentWeek()"
+                            (showNextWeekEvent)="handleCalendarShowNextWeek()"
+                            (showPreviousWeekEvent)="handleCalendarShowPreviousWeek()"
+                            (hourSegmentClickEvent)="handleCalendarHourSegmentClick($event)"
+                            (lessonEventClickEvent)="handleCalendarLessonEventClick($event)"
+
+                            *ngIf="currentCourseProgress && view === viewNameEnum.CALENDAR"
                     ></app-callan-lesson-events-calendar>
 
-                    <app-callan-lesson-events-list [lessonEvents$]="lessonEvents$"></app-callan-lesson-events-list>
+                    <app-callan-lesson-events-list
+                            [lessonEvents$]="lessonEvents$"
+                            *ngIf="view === viewNameEnum.DEFAULT"
+                    ></app-callan-lesson-events-list>
 
                     <p *ngIf="currentCustomer">Current customer: {{currentCustomer.email}}</p>
                 </section>

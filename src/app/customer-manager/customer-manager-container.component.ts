@@ -28,9 +28,7 @@ export class CallanCustomerManagerContainerComponent implements OnInit, OnDestro
 
     formErrors$ = new BehaviorSubject<AppFormErrors>(null);
 
-
-
-    private unsubscribe: Subject<void> = new Subject();
+    private unsubscribe$: Subject<void> = new Subject();
 
     constructor(
         private customerService: CallanCustomerService,
@@ -42,20 +40,21 @@ export class CallanCustomerManagerContainerComponent implements OnInit, OnDestro
     ngOnInit() {
         this.fetchCustomers();
         this.fetchRolesList();
-        this.setCurrentCustomer();
+        this.subscribeOnCurrentCustomer();
 
         // for developing purposes
         // this.handleCustomerCreate();
     }
 
     ngOnDestroy() {
-        this.unsubscribe.next();
-        this.unsubscribe.complete();
+        this.unsubscribe$.next();
+        this.unsubscribe$.complete();
     }
 
     handleSetCurrentCustomer(customer: CallanCustomer) {
         this.customerService.setCurrentCustomer(customer);
-        this.setCurrentCustomer();
+        this.toastrService.clear();
+        this.toastrService.success('Current customer now is ' + customer.firstName);
     }
 
     handleCustomerCreate() {
@@ -115,9 +114,8 @@ export class CallanCustomerManagerContainerComponent implements OnInit, OnDestro
         this.formErrors$.next(null);
     }
 
-    private setCurrentCustomer() {
-        this.customerService.getCurrentCustomer().subscribe(customer => {
-            console.log('here!!');
+    private subscribeOnCurrentCustomer() {
+        this.customerService.getCurrentCustomer$().subscribe(customer => {
             this.currentCustomer = customer;
         });
     }
