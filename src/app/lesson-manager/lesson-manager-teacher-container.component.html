@@ -1,0 +1,22 @@
+<div class="main-panel">
+  <div class="main-content">
+    <div class="content-wrapper">
+      <div class="container-fluid">
+
+        <section>
+          <app-callan-lesson-event
+                  [lessonEvent]="currentLessonEvent"
+                  *ngIf="currentLessonEvent && isLessonEventShown"
+          ></app-callan-lesson-event>
+
+          <app-callan-lesson-events-list
+                  [lessonEvents]="lessonEvents"
+                  [refresh$]="lessonEventsListRefresh$"
+                  *ngIf="view === viewNameEnum.DEFAULT"
+                  (setCurrentLessonEventEvent)="handleSetCurrentLessonEvent($event)"
+          ></app-callan-lesson-events-list>
+        </section>
+      </div>
+    </div>
+  </div>
+</div>

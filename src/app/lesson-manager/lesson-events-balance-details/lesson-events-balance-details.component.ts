@@ -14,7 +14,7 @@ import {CallanFormHelper} from '../../shared/helpers/form-helper';
     templateUrl: './lesson-events-balance-details.component.html',
     styleUrls: ['./lesson-events-balance-details.component.scss']
 })
-export class LessonEventsBalanceDetailsComponent implements OnInit, OnDestroy
+export class CallanLessonEventsBalanceDetailsComponent implements OnInit, OnDestroy
 {
 
     @Input() courseProgress: CallanCourseProgress;

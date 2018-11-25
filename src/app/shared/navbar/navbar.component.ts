@@ -103,10 +103,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
         console.log('Minutes left:', this.currentLessonEventRemainingMinutes);
     }
 
-    handleLessonEventView() {
+    handleLessonEventView(lessonEvent) {
 
         // set details shown value
-        this.lessonService.toggleIsLessonDetailsShown();
+        this.lessonService.setCurrentLessonEvent(lessonEvent);
+        this.lessonService.toggleIsLessonEventShown();
 
         // if we're not in the required module, change address...)
         if (this.router.routerState.snapshot.url.indexOf('/lessons') !== 0) {
@@ -114,12 +115,14 @@ export class NavbarComponent implements OnInit, OnDestroy {
         }
     }
 
-    handleLessonEventStart() {
+    handleLessonEventStart(lessonEvent) {
 
         console.log('to start');
-        this.lessonService.changetLessonEventState(this.currentLessonEvent, CallanLessonEventStateEnum.STARTED).subscribe(() => {
-            this.lessonService.setIsLessonDetailsShown(true);
-            console.log('state now is:', this.currentLessonEvent.state);
+        this.lessonService.changetLessonEventState(lessonEvent, CallanLessonEventStateEnum.STARTED).subscribe(updatedLessonEvent => {
+
+            this.currentLessonEvent = updatedLessonEvent;
+            this.lessonService.setCurrentLessonEvent(this.currentLessonEvent);
+            this.lessonService.setIsLessonEventShown(true);
 
             // if we're not in the required module, change address...)
             if (this.router.routerState.snapshot.url.indexOf('/lessons') !== 0) {

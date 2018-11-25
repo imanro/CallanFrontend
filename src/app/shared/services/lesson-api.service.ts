@@ -190,13 +190,19 @@ export class CallanLessonApiService extends CallanLessonService {
 
         // Process this case: query the lesson event which status is not completed and time is not passed
 
-        return new Observable<CallanLessonEvent>(observer => {
-            this.getLessonEventsByStudent(student).subscribe(lessonEvents => {
-                observer.next(lessonEvents[0]);
-                console.log(lessonEvents[0]);
-                observer.complete();
-            });
-        });
+        const url = this.getApiUrl('/LessonEvents/nearestStudentLessonEvent?studentId=' + student.id +
+            '&include=' + JSON.stringify(['Teacher', 'Student', {CourseProgress: ['Course']}, {Lesson: ['Course']}]));
+
+        return this.http.get<CallanLessonEvent>(url)
+            .pipe(
+                map<any, CallanLessonEvent>(row => {
+
+                    const lessonEvent = CallanLessonService.createLessonEvent();
+                    this.mapDataToLessonEvent(lessonEvent, row);
+                    return lessonEvent;
+                }),
+                catchError(this.handleHttpError<CallanLessonEvent>())
+            );
     }
 
     getDatesEnabled(lessonEvents: CallanLessonEvent[], previousDates: Date[]): Observable<Date[]> {

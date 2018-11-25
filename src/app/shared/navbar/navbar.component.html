@@ -6,8 +6,8 @@
                                                   [isLessonTimeSpent]="currentLessonEventRemainingMinutes <= 0"
                                                   [lessonEventRemainingMinutes]="currentLessonEventRemainingMinutes"
                                                   [lessonEvent]="currentLessonEvent"
-                                                  (lessonStartEvent)="handleLessonEventStart()"
-                                                  (lessonViewEvent)="handleLessonEventView()"
+                                                  (lessonStartEvent)="handleLessonEventStart($event)"
+                                                  (lessonViewEvent)="handleLessonEventView($event)"
             >
 
             </app-callan-lesson-event-announcement>

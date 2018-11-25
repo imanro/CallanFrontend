@@ -37,8 +37,6 @@ export class AppConfig implements IAppConfig {
                         console.log('response received');
                         for (const name in response) {
                             if (response.hasOwnProperty(name)) {
-                                console.log(response);
-                                console.log(this.appVersion)
                                 this[name] = response[name];
                             }
                         }

@@ -2,7 +2,7 @@ import {Inject, Injectable} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import {delay} from 'rxjs/operators';
 
-// import { CallanCustomersModule } from '../callan.module';
+
 import {CallanCustomerService} from './customer.service';
 import {CallanCustomer} from '../models/customer.model';
 import {AppConfig, IAppConfig} from '../../app.config';
@@ -10,10 +10,6 @@ import {mockCustomers} from '../data/mock-customers';
 import {mockRoles} from '../data/mock-roles';
 import {CallanRole} from '../models/role.model';
 import {CallanAuthService} from './auth.service';
-
-// @Injectable({
-//  providedIn: CallanCustomersModule
-// })
 
 @Injectable()
 export class CallanCustomerMockService extends CallanCustomerService {

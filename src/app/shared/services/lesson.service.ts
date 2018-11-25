@@ -19,9 +19,9 @@ import {Subject} from 'rxjs';
 @Injectable()
 export abstract class CallanLessonService extends CallanBaseService {
 
-    protected isLessonDetailsShown = false;
+    protected isLessonEventShown$ = new BehaviorSubject<boolean>(false);
 
-    protected isLessonDetailsShown$ = new BehaviorSubject<boolean>(false);
+    protected currentLessonEvent$ = new BehaviorSubject<CallanLessonEvent>(null);
 
     protected isLessonEventsUpdated$ = new Subject<void>();
 
@@ -77,6 +77,21 @@ export abstract class CallanLessonService extends CallanBaseService {
         };
     }
 
+    static getLessonEventStateName(value) {
+        switch (value) {
+            case(CallanLessonEventStateEnum.PLANNED):
+                return 'Planned';
+            case(CallanLessonEventStateEnum.STARTED):
+                return 'Started';
+            case(CallanLessonEventStateEnum.COMPLETED):
+                return 'Completed';
+            case(CallanLessonEventStateEnum.CONFIRMED):
+                return 'Confirmed';
+            case(CallanLessonEventStateEnum.CANCELED):
+                return 'Canceled';
+        }
+    }
+
     abstract getLessonEvents(courseProgress: CallanCourseProgress): Observable<CallanLessonEvent[]>;
 
     abstract getLessonEventsByStudent(student: CallanCustomer): Observable<CallanLessonEvent[]>;
@@ -123,28 +138,40 @@ export abstract class CallanLessonService extends CallanBaseService {
         super(appConfig);
     }
 
-    getIsLessonDetailsShown$(): BehaviorSubject<boolean> {
-        return this.isLessonDetailsShown$;
+    reset() {
+        this.setCurrentLessonEvent(null);
+        this.setIsLessonEventShown(false);
+    }
+
+    setCurrentLessonEvent(lessonEvent: CallanLessonEvent) {
+        this.currentLessonEvent$.next(lessonEvent);
+    }
+
+    getCurrentLessonEvent$(): BehaviorSubject<CallanLessonEvent> {
+        return this.currentLessonEvent$;
+    }
+
+    getIsLessonEventShown$(): BehaviorSubject<boolean> {
+        return this.isLessonEventShown$;
     }
 
     getIsLessonEventsUpdated$(): Subject<void> {
         return this.isLessonEventsUpdated$;
     }
 
-    setIsLessonDetailsShown(value): boolean {
-        if (value !== this.isLessonDetailsShown) {
-            this.isLessonDetailsShown = value;
-            this.isLessonDetailsShown$.next(value);
+    setIsLessonEventShown(value): boolean {
+        if (value !== this.isLessonEventShown$.getValue()) {
+            this.isLessonEventShown$.next(value);
         }
 
-        return this.isLessonDetailsShown;
+        return value;
     }
 
-    toggleIsLessonDetailsShown(): void {
-        if (this.isLessonDetailsShown) {
-            this.setIsLessonDetailsShown(false);
+    toggleIsLessonEventShown(): void {
+        if (this.isLessonEventShown$.getValue()) {
+            this.setIsLessonEventShown(false);
         } else {
-            this.setIsLessonDetailsShown(true);
+            this.setIsLessonEventShown(true);
         }
     }
 }

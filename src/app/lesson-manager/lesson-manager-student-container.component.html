@@ -13,7 +13,9 @@
                 <section>
                     <app-callan-lesson-event
                             [lessonEvent]="currentLessonEvent"
-                            *ngIf="currentLessonEvent && isLessonEventDetailsShown"
+                            [isConfirmButtonCanBeShown]="isConfirmLessonButtonShown"
+                            (lessonEventConfirmEvent)="handleLessonEventConfirm($event)"
+                            *ngIf="currentLessonEvent && isLessonEventShown"
                     ></app-callan-lesson-event>
 
                     <app-callan-courses-list
@@ -59,10 +61,9 @@
                             [courseProgress]="currentCourseProgress"
                             [calendarEvents]="calendarEvents"
                             [datesEnabled]="datesEnabled"
-                            [refresh$]="refresh$"
+                            [refresh$]="calendarRefresh$"
                             [currentDate]="currentDate"
                             [student]="currentCustomer"
-                            [lessonEvents$]="currentCourseLessonEvents$"
                             (cancelEvent)="handleLessonEventCreateCancel()"
                             (lessonEventCreateEvent)="lessonEventSave($event)"
                             (showCurrentWeekEvent)="handleCalendarShowCurrentWeek()"
@@ -75,8 +76,10 @@
                     ></app-callan-lesson-events-calendar>
 
                     <app-callan-lesson-events-list
-                            [lessonEvents$]="lessonEvents$"
+                            [lessonEvents]="lessonEvents"
+                            [refresh$]="lessonEventsListRefresh$"
                             *ngIf="view === viewNameEnum.DEFAULT"
+                            (setCurrentLessonEventEvent)="handleSetCurrentLessonEvent($event)"
                     ></app-callan-lesson-events-list>
 
                     <p *ngIf="currentCustomer">Current customer: {{currentCustomer.email}}</p>

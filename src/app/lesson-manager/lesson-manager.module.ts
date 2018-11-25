@@ -10,25 +10,28 @@ import {CalendarModule} from 'angular-calendar';
 import {CalendarWeekHoursViewModule} from '@imanro/angular-calendar-week-hours-view';
 
 import {CallanLessonManagerStudentContainerComponent} from './lesson-manager-student-container.component';
+import { CallanLessonManagerTeacherContainerComponent } from './lesson-manager-teacher-container.component';
 import {CallanCoursesListComponent} from './courses-list/courses-list.component';
 import {CallanCourseProgressDetailsComponent} from './course-progress-details/course-progress-details.component';
 import {CallanLessonEventsCalendarComponent} from './lesson-events-calendar/lesson-events-calendar.component';
 import {CallanLessonEventComponent} from './lesson-event/lesson-event.component';
 import {CallanLessonEventsListComponent} from './lesson-events-list/lesson-events-list.component';
 import {CallanCustomerCourseAddComponent} from './customer-course-add/customer-course-add.component';
-import {LessonEventsBalanceDetailsComponent} from './lesson-events-balance-details/lesson-events-balance-details.component';
+import {CallanLessonEventsBalanceDetailsComponent} from './lesson-events-balance-details/lesson-events-balance-details.component';
 import {AppModalContentModule} from '../shared-modules/modal-content/modal-content.module';
 import {AppModalContentComponent} from '../shared-modules/modal-content/modal-content.component';
 
 @NgModule({
-    declarations: [CallanLessonManagerStudentContainerComponent,
+    declarations: [
+        CallanLessonManagerStudentContainerComponent,
+        CallanLessonManagerTeacherContainerComponent,
         CallanCoursesListComponent,
         CallanCourseProgressDetailsComponent,
         CallanLessonEventsCalendarComponent,
         CallanLessonEventComponent,
         CallanLessonEventsListComponent,
         CallanCustomerCourseAddComponent,
-        LessonEventsBalanceDetailsComponent
+        CallanLessonEventsBalanceDetailsComponent
     ],
     imports: [
         CommonModule,
