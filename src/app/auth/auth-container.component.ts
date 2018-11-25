@@ -8,6 +8,7 @@ import {AppFormErrors} from '../shared/models/form-errors.model';
 import {AppError} from '../shared/models/error.model';
 import {CallanCustomerService} from '../shared/services/customer.service';
 import {CallanRoleNameEnum} from '../shared/enums/role.name.enum';
+import {CallanLessonService} from '../shared/services/lesson.service';
 
 @Component({
     selector: 'app-callan-auth-container',
@@ -27,7 +28,8 @@ export class CallanAuthContainerComponent implements OnInit, OnDestroy {
         private route: ActivatedRoute,
         private router: Router,
         private authService: CallanAuthService,
-        private customerService: CallanCustomerService
+        private customerService: CallanCustomerService,
+        private lessonService: CallanLessonService
     ) {}
 
     ngOnInit() {
@@ -51,9 +53,8 @@ export class CallanAuthContainerComponent implements OnInit, OnDestroy {
                 this.customerService.getAuthCustomer()
                     .subscribe(customer => {
 
-                        console.log('received!');
+                        this.lessonService.reset();
                         // now, we can redirect to main area
-
                         // redirection will depend on the customer's roles
 
                         // admin: customer-manager, teacher, student: lesson-manager, support: claim-manager
@@ -61,18 +62,20 @@ export class CallanAuthContainerComponent implements OnInit, OnDestroy {
                             console.log('will redirect to customers');
                             this.router.navigate(['/customers']);
 
-                        } else if (CallanCustomerService.hasCustomerRole(customer, CallanRoleNameEnum.STUDENT) ||
-                            CallanCustomerService.hasCustomerRole(customer, CallanRoleNameEnum.TEACHER)) {
-                            console.log('redirect to lessons')
-                            this.router.navigate(['/lessons']);
+                        } else if (CallanCustomerService.hasCustomerRole(customer, CallanRoleNameEnum.STUDENT)) {
+                            console.log('redirect to lessons (student realm)');
+                            this.router.navigate(['/lessons/student']);
+                        } else if (CallanCustomerService.hasCustomerRole(customer, CallanRoleNameEnum.TEACHER)) {
+                            console.log('redirect to lessons (teacher realm)');
+                            this.router.navigate(['/lessons/teacher']);
 
                         } else if (CallanCustomerService.hasCustomerRole(customer, CallanRoleNameEnum.SUPPORT)) {
                             console.log('redirect to claim-manager');
-                            this.router.navigate(['/lessons']);
+                            this.router.navigate(['/lessons/student']);
 
                         } else {
                             console.log('redirect to lessons anyway')
-                            this.router.navigate(['/lessons']);
+                            this.router.navigate(['/lessons/student']);
                         }
 
                 }, err => {

@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { ROUTES } from './sidebar-routes.config';
-import { RouteInfo } from "./sidebar.metadata";
 import { Router, ActivatedRoute } from "@angular/router";
 import { TranslateService } from '@ngx-translate/core';
 import {CallanAuthService} from '../services/auth.service';
@@ -33,13 +32,16 @@ export class SidebarComponent implements OnInit {
         this.customerService.getAuthCustomer().subscribe(customer => {
 
             const choosenRoutes = [];
+            let routeTitleReplacement = {};
 
             if (CallanCustomerService.hasCustomerRole(customer, CallanRoleNameEnum.ADMIN)) {
-                choosenRoutes.push(...['/customers', '/lessons', '/schedule']);
+                choosenRoutes.push(...['/customers', '/lessons/student', '/lessons/teacher', '/schedule']);
+                routeTitleReplacement = {'/lessons/student': 'Student Lessons', '/lessons/teacher': 'Teacher Lessons'}
+
             } else if (CallanCustomerService.hasCustomerRole(customer, CallanRoleNameEnum.TEACHER)) {
-                choosenRoutes.push(...['/lessons', '/schedule']);
+                choosenRoutes.push(...['/lessons/teacher', '/schedule']);
             } else if (CallanCustomerService.hasCustomerRole(customer, CallanRoleNameEnum.STUDENT)) {
-                choosenRoutes.push(...['/lessons']);
+                choosenRoutes.push(...['/lessons/student']);
             } else if (CallanCustomerService.hasCustomerRole(customer, CallanRoleNameEnum.SUPPORT)) {
                 choosenRoutes.push(...['/claims']);
             } else {
@@ -48,7 +50,13 @@ export class SidebarComponent implements OnInit {
 
             for (const name of choosenRoutes) {
                 for (const route of ROUTES) {
+
                     if (name === route.path) {
+
+                        if (routeTitleReplacement[name] !== undefined) {
+                            route.title = routeTitleReplacement[name];
+                        }
+
                         this.menuItems.push(route);
                     }
                 }

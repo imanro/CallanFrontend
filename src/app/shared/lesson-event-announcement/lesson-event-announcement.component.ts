@@ -12,8 +12,8 @@ export class CallanLessonEventAnnouncementComponent implements OnInit {
     @Input() isLessonTimeSpent = false;
     @Input() lessonEvent: CallanLessonEvent;
 
-    @Output() lessonStartEvent = new EventEmitter<void>();
-    @Output() lessonViewEvent = new EventEmitter<void>();
+    @Output() lessonStartEvent = new EventEmitter<CallanLessonEvent>();
+    @Output() lessonViewEvent = new EventEmitter<CallanLessonEvent>();
 
     lessonEventRemainingDays = 0;
     lessonEventRemainingHours = 0;
@@ -36,11 +36,11 @@ export class CallanLessonEventAnnouncementComponent implements OnInit {
   }
 
     handleLessonEventStart() {
-        this.lessonStartEvent.next();
+        this.lessonStartEvent.next(this.lessonEvent);
     }
 
     handleLessonEventView() {
-        this.lessonViewEvent.next();
+        this.lessonViewEvent.next(this.lessonEvent);
     }
 
 }

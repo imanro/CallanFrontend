@@ -9,6 +9,7 @@ import {CallanFormHelper} from '../shared/helpers/form-helper';
 import {ToastrService} from 'ngx-toastr';
 import {AppError} from '../shared/models/error.model';
 import {CallanCustomerManagerViewEnum} from '../shared/enums/customer-manager.view.enum';
+import {CallanLessonService} from '../shared/services/lesson.service';
 
 @Component({
     selector: 'app-callan-customer-manager-container',
@@ -32,6 +33,7 @@ export class CallanCustomerManagerContainerComponent implements OnInit, OnDestro
 
     constructor(
         private customerService: CallanCustomerService,
+        private lessonService: CallanLessonService,
         private toastrService: ToastrService
     ) {
         this.viewNameEnum = CallanCustomerManagerViewEnum;
@@ -53,6 +55,8 @@ export class CallanCustomerManagerContainerComponent implements OnInit, OnDestro
 
     handleSetCurrentCustomer(customer: CallanCustomer) {
         this.customerService.setCurrentCustomer(customer);
+        // resetting current data in lessonService
+        this.lessonService.reset();
         this.toastrService.clear();
         this.toastrService.success('Current customer now is ' + customer.firstName);
     }

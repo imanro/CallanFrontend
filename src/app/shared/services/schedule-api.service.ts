@@ -80,7 +80,7 @@ export class CallanScheduleApiService extends CallanScheduleService {
     saveScheduleRange(scheduleRange: CallanScheduleRange): Observable<CallanScheduleRange> {
 
         let data;
-console.log('here');
+
         try {
             data = this.mapScheduleRangeToData(scheduleRange);
         } catch (err) {
@@ -136,20 +136,17 @@ console.log('here');
         }
 
         const url = this.getApiUrl('/ScheduleRanges/availableHours') + '?' + this.buildQueryString(params);
-        console.log('querying for dates', url);
 
         return this.http.get<Date[]>(url)
             .pipe(
                 map<any, Date[]>(rows => {
 
-                    console.log('received', rows);
 
                     const result: Date[] = [];
                     for (const dateRow of rows) {
                         result.push(new Date(dateRow));
                     }
 
-                    console.log(result, 'made');
                     return result;
                 }),
                 catchError(this.handleHttpError<Date[]>())

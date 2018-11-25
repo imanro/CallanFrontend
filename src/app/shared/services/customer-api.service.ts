@@ -11,6 +11,7 @@ import {CallanRole} from '../models/role.model';
 import {CallanRoleNameEnum} from '../enums/role.name.enum';
 import {AppError} from '../models/error.model';
 import {CallanAuthService} from './auth.service';
+import {CallanLessonService} from './lesson.service';
 
 @Injectable()
 export class CallanCustomerApiService extends CallanCustomerService {

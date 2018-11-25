@@ -22,6 +22,7 @@ import * as moment from 'moment';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {AppModalContentComponent} from '../shared-modules/modal-content/modal-content.component';
 import {CallanLessonManagerStudentViewEnum} from '../shared/enums/lesson-manager-student.view.enum';
+import {CallanLessonEventStateEnum} from '../shared/enums/lesson-event.state.enum';
 
 @Component({
     selector: 'app-callan-lesson-manager-container',
@@ -39,7 +40,7 @@ export class CallanLessonManagerStudentContainerComponent implements OnInit, OnD
     currentCourseProgress: CallanCourseProgress;
 
     // we need this to be a subject
-    lessonEvents$ = new BehaviorSubject<CallanLessonEvent[]>([]);
+    lessonEvents: CallanLessonEvent[];
     currentCourseLessonEvents$ = new BehaviorSubject<CallanLessonEvent[]>([]);
 
     currentLessonEvent: CallanLessonEvent;
@@ -48,11 +49,11 @@ export class CallanLessonManagerStudentContainerComponent implements OnInit, OnD
     datesEnabled: Date[];
     calendarEvents: CalendarEvent[];
 
+    isConfirmLessonButtonShown = false;
     isTopUpLessonEventsBalanceButtonShown = false;
 
     // Helper indicator
-    isLessonEventDetailsShown = false;
-
+    isLessonEventShown = false;
     isCustomerCourseAddButtonShown = false;
     isLessonEventsCreateButtonShown = true;
 
@@ -63,7 +64,8 @@ export class CallanLessonManagerStudentContainerComponent implements OnInit, OnD
     isSaving = false;
 
     formErrors$ = new BehaviorSubject<AppFormErrors>(null);
-    refresh$ = new Subject<void>();
+    calendarRefresh$ = new Subject<void>();
+    lessonEventsListRefresh$ = new Subject<void>();
 
     // checkme
     private isInitialRouteProcessed = true;
@@ -85,70 +87,12 @@ export class CallanLessonManagerStudentContainerComponent implements OnInit, OnD
 
     ngOnInit() {
 
-        this.route.params
-            .pipe(takeUntil(this.unsubscribe$))
-            .subscribe(params => {
-
-                    this.isInitialRouteProcessed = false;
-
-                    // if there is courseProgressId, we can take the student from there
-                    if (params['courseProgressId'] !== undefined) {
-
-                        observableCombineLatest(
-                            this.customerService.getCurrentCustomer(),
-                            this.lessonService.getCourseProgress(params['courseProgressId']))
-                            .subscribe(results => {
-                                const customer = results[0];
-                                const courseProgress = results[1];
-
-                                if (!customer) {
-                                    this.customerService.getAuthCustomer().subscribe(authCustomer => {
-                                        if (CallanCustomerService.hasCustomerRole(authCustomer, CallanRoleNameEnum.ADMIN)) {
-                                            // try to set course progress and customer from it
-                                            console.log('Cause current auth customer is admin, we can set current ' +
-                                                'customer from courseprogress');
-                                            this.setCurrentCourseProgress(courseProgress);
-                                            this.customerService.setCurrentCustomer(courseProgress.customer);
-                                        }
-
-                                        this.isInitialRouteProcessed = true;
-                                    });
-                                } else {
-                                    if (customer && customer.id === courseProgress.customer.id) {
-                                        this.setCurrentCourseProgress(courseProgress);
-                                    }
-
-                                    this.isInitialRouteProcessed = true;
-                                }
-                            });
-                    } else {
-                        // just unset course progress
-                        this.setCurrentCourseProgress(null);
-                        this.isInitialRouteProcessed = true;
-                    }
-                }
-            );
+        this.processRouteParams();
 
         // for interaction with navbar
-        this.lessonService.getIsLessonDetailsShown$().pipe(
-            takeUntil(this.unsubscribe$)
-        ).subscribe(value => {
-            this.isLessonEventDetailsShown = value;
-        });
+        this.subscribeOnLessonEventShown();
 
-        this.lessonService.getIsLessonEventsUpdated$().pipe(
-            takeUntil(this.unsubscribe$)
-        ).subscribe(() => {
-            console.log('Lesson events updated, fetching the new info');
-            if (this.currentCustomer) {
-                this.assignLessonEvents(this.currentCustomer);
-                this.assignCurrentLessonEvent(this.currentCustomer);
-            }
-
-            if (this.currentCourseProgress) {
-                this.assignCurrentCourseLessonEvents(this.currentCourseProgress);
-            }
-        });
+        this.subscribeOnIsLessonEventsUpdated();
 
         this.assignCurrentCustomer();
         this.assignAuthCustomer();
@@ -159,10 +103,12 @@ export class CallanLessonManagerStudentContainerComponent implements OnInit, OnD
         // course progresses change process
         this.subscribeOnCourseProgresses();
 
+        // current lessonEvent subscription
+        this.subscribeOnCurrentLessonEvent();
+
         // chosen courseProgress
         this.subscribeOnCurrentCourseProgress();
 
-        this.subscribeOnLessonEvents();
         this.setCurrentDate(new Date());
         this.assignDatesEnabled(this.currentDate);
     }
@@ -336,6 +282,74 @@ export class CallanLessonManagerStudentContainerComponent implements OnInit, OnD
         });
     }
 
+    handleSetCurrentLessonEvent(lessonEvent) {
+
+        if (this.currentLessonEvent) {
+
+            if (this.currentLessonEvent.id === lessonEvent.id ) {
+                this.toggleLessonEventShown();
+            } else {
+                this.setIsLessonEventShown(true);
+            }
+        } else {
+            this.setIsLessonEventShown(true);
+        }
+
+        this.setCurrentLessonEvent(lessonEvent);
+    }
+
+    handleLessonEventConfirm(lessonEvent) {
+        this.lessonService.changetLessonEventState(lessonEvent, CallanLessonEventStateEnum.CONFIRMED).subscribe(() => {
+            console.log('Done');
+        });
+    }
+
+    private processRouteParams() {
+        this.route.params
+            .pipe(takeUntil(this.unsubscribe$))
+            .subscribe(params => {
+
+                    this.isInitialRouteProcessed = false;
+
+                    // if there is courseProgressId, we can take the student from there
+                    if (params['courseProgressId'] !== undefined) {
+
+                        observableCombineLatest(
+                            this.customerService.getCurrentCustomer(),
+                            this.lessonService.getCourseProgress(params['courseProgressId']))
+                            .subscribe(results => {
+                                const customer = results[0];
+                                const courseProgress = results[1];
+
+                                if (!customer) {
+                                    this.customerService.getAuthCustomer().subscribe(authCustomer => {
+                                        if (CallanCustomerService.hasCustomerRole(authCustomer, CallanRoleNameEnum.ADMIN)) {
+                                            // try to set course progress and customer from it
+                                            console.log('Cause current auth customer is admin, we can set current ' +
+                                                'customer from courseprogress');
+                                            this.setCurrentCourseProgress(courseProgress);
+                                            this.customerService.setCurrentCustomer(courseProgress.customer);
+                                        }
+
+                                        this.isInitialRouteProcessed = true;
+                                    });
+                                } else {
+                                    if (customer && customer.id === courseProgress.customer.id) {
+                                        this.setCurrentCourseProgress(courseProgress);
+                                    }
+
+                                    this.isInitialRouteProcessed = true;
+                                }
+                            });
+                    } else {
+                        // just unset course progress
+                        this.setCurrentCourseProgress(null);
+                        this.isInitialRouteProcessed = true;
+                    }
+                }
+            );
+    }
+
     private assignDatesEnabled(date: Date) {
 
         const range = CallanScheduleService.getWeekDatesRangeForDate(date);
@@ -345,13 +359,25 @@ export class CallanLessonManagerStudentContainerComponent implements OnInit, OnD
             this.datesEnabled = dates;
 
             observableTimer(100).subscribe(() => {
-                this.refresh$.next();
+                this.calendarRefresh$.next();
             });
         });
     }
 
     private setCurrentDate(date: Date) {
         this.currentDate = date;
+    }
+
+    private setCurrentLessonEvent(lessonEvent) {
+        this.lessonService.setCurrentLessonEvent(lessonEvent);
+    }
+
+    private setIsLessonEventShown(value) {
+        this.lessonService.setIsLessonEventShown(value);
+    }
+
+    private toggleLessonEventShown() {
+        this.lessonService.toggleIsLessonEventShown();
     }
 
     private createFormErrors() {
@@ -361,7 +387,7 @@ export class CallanLessonManagerStudentContainerComponent implements OnInit, OnD
     private setCurrentCourseProgress(courseProgress: CallanCourseProgress) {
 
         if (this.isInitialRouteProcessed) {
-            this.location.replaceState('/lessons/' + courseProgress.id);
+            this.location.replaceState('/lessons/student/' + courseProgress.id);
         }
 
         // put int observable
@@ -379,6 +405,9 @@ export class CallanLessonManagerStudentContainerComponent implements OnInit, OnD
             // special logic for Admin...
             if (CallanCustomerService.hasCustomerRole(customer, CallanRoleNameEnum.ADMIN)) {
                 this.isTopUpLessonEventsBalanceButtonShown = true;
+                this.isConfirmLessonButtonShown = true;
+            } else if (CallanCustomerService.hasCustomerRole(customer, CallanRoleNameEnum.STUDENT)) {
+                this.isConfirmLessonButtonShown = true;
             }
         });
     }
@@ -394,11 +423,9 @@ export class CallanLessonManagerStudentContainerComponent implements OnInit, OnD
             if (customer) {
                 this.assignCourseProgresses(customer);
                 this.assignLessonEvents(customer);
-                this.assignCurrentLessonEvent(customer);
             }
         });
     }
-
 
     private assignAllCourses() {
         this.lessonService.getAllCourses()
@@ -413,15 +440,16 @@ export class CallanLessonManagerStudentContainerComponent implements OnInit, OnD
         });
     }
 
-    private assignCurrentLessonEvent(customer) {
-        this.lessonService.getNearestStudentLessonEvent(customer).subscribe(lessonEvent => {
-            this.currentLessonEvent = lessonEvent;
-        });
-    }
-
+    // FIXME
     private assignLessonEvents(customer) {
         this.lessonService.getLessonEventsByStudent(customer).subscribe(lessonEvents => {
-            this.lessonEvents$.next(lessonEvents);
+            this.lessonEvents = lessonEvents;
+
+            observableTimer(50).subscribe(() => {
+                this.lessonEventsListRefresh$.next();
+            });
+
+            this.setCalendarEvents(lessonEvents);
         });
     }
 
@@ -432,6 +460,13 @@ export class CallanLessonManagerStudentContainerComponent implements OnInit, OnD
                     this.currentCourseLessonEvents$.next(lessonEvents);
                 });
         }
+    }
+
+    private subscribeOnCurrentLessonEvent() {
+        this.lessonService.getCurrentLessonEvent$().subscribe(lessonEvent => {
+            console.log('Current lesson event is changed');
+            this.currentLessonEvent = lessonEvent;
+        })
     }
 
     private subscribeOnCurrentCourseProgress() {
@@ -454,19 +489,14 @@ export class CallanLessonManagerStudentContainerComponent implements OnInit, OnD
             });
     }
 
-    private subscribeOnLessonEvents() {
-        this.lessonEvents$.pipe(
-            takeUntil(this.unsubscribe$)
-        ).subscribe(events => {
+    private setCalendarEvents(lessonEvents: CallanLessonEvent[]) {
+        this.calendarEvents = [];
 
-            this.calendarEvents = [];
+        for (const lessonEvent of lessonEvents) {
+            this.calendarEvents.push(CallanLessonService.convertLessonEventToCalendarEvent(lessonEvent));
+        }
 
-            if (events) {
-                for (const lessonEvent of events) {
-                    this.calendarEvents.push(CallanLessonService.convertLessonEventToCalendarEvent(lessonEvent));
-                }
-            }
-        });
+        this.calendarRefresh$.next();
     }
 
     private subscribeOnCourseProgresses() {
@@ -498,6 +528,34 @@ export class CallanLessonManagerStudentContainerComponent implements OnInit, OnD
                         }
                     });
             });
+    }
+
+    private subscribeOnLessonEventShown() {
+        this.lessonService.getIsLessonEventShown$().pipe(
+            takeUntil(this.unsubscribe$)
+        ).subscribe(value => {
+            this.isLessonEventShown = value;
+        });
+    }
+
+    private subscribeOnIsLessonEventsUpdated() {
+        this.lessonService.getIsLessonEventsUpdated$().pipe(
+            takeUntil(this.unsubscribe$)
+        ).subscribe(() => {
+
+            if (this.currentLessonEvent ) {
+                console.log('This case');
+            }
+
+            console.log('Lesson events updated, fetching the new info');
+            if (this.currentCustomer) {
+                this.assignLessonEvents(this.currentCustomer);
+            }
+
+            if (this.currentCourseProgress) {
+                this.assignCurrentCourseLessonEvents(this.currentCourseProgress);
+            }
+        });
     }
 
     private lessonEventSave(lessonEvent: CallanLessonEvent) {

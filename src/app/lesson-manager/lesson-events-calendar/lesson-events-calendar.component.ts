@@ -1,6 +1,5 @@
 import {Component, EventEmitter, Input, Output, OnInit, ViewChild, TemplateRef, OnDestroy} from '@angular/core';
 import {CallanCourseProgress} from '../../shared/models/course-progress.model';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Subject} from 'rxjs';
 
 import {
@@ -33,8 +32,6 @@ export class CallanLessonEventsCalendarComponent implements OnInit {
     @Input() courseProgress: CallanCourseProgress;
 
     @Input() student: CallanCustomer;
-
-    @Input() lessonEvents$: BehaviorSubject<CallanLessonEvent[]>;
 
     @Input() datesEnabled: Date[];
 

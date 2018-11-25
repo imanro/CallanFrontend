@@ -9,7 +9,7 @@
 <ng-template #lessonIsUpcommingBlock>
     <div class="row" *ngIf="isLessonTimeSpent; else lessonUpcommingCounterBlock">
         <div class="col-sm-12">
-            <span class="text">The <a href="javascript:void(0)" (click)="handleLessonEventView()">lesson</a> time is NOW.</span>
+            <span class="text">The <a href="javascript:void(0)" (click)="handleLessonEventView()">lesson</a> ({{lessonEvent.id}}) time ({{lessonEvent.startTime.toISOString()}}) is NOW.</span>
             <a class="btn btn-raised btn-sm gradient-blackberry white"
                href="javascript:void(0)"
                (click)="handleLessonEventStart()">Start the lesson!</a>

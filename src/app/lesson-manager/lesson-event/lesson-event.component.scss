@@ -11,18 +11,25 @@
     border-radius: 5px;
   }
 
-  .date-info {
+  .meta-info {
+
+    .row {
+      * {
+        vertical-align: middle !important;
+      }
+
+      i {
+        color: map-get($grey, 'base');
+        font-size: 1.3rem;
+        margin-right: 0.7rem;
+      }
+    }
+
+    .row:not(last-child) {
+      margin-bottom: .2Em;
+    }
 
     align-self: center;
 
-    * {
-      vertical-align: middle !important;
-    }
-
-    i {
-      color: map-get($grey, 'base');
-      font-size: 1.3rem;
-      margin-right: 0.7rem;
-    }
   }
 }
