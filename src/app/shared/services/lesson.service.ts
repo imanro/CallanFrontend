@@ -11,7 +11,7 @@ import {CalendarEvent } from 'angular-calendar';
 import {CallanLesson} from '../models/lesson.model';
 import {CallanLessonEventStateEnum} from '../enums/lesson-event.state.enum';
 import {CallanBaseService} from './base.service';
-import {AppConfig, IAppConfig} from '../../app.config';
+import {AppConfig} from '../../app.config';
 import {CallanCourseStage} from '../models/course-stage.model';
 import {Subject} from 'rxjs';
 
@@ -110,13 +110,11 @@ export abstract class CallanLessonService extends CallanBaseService {
 
     abstract getCourseProgress(id: number): Observable<CallanCourseProgress>;
 
-    // CHECKME: signature (does the lessonEvents needed here?)
-    abstract getNearestStudentLessonEvent(customer: CallanCustomer): Observable<CallanLessonEvent>;
+    abstract getNearestStudentLessonEvent(student: CallanCustomer): Observable<CallanLessonEvent>;
 
-    // CHECKME: signature (does the lessonEvents needed here?)
-    abstract getDatesEnabled(lessonEvents: CallanLessonEvent[], previousDates: Date[]): Observable<Date[]>;
+    abstract getNearestTeacherLessonEvent(teacher: CallanCustomer): Observable<CallanLessonEvent>;
 
-    abstract changetLessonEventState(lessonEvent: CallanLessonEvent, state: number): Observable<CallanLessonEvent>;
+    abstract changeLessonEventState(lessonEvent: CallanLessonEvent, state: number, reason?: string): Observable<CallanLessonEvent>;
 
     abstract mapDataToCourse(course: CallanCourse, row: any): void;
 
@@ -133,7 +131,7 @@ export abstract class CallanLessonService extends CallanBaseService {
     abstract mapDataToCourseStage(courseStage: CallanCourseStage, row: any): void;
 
     constructor(
-        @Inject(AppConfig) protected appConfig: IAppConfig
+        protected appConfig: AppConfig
     ) {
         super(appConfig);
     }

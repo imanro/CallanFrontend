@@ -5,7 +5,7 @@ import {delay} from 'rxjs/operators';
 
 import {CallanCustomerService} from './customer.service';
 import {CallanCustomer} from '../models/customer.model';
-import {AppConfig, IAppConfig} from '../../app.config';
+import {AppConfig} from '../../app.config';
 import {mockCustomers} from '../data/mock-customers';
 import {mockRoles} from '../data/mock-roles';
 import {CallanRole} from '../models/role.model';
@@ -15,7 +15,7 @@ import {CallanAuthService} from './auth.service';
 export class CallanCustomerMockService extends CallanCustomerService {
 
     constructor(
-        @Inject(AppConfig) protected appConfig: IAppConfig,
+        protected appConfig: AppConfig,
         protected authService: CallanAuthService
     ) {
         super(appConfig, authService);

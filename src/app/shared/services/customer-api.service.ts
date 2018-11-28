@@ -1,4 +1,4 @@
-import {Inject, Injectable} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import {map, catchError} from 'rxjs/operators';
 import {HttpClient} from '@angular/common/http';
@@ -6,18 +6,17 @@ import {HttpClient} from '@angular/common/http';
 // import { CallanCustomersModule } from '../callan.module';
 import {CallanCustomerService} from './customer.service';
 import {CallanCustomer} from '../models/customer.model';
-import {AppConfig, IAppConfig} from '../../app.config';
+import {AppConfig} from '../../app.config';
 import {CallanRole} from '../models/role.model';
 import {CallanRoleNameEnum} from '../enums/role.name.enum';
 import {AppError} from '../models/error.model';
 import {CallanAuthService} from './auth.service';
-import {CallanLessonService} from './lesson.service';
 
 @Injectable()
 export class CallanCustomerApiService extends CallanCustomerService {
 
     constructor(
-        @Inject(AppConfig) protected appConfig: IAppConfig,
+        protected appConfig: AppConfig,
         protected authService: CallanAuthService,
         protected http: HttpClient
     ) {

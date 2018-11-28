@@ -12,7 +12,7 @@ import {CallanRole} from '../models/role.model';
 
 import {mockRoles} from '../data/mock-roles';
 import {CallanAuthService} from './auth.service';
-import {AppConfig, IAppConfig} from '../../app.config';
+import {AppConfig} from '../../app.config';
 import {CallanRoleNameEnum} from '../enums/role.name.enum';
 import {CallanLessonService} from './lesson.service';
 
@@ -45,7 +45,7 @@ export abstract class CallanCustomerService extends CallanBaseService {
     }
 
     constructor(
-        @Inject(AppConfig) protected appConfig: IAppConfig,
+        protected appConfig: AppConfig,
         protected authService: CallanAuthService
     ) {
         super(appConfig);
@@ -144,7 +144,6 @@ export abstract class CallanCustomerService extends CallanBaseService {
         return new Observable<CallanCustomer>(observer => {
             this.getAuthCustomer().subscribe(customer => {
                 if (CallanCustomerService.hasCustomerRole(customer, CallanRoleNameEnum.ADMIN)) {
-
                     // only if it is not set yet
                     if (!this.currentCustomer) {
                         this.setCurrentCustomer(customer);

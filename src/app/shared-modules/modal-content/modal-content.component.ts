@@ -11,7 +11,7 @@ import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
             </button>
         </div>
         <div class="modal-body">
-            <p [innerHTML]="body"></p>
+            <div [innerHTML]="body"></div>
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-outline-secondary" (click)="activeModal.close(false)">Cancel</button>

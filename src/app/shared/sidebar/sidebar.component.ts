@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ROUTES } from './sidebar-routes.config';
+import {combineLatest as observableCombineLatest} from 'rxjs';
 import { Router, ActivatedRoute } from "@angular/router";
 import { TranslateService } from '@ngx-translate/core';
 import {CallanAuthService} from '../services/auth.service';
@@ -29,41 +30,70 @@ export class SidebarComponent implements OnInit {
     ngOnInit() {
         $.getScript('./assets/js/app-sidebar.js');
 
-        this.customerService.getAuthCustomer().subscribe(customer => {
+        this.customerService.getCurrentCustomer().subscribe(() => {
+            //   call this to set current customer by default for admin
+            observableCombineLatest(
+                this.customerService.getAuthCustomer(),
+                this.customerService.getCurrentCustomer$()
+            ).subscribe(results => {
+                const authCustomer = results[0];
+                const currentCustomer = results[1];
 
-            const choosenRoutes = [];
-            let routeTitleReplacement = {};
+                console.log('Now, current and auth:', authCustomer, currentCustomer);
 
-            if (CallanCustomerService.hasCustomerRole(customer, CallanRoleNameEnum.ADMIN)) {
-                choosenRoutes.push(...['/customers', '/lessons/student', '/lessons/teacher', '/schedule']);
-                routeTitleReplacement = {'/lessons/student': 'Student Lessons', '/lessons/teacher': 'Teacher Lessons'}
 
-            } else if (CallanCustomerService.hasCustomerRole(customer, CallanRoleNameEnum.TEACHER)) {
-                choosenRoutes.push(...['/lessons/teacher', '/schedule']);
-            } else if (CallanCustomerService.hasCustomerRole(customer, CallanRoleNameEnum.STUDENT)) {
-                choosenRoutes.push(...['/lessons/student']);
-            } else if (CallanCustomerService.hasCustomerRole(customer, CallanRoleNameEnum.SUPPORT)) {
-                choosenRoutes.push(...['/claims']);
-            } else {
-                choosenRoutes.push(...['/lessons']);
-            }
+                // clear menu items
+                this.menuItems = [];
 
-            for (const name of choosenRoutes) {
-                for (const route of ROUTES) {
+                const choosenRoutes = [];
+                let routeTitleReplacement = {};
 
-                    if (name === route.path) {
+                if (CallanCustomerService.hasCustomerRole(authCustomer, CallanRoleNameEnum.ADMIN)) {
+                    choosenRoutes.push(...['/customers']);
 
-                        if (routeTitleReplacement[name] !== undefined) {
-                            route.title = routeTitleReplacement[name];
+                    if (currentCustomer) {
+                        if (CallanCustomerService.hasCustomerRole(currentCustomer, CallanRoleNameEnum.TEACHER)){
+                            choosenRoutes.push(...['/lessons/teacher', '/schedule']);
+                        } else if (CallanCustomerService.hasCustomerRole(currentCustomer, CallanRoleNameEnum.STUDENT)){
+                            choosenRoutes.push(...['/lessons/student']);
                         }
+                    }
+                    routeTitleReplacement = {'/lessons/student': 'Student Lessons', '/lessons/teacher': 'Teacher Lessons'}
 
-                        this.menuItems.push(route);
+                } else if (CallanCustomerService.hasCustomerRole(authCustomer, CallanRoleNameEnum.TEACHER)) {
+                    choosenRoutes.push(...['/lessons/teacher', '/schedule']);
+                } else if (CallanCustomerService.hasCustomerRole(authCustomer, CallanRoleNameEnum.STUDENT)) {
+                    choosenRoutes.push(...['/lessons/student']);
+                } else if (CallanCustomerService.hasCustomerRole(authCustomer, CallanRoleNameEnum.SUPPORT)) {
+                    choosenRoutes.push(...['/claims']);
+                } else {
+                    choosenRoutes.push(...['/lessons']);
+                }
+
+                for (const name of choosenRoutes) {
+                    for (const route of ROUTES) {
+
+                        if (name === route.path) {
+
+                            if (routeTitleReplacement[name] !== undefined) {
+                                route.title = routeTitleReplacement[name];
+                            }
+
+                            this.menuItems.push(route);
+                        }
                     }
                 }
-            }
 
-            console.log('customer received');
+                console.log('customer received');
+            });
         });
+
+        /*
+        this.customerService.getAuthCustomer().subscribe(customer => {
+
+
+        });
+        */
 
         // this.menuItems = ROUTES.filter(menuItem => menuItem);
     }

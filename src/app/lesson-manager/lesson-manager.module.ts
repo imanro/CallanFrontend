@@ -20,6 +20,8 @@ import {CallanCustomerCourseAddComponent} from './customer-course-add/customer-c
 import {CallanLessonEventsBalanceDetailsComponent} from './lesson-events-balance-details/lesson-events-balance-details.component';
 import {AppModalContentModule} from '../shared-modules/modal-content/modal-content.module';
 import {AppModalContentComponent} from '../shared-modules/modal-content/modal-content.component';
+import {AppModalContentFeedbackModule} from '../shared-modules/modal-content-feedback/modal-content-feedback.module';
+import {AppModalContentFeedbackComponent} from '../shared-modules/modal-content-feedback/modal-content-feedback.component';
 
 @NgModule({
     declarations: [
@@ -42,8 +44,9 @@ import {AppModalContentComponent} from '../shared-modules/modal-content/modal-co
         CalendarModule.forRoot(),
         CalendarWeekHoursViewModule,
         AppModalContentModule,
+        AppModalContentFeedbackModule,
     ],
-    entryComponents: [AppModalContentComponent],
+    entryComponents: [AppModalContentComponent, AppModalContentFeedbackComponent],
 })
 export class CallanLessonManagerModule {
 }

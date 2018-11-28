@@ -25,8 +25,17 @@ ngb-accordion {
   padding: 0;
 }
 
-.ng2-smart-actions > ng2-st-tbody-custom > {
-  a, a:hover {
-    text-decoration: none;
+
+ng2-smart-table {
+  .ng2-smart-actions > ng2-st-tbody-custom > {
+    a, a:hover {
+      text-decoration: none;
+    }
+  }
+
+  tr:not(.cancel-shown) {
+    i.cancel {
+      display: none;
+    }
   }
 }
