@@ -2,6 +2,7 @@ import {Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
 import {CallanLessonEvent} from '../../shared/models/lesson-event.model';
 import {CallanLessonEventStateEnum} from '../../shared/enums/lesson-event.state.enum';
 import {CallanLessonService} from '../../shared/services/lesson.service';
+import {CallanLessonEventViewEnum} from '../../shared/enums/lesson-event.view.enum';
 
 @Component({
     selector: 'app-callan-lesson-event',
@@ -11,14 +12,22 @@ import {CallanLessonService} from '../../shared/services/lesson.service';
 export class CallanLessonEventComponent implements OnInit {
 
     @Input() lessonEvent: CallanLessonEvent;
+
     @Input() isConfirmButtonCanBeShown: boolean;
+
+    @Input() view: string;
+
     @Output() lessonEventConfirmEvent = new EventEmitter<CallanLessonEvent>();
 
     lessonEventStateEnum: any;
 
+    viewNameEnum: any;
+
     constructor() {
         this.lessonEventStateEnum = CallanLessonEventStateEnum;
         this.isConfirmButtonCanBeShown = false;
+
+        this.viewNameEnum = CallanLessonEventViewEnum;
     }
 
 

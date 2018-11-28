@@ -19,7 +19,11 @@ export class CallanLessonEventsListComponent implements OnInit, OnDestroy {
 
     @Input() refresh$ = new Subject<void>();
 
+    @Input() isLessonEditingShown = false;
+
     @Output() setCurrentLessonEventEvent = new EventEmitter<CallanLessonEvent>();
+
+    @Output() cancelLessonEventEvent = new EventEmitter<CallanLessonEvent>();
 
     source: LocalDataSource;
     settings: any;
@@ -30,11 +34,11 @@ export class CallanLessonEventsListComponent implements OnInit, OnDestroy {
         private datePipe: DatePipe
     ) {
         this.source = new LocalDataSource();
-        this.buildTable();
     }
 
     ngOnInit() {
         console.log('LE:', this.lessonEvents);
+        this.buildTable();
         // not load twice
         this.loadTableData();
         this.subscribeOnRefresh();
@@ -50,6 +54,10 @@ export class CallanLessonEventsListComponent implements OnInit, OnDestroy {
             case('setCurrentLessonEvent'):
                 this.setCurrentLessonEventEvent.next($e.data);
                 break;
+            case('cancelLessonEvent'):
+                console.log('cancel');
+                this.cancelLessonEventEvent.next($e.data);
+                break;
             default:
                 break;
         }
@@ -57,6 +65,22 @@ export class CallanLessonEventsListComponent implements OnInit, OnDestroy {
 
     private buildTable() {
         const _this = this;
+
+        const actionButtons = [
+            {
+                name: 'setCurrentLessonEvent',
+                title: '<i class="ft-eye success view font-medium-1 mr-2" title="View lesson event"></i>',
+            },
+        ];
+
+        if (this.isLessonEditingShown) {
+            actionButtons.push({
+                    // CHECKME: this action only for student
+                    name: 'cancelLessonEvent',
+                    title: '<i class="ft-trash-2 danger cancel font-medium-1 mr-2" title="Cancel lesson event"></i>',
+                }
+            );
+        }
 
         this.settings = {
             columns: {
@@ -114,12 +138,7 @@ export class CallanLessonEventsListComponent implements OnInit, OnDestroy {
                 class: 'table table-responsive'
             },
             actions: {
-                custom: [
-                    {
-                        name: 'setCurrentLessonEvent',
-                        title: '<i class="ft-eye success font-medium-1 mr-2" title="View lesson event"></i>',
-                    },
-                ],
+                custom: actionButtons,
                 add: false,
                 edit: false,
                 delete: false,
@@ -131,6 +150,9 @@ export class CallanLessonEventsListComponent implements OnInit, OnDestroy {
             delete: {
                 deleteButtonContent: '<i class="ft-x danger font-medium-1 mr-2"></i>'
             },
+            rowClassFunction: function(row) {
+                return row.data.state === CallanLessonEventStateEnum.PLANNED ? 'cancel-shown' : '';
+            }
         };
     }
 
@@ -141,7 +163,6 @@ export class CallanLessonEventsListComponent implements OnInit, OnDestroy {
     }
 
     private subscribeOnRefresh() {
-        console.log('sor');
         this.refresh$.pipe(
             takeUntil(this.unsubscribe$)
         ).subscribe(() => {

@@ -15,6 +15,7 @@ export class CallanLessonEvent extends CallanBaseModel {
     startTime: Date;
     duration: number;
     state: number;
+    cancelationReason: string;
 
     isStarted?() {
         return this.state === CallanLessonEventStateEnum.STARTED;

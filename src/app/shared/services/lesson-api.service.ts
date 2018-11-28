@@ -94,7 +94,7 @@ export class CallanLessonApiService extends CallanLessonService {
 
         const url = this.getApiUrl('/LessonEvents?filter=' + JSON.stringify({
             where: {courseProgressId: courseProgress.id},
-            order: ['startTime ASC'],
+            order: ['state ASC', 'startTime ASC'],
             include: ['Teacher', 'Student', {CourseProgress: ['Course']}, {Lesson: ['Course']}]
         }));
 
@@ -121,7 +121,7 @@ export class CallanLessonApiService extends CallanLessonService {
 
         const url = this.getApiUrl('/LessonEvents?filter=' + JSON.stringify({
             where: {studentId: student.id},
-            order: ['startTime ASC'],
+            order: ['state ASC', 'startTime ASC'],
             include: ['Teacher', 'Student', {CourseProgress: ['Course']}, {Lesson: ['Course']}]
         }));
 
@@ -147,7 +147,7 @@ export class CallanLessonApiService extends CallanLessonService {
 
         const url = this.getApiUrl('/LessonEvents?filter=' + JSON.stringify({
             where: {teacherId: teacher.id},
-            order: ['startTime ASC'],
+            order: ['state ASC', 'startTime ASC'],
             include: ['Teacher', 'Student', {CourseProgress: ['Course']}, {Lesson: ['Course']}]
         }));
 
@@ -205,68 +205,21 @@ export class CallanLessonApiService extends CallanLessonService {
             );
     }
 
-    getDatesEnabled(lessonEvents: CallanLessonEvent[], previousDates: Date[]): Observable<Date[]> {
+    getNearestTeacherLessonEvent(student: CallanCustomer): Observable<CallanLessonEvent> {
 
-        return new Observable<Date[]>(observer => {
-            const baseDate = new Date();
+        const url = this.getApiUrl('/LessonEvents/nearestTeacherLessonEvent?teacherId=' + student.id +
+            '&include=' + JSON.stringify(['Teacher', 'Student', {CourseProgress: ['Course']}, {Lesson: ['Course']}]));
 
-            baseDate.setDate(baseDate.getDate() - 3);
-            baseDate.setHours(9);
-            baseDate.setMinutes(0);
-            baseDate.setMinutes(0);
-            baseDate.setSeconds(0);
+        return this.http.get<CallanLessonEvent>(url)
+            .pipe(
+                map<any, CallanLessonEvent>(row => {
 
-            let randStart, randEnd;
-
-            let list = [];
-            if (previousDates) {
-                console.log('There was a previous dates', previousDates);
-                list = previousDates;
-            } else {
-                list = [];
-                for (let i = 0; i < 7; i++) {
-
-                    randStart = Math.floor(Math.random() * (20 - 10) + 10);
-                    randEnd = Math.floor(Math.random() * (20 - randStart) + randStart);
-
-                    // console.log(randStart, randEnd);
-
-                    for (let j = 10; j <= 20; j++) {
-                        // console.log(j, 'is');
-                        if (j >= randStart && j <= randEnd) {
-                            // console.log('katit');
-                            const date = new Date(baseDate.getTime());
-                            date.setDate(baseDate.getDate() + i);
-                            date.setHours(j);
-                            // console.log(date);
-                            list.push(date);
-                        }
-                    }
-                }
-            }
-
-            // checking the list against the lessonEvents
-            let counter = 0;
-            for (const date of list) {
-                for (const lessonEvent of lessonEvents) {
-                    if (
-                        lessonEvent.startTime.getFullYear() === date.getFullYear() &&
-                        lessonEvent.startTime.getMonth() === date.getMonth() &&
-                        lessonEvent.startTime.getDate() === date.getDate() &&
-                        lessonEvent.startTime.getHours() === date.getHours()
-                    ) {
-                        console.log('Removing an item from list of enabled dates');
-                        list.splice(counter, 1);
-                    }
-                }
-
-                counter++;
-            }
-
-            console.log('Now, list of enabled dates contains', list.length, 'elements');
-            console.log(list);
-            observer.next(list);
-        });
+                    const lessonEvent = CallanLessonService.createLessonEvent();
+                    this.mapDataToLessonEvent(lessonEvent, row);
+                    return lessonEvent;
+                }),
+                catchError(this.handleHttpError<CallanLessonEvent>())
+            );
     }
 
 
@@ -331,8 +284,13 @@ export class CallanLessonApiService extends CallanLessonService {
         }
     }
 
-    changetLessonEventState(lessonEvent: CallanLessonEvent, state: number): Observable<CallanLessonEvent> {
+    changeLessonEventState(lessonEvent: CallanLessonEvent, state: number, reason?: string): Observable<CallanLessonEvent> {
         lessonEvent.state = state;
+
+        if (reason) {
+            lessonEvent.cancelationReason = reason;
+        }
+
         return this.saveLessonEvent(lessonEvent);
     }
 
@@ -393,6 +351,7 @@ export class CallanLessonApiService extends CallanLessonService {
         lessonEvent.duration = row.duration;
         lessonEvent.startTime = new Date(row.startTime);
         lessonEvent.state = row.state;
+        lessonEvent.cancelationReason = row.cancelationReason;
 
         const courseProgress = CallanLessonService.createCourseProgress();
         this.mapDataToCourseProgress(courseProgress, row.CourseProgress, false);
@@ -424,6 +383,7 @@ export class CallanLessonApiService extends CallanLessonService {
         data.state = lessonEvent.state;
         data.startTime = lessonEvent.startTime.toISOString();
         data.courseProgressId = lessonEvent.courseProgress.id;
+        data.cancelationReason = lessonEvent.cancelationReason;
 
         if (!lessonEvent.teacher && !lessonEvent.student) {
             throw new AppError('Either student or teacher should be set for lessonEvent');

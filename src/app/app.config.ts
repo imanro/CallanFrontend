@@ -9,9 +9,8 @@ export interface IAppConfig {
     modalSize: string;
     apiUrl:  string;
     appVersion: string;
-    checkNearestLessonEventIntervalMs: number;
-    checkCurrentLessonEventStartTimeIntervalMs: number;
-
+    nearestLessonEventRemainingMinutesCheckIntervalMs: number;
+    nearestLessonEventCheckIntervalMs: number;
 }
 
 @Injectable()
@@ -21,8 +20,10 @@ export class AppConfig implements IAppConfig {
     modalSize = 'lg';
     apiUrl:  string;
     appVersion = versionInfo.hash;
-    checkNearestLessonEventIntervalMs = 30000;
-    checkCurrentLessonEventStartTimeIntervalMs = 30000;
+    nearestLessonEventRemainingMinutesCheckIntervalMs = 30000;
+    nearestLessonEventCheckIntervalMs = 60000;
+    lessonEventsUpdateIntervalMs = 60000;
+    lessonEventAllowStartOffsetMinutes = 5;
 
     constructor(
         private http: HttpClient

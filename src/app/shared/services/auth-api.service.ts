@@ -1,15 +1,16 @@
-import {Inject} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 
 import {CallanAuthService} from './auth.service';
-import {AppConfig, IAppConfig} from '../../app.config';
+import {AppConfig} from '../../app.config';
 import { map, catchError } from 'rxjs/operators';
 
+@Injectable()
 export class CallanAuthApiService extends CallanAuthService {
 
     constructor(
-        @Inject(AppConfig) protected appConfig: IAppConfig,
+        protected appConfig: AppConfig,
         private http: HttpClient
     ) {
         super(appConfig);

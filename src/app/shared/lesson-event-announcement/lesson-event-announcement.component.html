@@ -9,7 +9,7 @@
 <ng-template #lessonIsUpcommingBlock>
     <div class="row" *ngIf="isLessonTimeSpent; else lessonUpcommingCounterBlock">
         <div class="col-sm-12">
-            <span class="text">The <a href="javascript:void(0)" (click)="handleLessonEventView()">lesson</a> ({{lessonEvent.id}}) time ({{lessonEvent.startTime.toISOString()}}) is NOW.</span>
+            <span class="text">The <a href="javascript:void(0)" (click)="handleLessonEventView()">lesson</a> time is NOW.</span>
             <a class="btn btn-raised btn-sm gradient-blackberry white"
                href="javascript:void(0)"
                (click)="handleLessonEventStart()">Start the lesson!</a>
@@ -20,7 +20,7 @@
         <div class="row">
             <div class="col-sm-12" *ngIf="lessonEventRemainingDays > 0; else lessonEventRemainingHoursBlock">
                     <span class="text">You have an upcoming <a href="javascript:void(0)"
-                                                               (click)="handleLessonEventView()">lesson</a> in {{lessonEventRemainingDays}} days</span>
+                                                               (click)="handleLessonEventView()">lesson</a> in {{lessonEventRemainingDays}}  days</span>
             </div>
 
             <ng-template #lessonEventRemainingHoursBlock>

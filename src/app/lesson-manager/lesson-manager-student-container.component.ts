@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Location} from '@angular/common';
-import {Subject, timer as observableTimer} from 'rxjs';
+import {Subject, timer as observableTimer, interval as observableInterval} from 'rxjs';
 import {ToastrService} from 'ngx-toastr';
 import {combineLatest as observableCombineLatest} from 'rxjs/observable/combineLatest';
 import {takeUntil} from 'rxjs/operators';
@@ -21,8 +21,11 @@ import {CallanScheduleService} from '../shared/services/schedule.service';
 import * as moment from 'moment';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {AppModalContentComponent} from '../shared-modules/modal-content/modal-content.component';
+import {AppModalContentFeedbackComponent} from '../shared-modules/modal-content-feedback/modal-content-feedback.component';
 import {CallanLessonManagerStudentViewEnum} from '../shared/enums/lesson-manager-student.view.enum';
 import {CallanLessonEventStateEnum} from '../shared/enums/lesson-event.state.enum';
+import {CallanLessonEventViewEnum} from '../shared/enums/lesson-event.view.enum';
+import {AppConfig} from '../app.config';
 
 @Component({
     selector: 'app-callan-lesson-manager-container',
@@ -59,7 +62,7 @@ export class CallanLessonManagerStudentContainerComponent implements OnInit, OnD
 
     view = CallanLessonManagerStudentViewEnum.DEFAULT;
     viewNameEnum: any;
-
+    lessonEventViewNameEnum: any;
 
     isSaving = false;
 
@@ -74,6 +77,7 @@ export class CallanLessonManagerStudentContainerComponent implements OnInit, OnD
     private unsubscribe$: Subject<void> = new Subject();
 
     constructor(
+        private appConfig: AppConfig,
         private customerService: CallanCustomerService,
         private lessonService: CallanLessonService,
         private scheduleService: CallanScheduleService,
@@ -83,6 +87,7 @@ export class CallanLessonManagerStudentContainerComponent implements OnInit, OnD
         private modalService: NgbModal
     ) {
         this.viewNameEnum = CallanLessonManagerStudentViewEnum;
+        this.lessonEventViewNameEnum = CallanLessonEventViewEnum;
     }
 
     ngOnInit() {
@@ -93,6 +98,7 @@ export class CallanLessonManagerStudentContainerComponent implements OnInit, OnD
         this.subscribeOnLessonEventShown();
 
         this.subscribeOnIsLessonEventsUpdated();
+        this.subscribeOnLessonEventsUpdateInterval();
 
         this.assignCurrentCustomer();
         this.assignAuthCustomer();
@@ -298,8 +304,61 @@ export class CallanLessonManagerStudentContainerComponent implements OnInit, OnD
         this.setCurrentLessonEvent(lessonEvent);
     }
 
+    handleCancelLessonEvent(lessonEvent) {
+        // check state
+        console.log('to cancel');
+
+        const modalRef = this.modalService.open(AppModalContentFeedbackComponent, {
+            centered: true,
+            backdrop: true,
+            size: 'lg'
+        });
+
+        modalRef.componentInstance.title = 'Confirm cancel lesson';
+        modalRef.componentInstance.message = '<p>Do you confirm the lesson cancelation? Please, write a few fords about the reason</p>';
+
+        modalRef.result.then((userResponse) => {
+
+            if (userResponse) {
+                if (userResponse.result) {
+                    // cancel (update status) and then reload lesson evnets
+                    // TODO: check is this action available for this lesson currently
+                    const prevState = lessonEvent.state;
+
+                    this.lessonService.changeLessonEventState(lessonEvent, CallanLessonEventStateEnum.CANCELED, userResponse.feedback).subscribe(() => {
+                        console.log('Done');
+                        this.toastrService.success('The lesson was canceled, you\'ve been refunded', 'Success');
+                        // FIXME - to subscription, perhaps
+                        this.assignCourseProgresses(this.currentCustomer);
+                    }, err => {
+
+                        if (err instanceof AppError) {
+                            let message;
+
+                            if (err.httpStatus === 400) {
+                                message = err.message;
+                            } else {
+                                message = 'Something went wrong';
+                            }
+
+                            console.error(err, 'occurred');
+                            this.toastrService.error(message, 'Error');
+                        }
+
+                        lessonEvent.state = prevState;
+
+                    });
+                } else {
+                    console.log('No cancelation , continuing to work');
+                }
+            }
+        }, () => {
+            // just do nothing
+        });
+    }
+
     handleLessonEventConfirm(lessonEvent) {
-        this.lessonService.changetLessonEventState(lessonEvent, CallanLessonEventStateEnum.CONFIRMED).subscribe(() => {
+        this.lessonService.changeLessonEventState(lessonEvent, CallanLessonEventStateEnum.CONFIRMED).subscribe(() => {
             console.log('Done');
         });
     }
@@ -325,7 +384,7 @@ export class CallanLessonManagerStudentContainerComponent implements OnInit, OnD
                                     this.customerService.getAuthCustomer().subscribe(authCustomer => {
                                         if (CallanCustomerService.hasCustomerRole(authCustomer, CallanRoleNameEnum.ADMIN)) {
                                             // try to set course progress and customer from it
-                                            console.log('Cause current auth customer is admin, we can set current ' +
+                                            console.log('Because current auth customer is admin, we can set current ' +
                                                 'customer from courseprogress');
                                             this.setCurrentCourseProgress(courseProgress);
                                             this.customerService.setCurrentCustomer(courseProgress.customer);
@@ -442,15 +501,17 @@ export class CallanLessonManagerStudentContainerComponent implements OnInit, OnD
 
     // FIXME
     private assignLessonEvents(customer) {
-        this.lessonService.getLessonEventsByStudent(customer).subscribe(lessonEvents => {
-            this.lessonEvents = lessonEvents;
+        if (customer) {
+            this.lessonService.getLessonEventsByStudent(customer).subscribe(lessonEvents => {
+                this.lessonEvents = lessonEvents;
 
-            observableTimer(50).subscribe(() => {
-                this.lessonEventsListRefresh$.next();
+                observableTimer(50).subscribe(() => {
+                    this.lessonEventsListRefresh$.next();
+                });
+
+                this.setCalendarEvents(lessonEvents);
             });
-
-            this.setCalendarEvents(lessonEvents);
-        });
+        }
     }
 
     private assignCurrentCourseLessonEvents(courseProgress) {
@@ -493,6 +554,12 @@ export class CallanLessonManagerStudentContainerComponent implements OnInit, OnD
         this.calendarEvents = [];
 
         for (const lessonEvent of lessonEvents) {
+
+            // show in the calendar only this two types of lessons
+            if (
+                lessonEvent.state === CallanLessonEventStateEnum.PLANNED ||
+                lessonEvent.state === CallanLessonEventStateEnum.STARTED
+            )
             this.calendarEvents.push(CallanLessonService.convertLessonEventToCalendarEvent(lessonEvent));
         }
 
@@ -558,6 +625,15 @@ export class CallanLessonManagerStudentContainerComponent implements OnInit, OnD
         });
     }
 
+    private subscribeOnLessonEventsUpdateInterval() {
+        observableInterval(this.appConfig.lessonEventsUpdateIntervalMs).pipe(
+            takeUntil(this.unsubscribe$)
+        ).subscribe(() => {
+            console.log('The lesson Events Should be updated');
+            this.assignLessonEvents(this.currentCustomer);
+        });
+    }
+
     private lessonEventSave(lessonEvent: CallanLessonEvent) {
 
         // add some required info
@@ -569,6 +645,7 @@ export class CallanLessonManagerStudentContainerComponent implements OnInit, OnD
                 console.log('Lesson events updated');
                 this.toastrService.success('You have successfully planed the lesson!', 'Success');
                 // re-read
+                // FIXME - to subscription, perhaps
                 this.assignCourseProgresses(this.currentCustomer);
                 this.view = CallanLessonManagerStudentViewEnum.DEFAULT;
 
@@ -577,12 +654,17 @@ export class CallanLessonManagerStudentContainerComponent implements OnInit, OnD
                     if (err.httpStatus === 401 || err.httpStatus === 403) {
                         throw err.error;
                     } else {
-                        this.toastrService.warning('Something went wrong, sorry', 'Warning');
-                        const formErrors = this.createFormErrors();
-                        const message = err.message;
-                        formErrors.common.push(message);
-                        formErrors.assignServerFieldErrors(err.formErrors);
-                        this.formErrors$.next(formErrors);
+
+                        let message;
+
+                        if (err.httpStatus === 400) {
+                            message = err.message;
+                        } else {
+                            message = 'Something went wrong, sorry';
+                        }
+
+                        console.error(err, 'occurred');
+                        this.toastrService.warning(message, 'Warning');
                     }
 
                 } else {

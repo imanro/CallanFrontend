@@ -3,7 +3,7 @@
     <div class="container-fluid">
         <div class="navbar-header">
             <app-callan-lesson-event-announcement *ngIf="currentLessonEvent"
-                                                  [isLessonTimeSpent]="currentLessonEventRemainingMinutes <= 0"
+                                                  [isLessonTimeSpent]="currentLessonEventRemainingMinutes <= lessonEventAllowStartOffsetMinutes"
                                                   [lessonEventRemainingMinutes]="currentLessonEventRemainingMinutes"
                                                   [lessonEvent]="currentLessonEvent"
                                                   (lessonStartEvent)="handleLessonEventStart($event)"

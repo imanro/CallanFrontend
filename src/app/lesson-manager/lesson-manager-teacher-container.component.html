@@ -6,14 +6,17 @@
         <section>
           <app-callan-lesson-event
                   [lessonEvent]="currentLessonEvent"
+                  [view]="lessonEventViewNameEnum.TEACHER"
                   *ngIf="currentLessonEvent && isLessonEventShown"
           ></app-callan-lesson-event>
 
           <app-callan-lesson-events-list
                   [lessonEvents]="lessonEvents"
                   [refresh$]="lessonEventsListRefresh$"
+                  [isLessonEditingShown]="true"
                   *ngIf="view === viewNameEnum.DEFAULT"
                   (setCurrentLessonEventEvent)="handleSetCurrentLessonEvent($event)"
+                  (cancelLessonEventEvent)="handleCancelLessonEvent($event)"
           ></app-callan-lesson-events-list>
         </section>
       </div>

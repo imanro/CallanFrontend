@@ -23,7 +23,7 @@ import {CallanCourseStage} from '../models/course-stage.model';
 export class CallanLessonMockService extends CallanLessonService {
 
     constructor(
-        @Inject(AppConfig) protected appConfig: IAppConfig,
+        protected appConfig: AppConfig,
         protected customerService: CallanCustomerService
     ) {
         super(appConfig);
@@ -181,71 +181,18 @@ export class CallanLessonMockService extends CallanLessonService {
         });
     }
 
-    getDatesEnabled(lessonEvents: CallanLessonEvent[], previousDates: Date[]): Observable<Date[]> {
+    getNearestTeacherLessonEvent(teacher: CallanCustomer): Observable<CallanLessonEvent> {
 
-        return new Observable<Date[]>(observer => {
-            const baseDate = new Date();
-
-            baseDate.setDate(baseDate.getDate() + 1);
-            baseDate.setHours(9);
-            baseDate.setMinutes(0);
-            baseDate.setMinutes(0);
-            baseDate.setSeconds(0);
-
-            let randStart, randEnd;
-
-            let list = [];
-            if (previousDates) {
-                console.log('There was a previous dates', previousDates);
-                list = previousDates;
-            } else {
-                list = [];
-                for (let i = 0; i < 7; i++) {
-
-                    randStart = Math.floor(Math.random() * (20 - 10) + 10);
-                    randEnd = Math.floor(Math.random() * (20 - randStart) + randStart);
-
-                    // console.log(randStart, randEnd);
-
-                    for (let j = 10; j <= 20; j++) {
-                        // console.log(j, 'is');
-                        if (j >= randStart && j <= randEnd) {
-                            // console.log('katit');
-                            const date = new Date(baseDate.getTime());
-                            date.setDate(baseDate.getDate() + i);
-                            date.setHours(j);
-                            // console.log(date);
-                            list.push(date);
-                        }
-                    }
-                }
-            }
-
-            // checking the list against the lessonEvents
-            let counter = 0;
-            for (const date of list) {
-                for (const lessonEvent of lessonEvents) {
-                    if (
-                        lessonEvent.startTime.getFullYear() === date.getFullYear() &&
-                        lessonEvent.startTime.getMonth() === date.getMonth() &&
-                        lessonEvent.startTime.getDate() === date.getDate() &&
-                        lessonEvent.startTime.getHours() === date.getHours()
-                    ) {
-                        console.log('Removing an item from list of enabled dates');
-                        list.splice(counter, 1);
-                    }
-                }
-
-                counter++;
-            }
-
-            console.log('Now, list of enabled dates contains', list.length, 'elements');
-            console.log(list);
-            observer.next(list);
+        return new Observable<CallanLessonEvent>(observer => {
+            this.getLessonEventsByTeacher(null).subscribe(lessonEvents => {
+                observer.next(lessonEvents[0]);
+                console.log(lessonEvents[0]);
+                observer.complete();
+            });
         });
     }
 
-    changetLessonEventState(lessonEvent: CallanLessonEvent, state: number): Observable<CallanLessonEvent> {
+    changeLessonEventState(lessonEvent: CallanLessonEvent, state: number): Observable<CallanLessonEvent> {
         lessonEvent.state = state;
         return new Observable<CallanLessonEvent>(observer => {
             observer.next(lessonEvent);

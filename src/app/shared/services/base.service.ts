@@ -9,7 +9,7 @@ import {AppError} from '../models/error.model';
 export abstract class CallanBaseService {
 
     constructor(
-        @Inject(AppConfig) protected appConfig: IAppConfig
+        protected appConfig: AppConfig
     ) {
     }
 

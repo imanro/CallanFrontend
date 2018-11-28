@@ -14,6 +14,7 @@
                     <app-callan-lesson-event
                             [lessonEvent]="currentLessonEvent"
                             [isConfirmButtonCanBeShown]="isConfirmLessonButtonShown"
+                            [view]="lessonEventViewNameEnum.STUDENT"
                             (lessonEventConfirmEvent)="handleLessonEventConfirm($event)"
                             *ngIf="currentLessonEvent && isLessonEventShown"
                     ></app-callan-lesson-event>
@@ -78,8 +79,10 @@
                     <app-callan-lesson-events-list
                             [lessonEvents]="lessonEvents"
                             [refresh$]="lessonEventsListRefresh$"
+                            [isLessonEditingShown]="true"
                             *ngIf="view === viewNameEnum.DEFAULT"
                             (setCurrentLessonEventEvent)="handleSetCurrentLessonEvent($event)"
+                            (cancelLessonEventEvent)="handleCancelLessonEvent($event)"
                     ></app-callan-lesson-events-list>
 
                     <p *ngIf="currentCustomer">Current customer: {{currentCustomer.email}}</p>
