@@ -2,9 +2,10 @@
   <div class="main-content">
     <div class="content-wrapper">
       <div class="container-fluid">
+        <section>
         <div class="row" *ngIf="view === viewNameEnum.DEFAULT && currentCustomer">
           <div class="col-sm-12">
-            <a class="btn btn-raised gradient-summer white" href="javascript:void(0)" (click)="handleShowScheduleRangeDetails()">Add a new time range</a>
+            <a class="btn mb-0 btn-raised gradient-summer white" href="javascript:void(0)" (click)="handleShowScheduleRangeDetails()">Add a new time range</a>
           </div>
         </div>
 
@@ -28,7 +29,8 @@
                 (setCurrentDateEvent)="handleSetCurrentDate($event)"
                 *ngIf="view === viewNameEnum.DEFAULT && currentCustomer && currentDate"
         ></app-callan-schedule-range-calendar>
-
+        </section>
+        <p *ngIf="currentCustomer">Current customer: {{currentCustomer.email}}</p>
       </div>
     </div>
   </div>

@@ -19,6 +19,8 @@
                   (cancelLessonEventEvent)="handleCancelLessonEvent($event)"
           ></app-callan-lesson-events-list>
         </section>
+
+          <p *ngIf="currentCustomer">Current customer: {{currentCustomer.email}}</p>
       </div>
     </div>
   </div>
