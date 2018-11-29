@@ -52,13 +52,12 @@ export class CallanLessonManagerTeacherContainerComponent implements OnInit, OnD
     }
 
     ngOnInit() {
-        console.log('acc');
         this.subscribeOnLessonEventShown();
         this.subscribeOnCurrentLessonEvent();
 
         this.subscribeOnIsLessonEventsUpdated();
         this.subscribeOnLessonEventsUpdateInterval();
-
+        this.subscribeOnCurrentLessonEventUpdateInterval();
 
         this.assignAuthCustomer();
         this.assignCurrentCustomer();
@@ -176,7 +175,6 @@ export class CallanLessonManagerTeacherContainerComponent implements OnInit, OnD
             if (this.currentCustomer) {
                 this.assignLessonEvents(this.currentCustomer);
             }
-
         });
     }
 
@@ -186,6 +184,22 @@ export class CallanLessonManagerTeacherContainerComponent implements OnInit, OnD
         ).subscribe(() => {
             console.log('The lesson Events Should be updated');
             this.assignLessonEvents(this.currentCustomer);
+        });
+    }
+
+    private subscribeOnCurrentLessonEventUpdateInterval() {
+        observableInterval(this.appConfig.lessonEventsUpdateIntervalMs).pipe(
+            takeUntil(this.unsubscribe$)
+        ).subscribe(() => {
+            if (this.currentLessonEvent) {
+                console.log('The current lesson event should be updated');
+
+                this.lessonService.getLessonEvent(this.currentLessonEvent.id)
+                    .subscribe(lessonEvent => {
+                        console.log('Updated!!');
+                        this.lessonService.setCurrentLessonEvent(lessonEvent);
+                    });
+            }
         });
     }
 

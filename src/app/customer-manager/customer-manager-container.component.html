@@ -3,6 +3,14 @@
         <div class="content-wrapper">
             <div class="container-fluid">
 
+                <section>
+                <div class="row" *ngIf="view === viewNameEnum.DEFAULT">
+                    <div class="col-sm-12">
+                        <a class="mb-0 btn btn-raised gradient-blueberry white" href="javascript:void(0)" (click)="handleCustomerCreate()">Add a new
+                            user</a>
+                    </div>
+                </div>
+
                 <app-callan-customers-list [customers$]="customers$"
                                            (setCurrentCustomer)="handleSetCurrentCustomer($event)"
                                            *ngIf="view === viewNameEnum.DEFAULT"></app-callan-customers-list>
@@ -15,12 +23,7 @@
                                              (cancelEvent)="handleDetailsReset()"
                                              *ngIf="currentCustomer && view === viewNameEnum.CUSTOMER_DETAILS"></app-callan-customer-details>
 
-                <div class="row" *ngIf="view === viewNameEnum.DEFAULT">
-                    <div class="col-sm-12">
-                            <a class="btn btn-raised gradient-blueberry white" href="javascript:void(0)" (click)="handleCustomerCreate()">Add a new
-                                user</a>
-                    </div>
-                </div>
+                </section>
 
                 <p *ngIf="currentCustomer">Current customer: {{currentCustomer.email}}</p>
             </div>

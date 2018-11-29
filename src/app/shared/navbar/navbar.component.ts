@@ -180,14 +180,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
                 this.lessonService.getNearestStudentLessonEvent(customer).subscribe(lessonEvent => {
                     this.currentLessonEvent = lessonEvent;
 
-                    // updating in service
-                    if (this.lessonService.getCurrentLessonEvent$().getValue() &&
-                        this.lessonService.getCurrentLessonEvent$().getValue().id === lessonEvent.id) {
-                        // update in service
-                        console.log('Lesson event updated in service');
-                        this.lessonService.setCurrentLessonEvent(lessonEvent);
-                    }
-
                     if (lessonEvent) {
                         console.log('New lesson event assigned, the lesson is', lessonEvent);
                         this.assignNearestLessonEventRemainingMinutes(lessonEvent);
@@ -204,13 +196,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
                     }
 
                     this.currentLessonEvent = lessonEvent;
-
-                    if (this.lessonService.getCurrentLessonEvent$().getValue() &&
-                        this.lessonService.getCurrentLessonEvent$().getValue().id === lessonEvent.id) {
-                        // update in service
-                        console.log('Lesson event updated in service');
-                        this.lessonService.setCurrentLessonEvent(lessonEvent);
-                    }
 
                     if (lessonEvent) {
                         console.log('New lesson event assigned, the lesson is', lessonEvent);
