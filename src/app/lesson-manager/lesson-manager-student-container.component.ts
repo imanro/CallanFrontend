@@ -115,9 +115,6 @@ export class CallanLessonManagerStudentContainerComponent implements OnInit, OnD
 
         // chosen courseProgress
         this.subscribeOnCurrentCourseProgress();
-
-        this.setCurrentDate(new Date());
-        this.assignDatesEnabled(this.currentDate);
     }
 
     ngOnDestroy() {
@@ -132,6 +129,8 @@ export class CallanLessonManagerStudentContainerComponent implements OnInit, OnD
     handleLessonEventCreate() {
         // reset date first
         this.setCurrentDate(new Date());
+        this.assignDatesEnabled(this.currentDate);
+
         this.view = CallanLessonManagerStudentViewEnum.CALENDAR;
     }
 
@@ -416,6 +415,7 @@ export class CallanLessonManagerStudentContainerComponent implements OnInit, OnD
 
         // we need to getHoursAvailable also includes already booked times
         this.scheduleService.getHoursAvailable(range[0], range[1], null, true).subscribe(dates => {
+            console.log(dates, 'received!');
             this.datesEnabled = dates;
 
             observableTimer(100).subscribe(() => {

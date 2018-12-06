@@ -111,6 +111,7 @@ export class ScheduleRangeDetailsComponent implements OnInit, OnDestroy {
 
     private prepareSaveScheduleRange(): CallanScheduleRange {
         const saveScheduleRange = _.cloneDeep(this.scheduleRange);
+        saveScheduleRange.timezoneOffset = new Date().getTimezoneOffset();
         const formModel = this.scheduleRangeDetailsForm.value;
 
         saveScheduleRange.dayOfWeek = formModel.dayOfWeek;

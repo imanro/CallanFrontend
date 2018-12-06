@@ -169,6 +169,7 @@ export class CallanScheduleApiService extends CallanScheduleService {
         scheduleRange.regularity = row.regularity;
         scheduleRange.startMinutes = row.startMinutes;
         scheduleRange.endMinutes = row.endMinutes;
+        scheduleRange.timezoneOffset = row.timezoneOffset;
 
         if (row.Customer) {
             const customer = CallanCustomerService.createCustomer();
@@ -186,6 +187,8 @@ export class CallanScheduleApiService extends CallanScheduleService {
         data['dayOfWeek'] = scheduleRange.dayOfWeek;
         data['startMinutes'] = scheduleRange.startMinutes;
         data['endMinutes'] = scheduleRange.endMinutes;
+
+        data['timezoneOffset'] = scheduleRange.timezoneOffset;
 
         if (scheduleRange.date && scheduleRange.regularity === CallanScheduleRangeRegularityEnum.AD_HOC) {
             data['date'] = scheduleRange.date.toISOString();

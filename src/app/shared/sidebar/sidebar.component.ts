@@ -49,7 +49,7 @@ export class SidebarComponent implements OnInit {
                 let routeTitleReplacement = {};
 
                 if (CallanCustomerService.hasCustomerRole(authCustomer, CallanRoleNameEnum.ADMIN)) {
-                    choosenRoutes.push(...['/customers']);
+                    choosenRoutes.push(...['/customers', '/admin-dashboard']);
 
                     if (currentCustomer) {
                         if (CallanCustomerService.hasCustomerRole(currentCustomer, CallanRoleNameEnum.TEACHER)){

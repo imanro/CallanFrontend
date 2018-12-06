@@ -18,5 +18,9 @@ export const MAIN_ROUTES: Routes = [
     {
         path: 'profile',
         loadChildren: './customer-profile/customer-profile.module#CallanCustomerProfileModule'
+    },
+    {
+        path: 'admin-dashboard',
+        loadChildren: './admin-dashboard/admin-dashboard.module#CallanAdminDashboardModule'
     }
 ];

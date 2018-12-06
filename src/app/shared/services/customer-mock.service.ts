@@ -32,6 +32,18 @@ export class CallanCustomerMockService extends CallanCustomerService {
         );
     }
 
+    findCustomers(term: string): Observable<CallanCustomer[]> {
+        const d = this.appConfig.mockDelayMs;
+        return new Observable<CallanCustomer[]>(observer => {
+            observer.next(mockCustomers.filter(customer => customer.email.indexOf(term) !== -1));
+            observer.complete();
+
+        }).pipe(
+            delay(d)
+        );
+    }
+
+
     getCustomer(id: number): Observable<CallanCustomer> {
         const d = this.appConfig.mockDelayMs;
         return new Observable<CallanCustomer>(observer => {

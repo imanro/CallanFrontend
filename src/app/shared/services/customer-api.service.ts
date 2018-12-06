@@ -44,6 +44,29 @@ export class CallanCustomerApiService extends CallanCustomerService {
             );
     }
 
+    findCustomers(term: string): Observable<CallanCustomer[]> {
+        const filter = {include: ['roles'], where: {email: {like: '___'}}};
+        const url = this.getApiUrl('/Customers?filter=' + JSON.stringify(filter).replace('___', encodeURI(term + '%')));
+
+        return this.http.get<CallanCustomer[]>(url)
+            .pipe(
+                map<any, CallanCustomer[]>(rows => {
+
+                    const  customers: CallanCustomer[] = [];
+
+                    for (const row of rows) {
+                        const customer = CallanCustomerService.createCustomer();
+                        this.mapDataToCustomer(customer, row);
+                        customers.push(customer);
+                    }
+
+                    return customers;
+                }),
+                catchError(this.handleHttpError<CallanCustomer[]>())
+            );
+    }
+
+
     getCustomer(id: number): Observable<CallanCustomer> {
         const url = this.getApiUrl('/Customers/' + id + '?filter=' + JSON.stringify({include: 'roles'}));
 
