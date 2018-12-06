@@ -1,4 +1,5 @@
 export enum CallanEnvironmentNameEnum {
     DEV = 'dev',
-    PROD = 'prod'
+    PROD = 'prod',
+    STAGING = 'stag'
 }

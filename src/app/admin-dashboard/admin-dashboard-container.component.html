@@ -1,0 +1,24 @@
+<div class="main-panel">
+  <div class="main-content">
+    <div class="content-wrapper">
+      <div class="container-fluid">
+        <section>
+        <app-activity-log-list
+                [rows]="activityLogItems"
+                [limit]="activityLogItemsLimit"
+                [pageOffset]="activityLogItemsPageOffset"
+                [count]="activityLogItemsCount"
+                [affectedList$]="affectedList$"
+                [initiatorList$]="initiatorList$"
+                (filterByMessageEvent)="handleActivityLogItemsFilterByMessage($event)"
+                (filterByAffectedEvent)="handleActivityLogItemsFilterByAffected($event)"
+                (filterByInitiatorEvent)="handleActivityLogItemsFilterByInitiator($event)"
+                (affectedSearchEvent)="handleAffectedSearch($event)"
+                (initiatorSearchEvent)="handleInitiatorSearch($event)"
+                (setPageEvent)="handleSetPageActivityLog($event)"
+        ></app-activity-log-list>
+        </section>
+      </div>
+    </div>
+  </div>
+</div>

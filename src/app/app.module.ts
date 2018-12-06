@@ -35,6 +35,9 @@ import {AppErrorHandler} from './app-error-handler';
 import {CallanScheduleMockService} from './shared/services/schedule-mock.service';
 import {CallanScheduleService} from './shared/services/schedule.service';
 import {CallanScheduleApiService} from './shared/services/schedule-api.service';
+import {CallanActivityLogService} from './shared/services/activity-log.service';
+import {CallanActivityLogMockService} from './shared/services/activity-log-mock.service';
+import {CallanActivityLogApiService} from './shared/services/activity-log-api.service';
 
 
 export function createTranslateLoader(http: HttpClient) {
@@ -98,6 +101,8 @@ export function initializeApp(appConfig: AppConfig) {
         {provide: CallanLessonService, useClass: CallanLessonApiService},
         // {provide: CallanScheduleService, useClass: CallanScheduleMockService},
         {provide: CallanScheduleService, useClass: CallanScheduleApiService},
+        // {provide: CallanActivityLogService, useClass: CallanActivityLogMockService}
+        {provide: CallanActivityLogService, useClass: CallanActivityLogApiService}
     ],
     bootstrap: [AppComponent]
 })

@@ -46,3 +46,41 @@ ng2-smart-table {
     }
   }
 }
+
+.ngx-datatable.bootstrap {
+  .datatable-body {
+    .datatable-body-row.active {
+      color: inherit;
+      background-color: #ddd;
+    }
+  }
+
+  .datatable-row-detail {
+    color: inherit;
+    background-color: #d2e5ea;
+    border-top: solid 1px #777;
+
+    dl {
+      margin: 0;
+
+      dt, dd {
+        float: left;
+        margin: 0;
+      }
+      dt::after {
+        content: ":";
+      }
+      dt {
+        margin-right: .5Em;
+      }
+    }
+
+    dl::after {
+      display: table;
+      content: " ";
+      clear: both;
+      box-sizing: border-box;
+    }
+  }
+}
+

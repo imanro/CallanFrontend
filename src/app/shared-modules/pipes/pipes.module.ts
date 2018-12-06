@@ -1,17 +1,19 @@
-import { NgModule } from '@angular/core';
-import { KeysPipe } from './keys.pipe';
+import {NgModule} from '@angular/core';
+import {KeysPipe} from './keys.pipe';
+import {KeepHtmlPipe} from './keep-html.pipe';
 
 @NgModule({
     declarations: [
-        KeysPipe
+        KeysPipe,
+        KeepHtmlPipe
     ],
-    imports     : [],
-    exports     : [
-        KeysPipe
+    imports: [],
+    exports: [
+        KeysPipe,
+        KeepHtmlPipe
     ]
 })
 
-export class AppPipesModule
-{
+export class AppPipesModule {
 
 }

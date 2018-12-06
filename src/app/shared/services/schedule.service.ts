@@ -75,13 +75,9 @@ export abstract class CallanScheduleService extends CallanBaseService {
         const dateFrom = new Date(date.getTime());
         const dateTo = new Date(date.getTime());
 
-        dateFrom.setHours(0);
-        dateFrom.setMinutes(0);
-        dateFrom.setSeconds(0);
+        dateFrom.setHours(0, 0, 0, 0);
 
-        dateTo.setHours(23);
-        dateTo.setMinutes(59);
-        dateTo.setSeconds(59);
+        dateTo.setHours(23, 59, 59, 999);
 
         let dayOfWeek = date.getDay();
         if (dayOfWeek === 0) {

@@ -14,9 +14,11 @@
   "dependencies": {
     "@agm/core": "^1.0.0-beta.3",
     "@angular/animations": "^6.0.3",
+    "@angular/cdk": "^6.4.7",
     "@angular/common": "^6.0.3",
     "@angular/compiler": "^6.0.3",
     "@angular/core": "^6.0.3",
+    "@angular/flex-layout": "^6.0.0-beta.16",
     "@angular/forms": "^6.0.3",
     "@angular/http": "^6.0.3",
     "@angular/platform-browser": "^6.0.3",
@@ -88,6 +90,6 @@
     "rxjs-compat": "^6.2.0",
     "ts-node": "^6.0.5",
     "tslint": "^5.10.0",
-    "typescript": "2.7.2"
+    "typescript": "^2.7.2"
   }
 }

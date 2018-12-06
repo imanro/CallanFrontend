@@ -54,6 +54,8 @@ export abstract class CallanCustomerService extends CallanBaseService {
 
     abstract getCustomers(): Observable<CallanCustomer[]>;
 
+    abstract findCustomers(term: string): Observable<CallanCustomer[]>;
+
     abstract getCustomer(id: number): Observable<CallanCustomer>;
 
     abstract isCustomerExists(email)
