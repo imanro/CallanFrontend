@@ -12,9 +12,18 @@ if [ ! -e "$DEPLOY_DIR" ]; then
 fi;
 
 echo "Type a revision number, followed by [ENTER]: ";
-read REV
+read REV;
 
-ARCHIVE_FILE="$BUILD_DIR/$SCRIPT_PREFIX-$REV$ARCHIVE_EXT";
+echo "Type an evnironment followed by [ENTER] (default \"production\"): ";
+read ENV;
+
+if [ "$ENV" == "" ]; then
+    ENV="production";
+fi;
+
+
+
+ARCHIVE_FILE="$BUILD_DIR/$SCRIPT_PREFIX-$ENV-$REV$ARCHIVE_EXT";
 
 if [ -e "$ARCHIVE_FILE" ]; then
     echo "Cleaning contents of $DEPLOY_DIR/...";

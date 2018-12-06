@@ -21,7 +21,7 @@ node git-version.js
 echo "Building for $ENV...";
 ng build --configuration=$ENV
 
-FILE_NAME="$BUILD_DIR/callan-$REV.tar.gz";
+FILE_NAME="$BUILD_DIR/callan-$ENV-$REV.tar.gz";
 echo "Creating $FILE_NAME"
 
 tar -czf $FILE_NAME -C $DIST_DIR .
