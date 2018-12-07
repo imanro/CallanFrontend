@@ -6,7 +6,7 @@ import {CallanCustomer} from '../models/customer.model';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 
 import {environment} from '../../../environments/environment';
-import {CallanEnvironmentNameEnum} from '../enums/environment.name.enum';
+import {AppEnvironmentNameEnum} from '../enums/environment.name.enum';
 import {CallanBaseService} from './base.service';
 import {CallanRole} from '../models/role.model';
 
@@ -58,7 +58,7 @@ export abstract class CallanCustomerService extends CallanBaseService {
 
     abstract getCustomer(id: number): Observable<CallanCustomer>;
 
-    abstract isCustomerExists(email)
+    abstract findCustomerByEmail(email): Observable<CallanCustomer>;
 
     abstract getRoles(): Observable<CallanRole[]>;
 
@@ -181,7 +181,7 @@ export abstract class CallanCustomerService extends CallanBaseService {
 
                 console.log('Customer initialized');
 
-                if (environment.name === CallanEnvironmentNameEnum.DEV) {
+                if (environment.name === AppEnvironmentNameEnum.DEV) {
                     this.initNewCustomerDev(customer).subscribe(() => {
                         console.log('Customer initialized for dev');
                         observer.next();

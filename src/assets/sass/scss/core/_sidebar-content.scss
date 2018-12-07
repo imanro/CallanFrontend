@@ -109,6 +109,7 @@
     }
 
     .sidebar-content{
+        margin-top: 20px;
         position: relative;
         height: calc(100vh - 90px);
         overflow: auto;
@@ -179,7 +180,7 @@
                     background: rgba(200, 200, 200, 0.2);
                 }
             }
-            
+
             > a{
                 display: block;
                 overflow: hidden;
@@ -234,7 +235,7 @@
                     ul{
                         li{
                             a{
-                                padding: 8px 18px 8px 70px;           
+                                padding: 8px 18px 8px 70px;
                             }
                         }
                     }
@@ -298,7 +299,7 @@
 
     .logo{
         position: relative;
-        padding: 20px 15px;
+        padding: 20px 15px 0;
         z-index: 4;
 
         p{
@@ -321,6 +322,12 @@
             font-weight: 400;
 
         }
+    }
+
+    .environment {
+        position: relative;
+        color: $white;
+        z-index: 4;
     }
 
     .logo-tim{

@@ -55,10 +55,10 @@ export class CallanCustomerMockService extends CallanCustomerService {
         );
     }
 
-    isCustomerExists(email: string): Observable<boolean> {
+    findCustomerByEmail(email: string): Observable<CallanCustomer> {
         const d = this.appConfig.mockDelayMs;
-        return new Observable<boolean>(observer => {
-            observer.next(false);
+        return new Observable<CallanCustomer>(observer => {
+            observer.next(null);
             observer.complete();
 
         }).pipe(

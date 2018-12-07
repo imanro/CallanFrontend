@@ -13,6 +13,7 @@
 
                 <app-callan-customers-list [customers$]="customers$"
                                            (setCurrentCustomer)="handleSetCurrentCustomer($event)"
+                                           (editCustomer)="handleEditCustomer($event)"
                                            *ngIf="view === viewNameEnum.DEFAULT"></app-callan-customers-list>
 
                 <app-callan-customer-details [customer]="currentCustomer"

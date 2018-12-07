@@ -11,6 +11,9 @@
             <i class="ft-x"></i>
         </a>
     </div>
+    <div class="environment" *ngIf="environment.name !== environmentNameEnum.PROD">
+        <div class="h6 text-right pr-2 pt-2">{{environment.title}}</div>
+    </div>
 </div>
 <!-- Sidebar Header Ends -->
 
