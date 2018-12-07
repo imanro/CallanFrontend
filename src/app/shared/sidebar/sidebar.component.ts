@@ -6,6 +6,8 @@ import { TranslateService } from '@ngx-translate/core';
 import {CallanAuthService} from '../services/auth.service';
 import {CallanCustomerService} from '../services/customer.service';
 import {CallanRoleNameEnum} from '../enums/role.name.enum';
+import {environment} from '../../../environments/environment';
+import {AppEnvironmentNameEnum} from '../enums/environment.name.enum';
 
 declare var $: any;
 
@@ -15,7 +17,10 @@ declare var $: any;
 })
 
 export class SidebarComponent implements OnInit {
-    public menuItems: any[] = [];
+    menuItems: any[] = [];
+
+    environment: {name: string, title: string};
+    environmentNameEnum: any;
 
     constructor(
         private router: Router,
@@ -24,7 +29,8 @@ export class SidebarComponent implements OnInit {
         private customerService: CallanCustomerService,
         public translate: TranslateService
     ) {
-
+        this.environmentNameEnum = AppEnvironmentNameEnum;
+        this.environment = environment;
     }
 
     ngOnInit() {

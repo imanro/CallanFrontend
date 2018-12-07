@@ -37,45 +37,49 @@ export abstract class CallanBaseService {
 
                 });
             } else {
-                console.log('no fallback data');
-
-                const friendlyError = new AppError();
-                friendlyError.error = error;
-
-                if (error instanceof HttpErrorResponse ){
-                    friendlyError.httpStatus = error.status;
-
-                    // common errors processing
-
-                    if (error.status === 0) {
-                        friendlyError.message = 'It seems like the server is down. Please, try again later';
-
-                    } else {
-
-                        if (error.error && error.error.error) {
-                            const container = error.error.error;
-
-                            if (container.message) {
-                                friendlyError.message = container.message;
-                            }
-
-                            // 401: invalid access token: throw this error
-
-                            // fieldErrors processing
-                            if (error.status === 422) {
-                                if (container.details && container.details.messages) {
-                                    friendlyError.formErrors = container.details.messages;
-                                }
-                            }
-                        }
-                    }
-
-                    console.log(friendlyError);
-                }
-
-                console.log('throw');
-                return throwError(friendlyError);
+                return this.throwFriendlyError(error);
             }
         };
+    }
+
+    protected throwFriendlyError(error) {
+        console.log('no fallback data');
+
+        const friendlyError = new AppError();
+        friendlyError.error = error;
+
+        if (error instanceof HttpErrorResponse ){
+            friendlyError.httpStatus = error.status;
+
+            // common errors processing
+
+            if (error.status === 0) {
+                friendlyError.message = 'It seems like the server is down. Please, try again later';
+
+            } else {
+
+                if (error.error && error.error.error) {
+                    const container = error.error.error;
+
+                    if (container.message) {
+                        friendlyError.message = container.message;
+                    }
+
+                    // 401: invalid access token: throw this error
+
+                    // fieldErrors processing
+                    if (error.status === 422) {
+                        if (container.details && container.details.messages) {
+                            friendlyError.formErrors = container.details.messages;
+                        }
+                    }
+                }
+            }
+
+            console.log(friendlyError);
+        }
+
+        console.log('throw');
+        return throwError(friendlyError);
     }
 }

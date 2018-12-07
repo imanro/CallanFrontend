@@ -15,7 +15,10 @@ import {Subject} from 'rxjs';
 export class CallanCustomersListComponent implements OnInit, OnDestroy {
 
     @Input() customers$: Observable<CallanCustomer[]>;
+
     @Output() setCurrentCustomer = new EventEmitter<any>();
+
+    @Output() editCustomer = new EventEmitter<CallanCustomer>();
 
     source: LocalDataSource;
     settings: any;
@@ -66,6 +69,10 @@ export class CallanCustomersListComponent implements OnInit, OnDestroy {
                         name: 'setCurrent',
                         title: '<i class="ft-user-check success font-medium-1 mr-2" title="Set user for on-behave"></i>',
                     },
+                    {
+                        name: 'edit',
+                        title: '<i class="ft-edit-2 info font-medium-1 mr-2" title="Edit customer"></i>'
+                    }
                 ],
                 add: false,
                 edit: false,
@@ -103,8 +110,16 @@ export class CallanCustomersListComponent implements OnInit, OnDestroy {
         this.unsubscribe.complete();
     }
 
-    onCustom(event) {
+    handleCustomAction($e) {
         // emit the data
-        this.setCurrentCustomer.next(event.data);
+        switch ($e.action) {
+            case('setCurrent'):
+                this.setCurrentCustomer.next($e.data);
+                break;
+            case('edit'):
+                this.editCustomer.next($e.data);
+                console.log($e);
+                break;
+        }
     }
 }

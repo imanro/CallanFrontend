@@ -68,6 +68,10 @@ export abstract class CallanActivityLogService extends CallanBaseService {
             case(CallanActivityLogActionEnum.BALANCE_CHANGE):
                 return CallanActivityLogItemKindEnum.COURSE_PROGRESS;
 
+            case(CallanActivityLogActionEnum.CUSTOMER_CREATE):
+            case(CallanActivityLogActionEnum.CUSTOMER_UPDATE):
+                return CallanActivityLogItemKindEnum.CUSTOMER;
+
             default:
                 return null;
 

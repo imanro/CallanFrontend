@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Observable} from 'rxjs/Observable';
+import {Observable, of as observableOf} from 'rxjs';
 import {map, catchError} from 'rxjs/operators';
 import {HttpClient} from '@angular/common/http';
 
@@ -81,15 +81,24 @@ export class CallanCustomerApiService extends CallanCustomerService {
             );
     }
 
-    isCustomerExists(email: string): Observable<boolean> {
-        const url = this.getApiUrl('/Customers?filter=' + JSON.stringify({where: {email: email}}));
+    findCustomerByEmail(email: string): Observable<CallanCustomer> {
+        const url = this.getApiUrl('/Customers/findOne?filter=' + JSON.stringify({where: {email: email}}));
 
         return this.http.get<CallanCustomer>(url)
             .pipe(
-                map<any, boolean>(rows => {
-                    return rows.length > 0;
+                map<any, CallanCustomer>(row => {
+                    const customer = CallanCustomerService.createCustomer();
+                    this.mapDataToCustomer(customer, row);
+                    return customer;
                 }),
-                catchError(this.handleHttpError<boolean>())
+                catchError(err => {
+                    if (err.status === 404) {
+                        return observableOf(null);
+                    } else {
+                        console.log('handling');
+                        return this.throwFriendlyError(err);
+                    }
+                })
             );
     }
 
@@ -117,20 +126,37 @@ export class CallanCustomerApiService extends CallanCustomerService {
     saveCustomer(customer: CallanCustomer): Observable<CallanCustomer> {
 
         const data = this.mapCustomerToData(customer);
-
-        const url = this.getApiUrl('/Customers');
-
         console.log('We have prepared the following data:', data);
-        return this.http.post(url, data)
-            .pipe(
-                map<any, CallanCustomer>(responseData => {
-                    console.log('The response is follow:', responseData);
-                    const newCustomer = CallanCustomerService.createCustomer();
-                    this.mapDataToCustomer(responseData, newCustomer);
-                    return newCustomer;
-                }),
-                catchError(this.handleHttpError<CallanCustomer>())
-            );
+
+        if (customer.id) {
+            console.log('Existing customer case');
+            const url = this.getApiUrl('/Customers/' + customer.id);
+
+            return this.http.put(url, data)
+                .pipe(
+                    map<any, CallanCustomer>(responseData => {
+                        console.log('The response is follow:', responseData);
+                        const newCustomer = CallanCustomerService.createCustomer();
+                        this.mapDataToCustomer(responseData, newCustomer);
+                        return newCustomer;
+                    }),
+                    catchError(this.handleHttpError<CallanCustomer>())
+                );
+        } else {
+            const url = this.getApiUrl('/Customers');
+            console.log('New customer case');
+            return this.http.post(url, data)
+                .pipe(
+                    map<any, CallanCustomer>(responseData => {
+                        console.log('The response is follow:', responseData);
+                        const newCustomer = CallanCustomerService.createCustomer();
+                        this.mapDataToCustomer(responseData, newCustomer);
+                        return newCustomer;
+                    }),
+                    catchError(this.handleHttpError<CallanCustomer>())
+                );
+        }
+
     }
 
     mapDataToCustomer(customer: CallanCustomer, row: any): void {
@@ -184,7 +210,10 @@ export class CallanCustomerApiService extends CallanCustomerService {
         data['firstName'] = customer.firstName;
         data['lastName'] = customer.lastName;
         data['email'] = customer.email;
-        data['password'] = customer.password;
+
+        if (customer.password) {
+            data['password'] = customer.password;
+        }
 
         if (customer.roles) {
             data['roles'] = [];

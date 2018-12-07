@@ -52,6 +52,7 @@ export class CallanCustomerDetailsComponent implements OnInit, OnDestroy {
 
         if (this.customer) {
             this.setFormValues();
+            this.updateValidators();
         }
 
         this.commonFormErrors = [];
@@ -154,8 +155,9 @@ export class CallanCustomerDetailsComponent implements OnInit, OnDestroy {
 
     private buildForm() {
 
-        const password = new FormControl('', [Validators.required, Validators.minLength(6)]);
-        const passwordConfirm = new FormControl('', [Validators.required, Validators.minLength(6), CustomValidators.equalTo(password)]);
+        const password = new FormControl('', [Validators.minLength(6)]);
+
+        const passwordConfirm = new FormControl('', [Validators.minLength(6), CustomValidators.equalTo(password)]);
 
         this.customerForm = this.fb.group({
             firstName: ['', Validators.required],
@@ -170,6 +172,29 @@ export class CallanCustomerDetailsComponent implements OnInit, OnDestroy {
         this.customerForm.valueChanges.subscribe(() => {
             this.commonFormErrors = [];
         });
+    }
+
+    private updateValidators() {
+        const passwordValidators = [
+            this.customerForm.get('password').validator
+        ];
+
+        const passwordConfirmValidators = [
+            this.customerForm.get('passwordConfirm').validator
+        ];
+
+        if (!this.customer.id) {
+            passwordValidators.push(Validators.required);
+            passwordConfirmValidators.push(Validators.required);
+        }
+
+        this.customerForm.get('password').setValidators(
+            passwordValidators
+        );
+
+        this.customerForm.get('passwordConfirm').setValidators(
+            passwordConfirmValidators
+        );
     }
 
     private setFormValues() {

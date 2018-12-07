@@ -23,8 +23,11 @@ export class CallanCustomerManagerContainerComponent implements OnInit, OnDestro
     viewNameEnum: any;
 
     customers$ = new BehaviorSubject<CallanCustomer[]>([]);
+
     rolesList: CallanRole[];
+
     currentCustomer: CallanCustomer;
+
     isSaving = false;
 
     formErrors$ = new BehaviorSubject<AppFormErrors>(null);
@@ -61,6 +64,11 @@ export class CallanCustomerManagerContainerComponent implements OnInit, OnDestro
         this.toastrService.success('Current customer now is ' + customer.firstName);
     }
 
+    handleEditCustomer(customer: CallanCustomer) {
+        this.view = CallanCustomerManagerViewEnum.CUSTOMER_DETAILS;
+        this.currentCustomer = customer;
+    }
+
     handleCustomerCreate() {
         this.currentCustomer = CallanCustomerService.createCustomer();
         this.customerService.initNewCustomer(this.currentCustomer).subscribe(() => {
@@ -73,44 +81,85 @@ export class CallanCustomerManagerContainerComponent implements OnInit, OnDestro
         this.isSaving = true;
 
         // checking if this user exists
-        this.customerService.isCustomerExists(customer.email).subscribe(result => {
-            if (result) {
-                // create form errors object
-                const formErrors = this.createFormErrors();
-                this.toastrService.warning('Please check the form', 'Warning');
-                CallanFormHelper.addFormError(formErrors, 'email', 'Such user already exists');
-                this.formErrors$.next(formErrors);
-            } else {
+        if (customer.id) {
+            console.log('This case');
+            this.customerService.findCustomerByEmail(customer.email).subscribe(existingCustomer => {
+                if (existingCustomer && existingCustomer.id !== customer.id) {
+                    // create form errors object
+                    const formErrors = this.createFormErrors();
+                    this.toastrService.warning('Please check the form', 'Warning');
+                    CallanFormHelper.addFormError(formErrors, 'email', 'Another user with the same email is already exists');
+                    this.formErrors$.next(formErrors);
+                } else {
+                    this.customerService.saveCustomer(customer).subscribe(() => {
 
-                this.customerService.saveCustomer(customer).subscribe(() => {
+                        this.isSaving = false;
+                        this.fetchCustomers();
+                        this.toastrService.success('User has been successfully saved', 'Success');
+                        this.handleDetailsReset();
+                    }, err => {
 
-                    this.isSaving = false;
+                        this.isSaving = false;
 
-                    this.fetchCustomers();
-                    this.toastrService.success('User has been successfully saved', 'Success');
-                    this.handleDetailsReset();
-                }, err => {
+                        if (err instanceof AppError) {
+                            if (err.httpStatus === 401 || err.httpStatus === 403) {
+                                throw err.error;
+                            } else {
+                                this.toastrService.warning('Please check the form', 'Warning');
+                                const formErrors = this.createFormErrors();
+                                const message = err.message;
+                                formErrors.common.push(message);
+                                formErrors.assignServerFieldErrors(err.formErrors);
+                                this.formErrors$.next(formErrors);
+                            }
 
-                    this.isSaving = false;
-
-                    if (err instanceof AppError) {
-                        if (err.httpStatus === 401 || err.httpStatus === 403) {
-                            throw err.error;
                         } else {
-                            this.toastrService.warning('Please check the form', 'Warning');
-                            const formErrors = this.createFormErrors();
-                            const message = err.message;
-                            formErrors.common.push(message);
-                            formErrors.assignServerFieldErrors(err.formErrors);
-                            this.formErrors$.next(formErrors);
+                            throw err;
                         }
+                    });
+                }
+            });
 
-                    } else {
-                        throw err;
-                    }
-                });
-            }
-        });
+        } else {
+            this.customerService.findCustomerByEmail(customer.email).subscribe(existingCustomer => {
+                if (existingCustomer) {
+                    // create form errors object
+                    const formErrors = this.createFormErrors();
+                    this.toastrService.warning('Please check the form', 'Warning');
+                    CallanFormHelper.addFormError(formErrors, 'email', 'Such user already exists');
+                    this.formErrors$.next(formErrors);
+                } else {
+
+                    this.customerService.saveCustomer(customer).subscribe(() => {
+
+                        this.isSaving = false;
+
+                        this.fetchCustomers();
+                        this.toastrService.success('User has been successfully saved', 'Success');
+                        this.handleDetailsReset();
+                    }, err => {
+
+                        this.isSaving = false;
+
+                        if (err instanceof AppError) {
+                            if (err.httpStatus === 401 || err.httpStatus === 403) {
+                                throw err.error;
+                            } else {
+                                this.toastrService.warning('Please check the form', 'Warning');
+                                const formErrors = this.createFormErrors();
+                                const message = err.message;
+                                formErrors.common.push(message);
+                                formErrors.assignServerFieldErrors(err.formErrors);
+                                this.formErrors$.next(formErrors);
+                            }
+
+                        } else {
+                            throw err;
+                        }
+                    });
+                }
+            });
+        }
     }
 
     handleDetailsReset() {
