@@ -10,7 +10,7 @@
       <div class="card-body">
         <div class="px-3">
           <div class="form-body">
-            <form [formGroup]="courseAddForm" (ngSubmit)="handleCourseAdd()">
+            <form [formGroup]="courseAddForm" (ngSubmit)="handleCourseProgressAdd()">
               <div class="row">
                 <div class="col-sm-6">
                   <div class="form-group">
@@ -27,6 +27,21 @@
                 </div>
               </div>
 
+              <div class="row">
+                <div class="col-sm-6">
+                  <h5
+                          class="mb-2"
+                          *ngIf="toNumber(courseAddForm.get('course').value.teacherChoice) === courseTeacherChoiceEnum.MANUAL && courseCompetences && courseCompetences.length > 0"
+                  >Please, select the tutor</h5>
+
+                  <app-callan-course-competences-for-course-list
+                          [courseCompetences]="courseCompetences"
+                          (selectCourseCompetenceEvent)="handleSelectCourseCompetence($event)"
+                          *ngIf="toNumber(courseAddForm.get('course').value.teacherChoice) === courseTeacherChoiceEnum.MANUAL && courseCompetences && courseCompetences.length > 0"
+                  ></app-callan-course-competences-for-course-list>
+                </div>
+              </div>
+
               <ul *ngIf="commonFormErrors.length > 0" class="pt-20 form-errors-wrapper">
                 <li *ngFor="let error of commonFormErrors" class="form-text text-muted danger">{{error}}</li>
               </ul>
@@ -36,7 +51,7 @@
                   Cancel
                 </button>
 
-                <button type="submit" class="btn btn-raised btn-primary" [disabled]="courseAddForm.invalid">
+                <button type="submit" class="btn btn-raised btn-primary" [disabled]="courseAddForm.invalid || !isCourseCompetenceSelected">
                   Add
                 </button>
               </div>

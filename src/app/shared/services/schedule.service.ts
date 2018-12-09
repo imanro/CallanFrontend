@@ -4,6 +4,8 @@ import {CallanScheduleRangeTypeEnum} from '../enums/schedule-range.type.enum';
 import {CallanScheduleRangeRegularityEnum} from '../enums/schedule-range.regularity.enum';
 import {Observable} from 'rxjs';
 import {CallanCustomer} from '../models/customer.model';
+import {CallanCourse} from '../models/course.model';
+import {CallanCourseProgress} from '../models/course-progress.model';
 
 export abstract class CallanScheduleService extends CallanBaseService {
 
@@ -110,7 +112,7 @@ export abstract class CallanScheduleService extends CallanBaseService {
 
     abstract getScheduleRange(id: number): Observable<CallanScheduleRange>;
 
-    abstract getHoursAvailable(startDate: Date, endDate: Date, customer?: CallanCustomer, isLookupLessonEvents?: boolean): Observable<Date[]>;
+    abstract getHoursAvailable(startDate: Date, endDate: Date, courseProgress?: CallanCourseProgress, customer?: CallanCustomer, isLookupLessonEvents?: boolean): Observable<Date[]>;
 
     abstract saveScheduleRange(scheduleRange: CallanScheduleRange): Observable<CallanScheduleRange>;
 

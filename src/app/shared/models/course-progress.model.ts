@@ -10,4 +10,5 @@ export class CallanCourseProgress extends CallanBaseModel {
     lastLessonEvent?: CallanLessonEvent;
     completedLessonEventsCount: number;
     lessonEventsBalance: number;
+    primaryTeacher: CallanCustomer;
 }

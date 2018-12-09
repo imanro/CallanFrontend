@@ -4,6 +4,8 @@ import {delay} from 'rxjs/operators';
 import {mockScheduleRanges} from '../data/mock-schedule-ranges';
 import {CallanCustomer} from '../models/customer.model';
 import {CallanScheduleRange} from '../models/schedule-range.model';
+import {CallanCourse} from '../models/course.model';
+import {CallanCourseProgress} from '../models/course-progress.model';
 
 export class CallanScheduleMockService extends CallanScheduleService {
 
@@ -77,7 +79,7 @@ export class CallanScheduleMockService extends CallanScheduleService {
         );
     }
 
-    getHoursAvailable(startDate: Date, endDate: Date, customer?: CallanCustomer, isLookupLessonEvents = false): Observable<Date[]> {
+    getHoursAvailable(startDate: Date, endDate: Date, courseProgress?: CallanCourseProgress, customer?: CallanCustomer, isLookupLessonEvents = false): Observable<Date[]> {
 
         return new Observable<Date[]>(observer => {
             const segment1 = new Date();

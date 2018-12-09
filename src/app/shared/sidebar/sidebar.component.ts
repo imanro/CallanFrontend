@@ -8,6 +8,7 @@ import {CallanCustomerService} from '../services/customer.service';
 import {CallanRoleNameEnum} from '../enums/role.name.enum';
 import {environment} from '../../../environments/environment';
 import {AppEnvironmentNameEnum} from '../enums/environment.name.enum';
+import {AppConfig} from '../../app.config';
 
 declare var $: any;
 
@@ -21,16 +22,19 @@ export class SidebarComponent implements OnInit {
 
     environment: {name: string, title: string};
     environmentNameEnum: any;
+    appVersion: string;
 
     constructor(
         private router: Router,
         private route: ActivatedRoute,
         private authService: CallanAuthService,
         private customerService: CallanCustomerService,
-        public translate: TranslateService
+        private appConfig: AppConfig,
+        public translate: TranslateService,
     ) {
         this.environmentNameEnum = AppEnvironmentNameEnum;
         this.environment = environment;
+        this.appVersion = this.appConfig.appVersion;
     }
 
     ngOnInit() {

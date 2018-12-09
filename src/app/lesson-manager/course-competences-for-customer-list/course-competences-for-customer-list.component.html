@@ -1,0 +1,35 @@
+<div class="row">
+
+  <div class="col-lg-12">
+    <div class="content-header mt-3">Your qualifications</div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12">
+    <div class="card">
+      <div class="card-body">
+        <div class="card-block pb-1"
+             *ngIf="courseSpecialities && courseSpecialities.length > 0; else noRows"
+        >
+          <div class="row pb-2" *ngFor="let speciality of courseSpecialities">
+            <div class="col-sm-2">
+              <h5 class="text-info">{{speciality.course.title}}</h5>
+            </div>
+            <div class="col-sm-10">
+
+              <div *ngIf="isSpecialityControlsShown">
+              <a href="javascript:;" (click)="handleCourseSpecialityDelete(speciality)"><i class="ft-trash-2 danger cancel font-medium-1 mr-2" title="Delete speciality"></i></a>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <ng-template #noRows>
+          <div class="card-block">Nothing to display</div>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</div>

@@ -44,9 +44,12 @@
                     <app-callan-customer-course-add
                             [allCourses$]="allCourses$"
                             [currentCustomerCourseProgresses$]="courseProgresses$"
+                            [courseProgress]="currentCourseProgress"
+                            [courseCompetences]="courseCompetences"
                             [formErrors$]="formErrors$"
                             (cancelEvent)="handleCustomerCourseAddCancel()"
-                            (courseAddEvent)="handleCustomerCourseAdd($event)"
+                            (courseProgressAddEvent)="handleCourseProgressAdd($event)"
+                            (courseSelectEvent)="handleCourseSelect($event)"
                             *ngIf="view === viewNameEnum.CUSTOMER_COURSE_ADD"
                     ></app-callan-customer-course-add>
 

@@ -1,0 +1,17 @@
+:host {
+  .list-group {
+    .list-group-item {
+      border: none;
+      margin-bottom: 0;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+    }
+
+    .list-group-item:last-child {
+      border-bottom: none;
+    }
+
+    .list-group-item.selected {
+      background-color: #E0F2F1;
+    }
+  }
+}

@@ -14,6 +14,7 @@ import {CallanBaseService} from './base.service';
 import {AppConfig} from '../../app.config';
 import {CallanCourseStage} from '../models/course-stage.model';
 import {Subject} from 'rxjs';
+import {CallanCourseCompetence} from '../models/course-competence.model';
 
 
 @Injectable()
@@ -27,6 +28,10 @@ export abstract class CallanLessonService extends CallanBaseService {
 
     static createCourseProgress(): CallanCourseProgress {
         return new CallanCourseProgress();
+    }
+
+    static createCourseSpeciality(): CallanCourseCompetence {
+        return new CallanCourseCompetence();
     }
 
     static createCourse(): CallanCourse {
@@ -100,15 +105,25 @@ export abstract class CallanLessonService extends CallanBaseService {
 
     abstract getLessonEvent(id: number): Observable<CallanLessonEvent>;
 
+    abstract saveLessonEvent(lessonEvent: CallanLessonEvent): Observable<CallanLessonEvent>;
+
     abstract getCourseProgresses(customer: CallanCustomer): Observable<CallanCourseProgress[]>;
+
+    abstract getCourseProgress(id: number): Observable<CallanCourseProgress>;
 
     abstract saveCourseProgress(progress: CallanCourseProgress): Observable<CallanCourseProgress>;
 
-    abstract saveLessonEvent(lessonEvent: CallanLessonEvent): Observable<CallanLessonEvent>;
+    abstract getCourseCompetences(customer: CallanCustomer): Observable<CallanCourseCompetence[]>;
+
+    abstract getCourseCompetencesByCourse(course: CallanCourse): Observable<CallanCourseCompetence[]>;
+
+    abstract getCourseCompetence(id: number): Observable<CallanCourseCompetence>;
+
+    abstract saveCourseCompetence(courseCompetency: CallanCourseCompetence): Observable<CallanCourseCompetence>;
+
+    abstract deleteCourseCompetence(courseCompetency: CallanCourseCompetence): Observable<boolean>;
 
     abstract getAllCourses(): Observable<CallanCourse[]>;
-
-    abstract getCourseProgress(id: number): Observable<CallanCourseProgress>;
 
     abstract getNearestStudentLessonEvent(student: CallanCustomer): Observable<CallanLessonEvent>;
 
@@ -129,6 +144,10 @@ export abstract class CallanLessonService extends CallanBaseService {
     abstract mapDataToLesson(lesson: CallanLesson, row: any): void;
 
     abstract mapDataToCourseStage(courseStage: CallanCourseStage, row: any): void;
+
+    abstract mapDataToCourseCompetence(courseCompetence: CallanCourseCompetence, row: any): void;
+
+    abstract mapCourseCompetencyToData(courseCompetence: CallanCourseCompetence): object;
 
     constructor(
         protected appConfig: AppConfig

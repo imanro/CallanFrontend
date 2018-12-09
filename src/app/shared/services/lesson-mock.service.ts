@@ -8,6 +8,7 @@ import {AppConfig, IAppConfig} from '../../app.config';
 import {mockCourses} from '../data/mock-courses';
 import {mockProgresses} from '../data/mock-course-progresses';
 import {mockLessonEvents} from '../data/mock-lesson-events';
+import {mockCourseCompetences} from '../data/mock-course-competences';
 
 import {CallanCustomer} from '../models/customer.model';
 import {CallanCourse} from '../models/course.model';
@@ -18,6 +19,8 @@ import {CallanLessonService} from './lesson.service';
 import {CallanCustomerService} from './customer.service';
 import {CallanLesson} from '../models/lesson.model';
 import {CallanCourseStage} from '../models/course-stage.model';
+import {CallanCourseCompetence} from '../models/course-competence.model';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
 @Injectable()
 export class CallanLessonMockService extends CallanLessonService {
@@ -42,18 +45,15 @@ export class CallanLessonMockService extends CallanLessonService {
     getCourseProgresses(customer: CallanCustomer): Observable<CallanCourseProgress[]> {
         return new Observable<CallanCourseProgress[]>(observer => {
             const result = [];
-            for (const id in mockProgresses) {
-                if (mockProgresses.hasOwnProperty(id)) {
-                    const row = mockProgresses[id];
-                    if (row.customer.id === customer.id) {
-                        result.push(row);
-                    }
+            for (const row of mockProgresses) {
+                if (row.customer.id === customer.id) {
+                    result.push(row);
                 }
             }
 
             observer.next(result);
             observer.complete();
-        })
+        });
     }
 
     getCourseProgress(id: number): Observable<CallanCourseProgress> {
@@ -62,6 +62,7 @@ export class CallanLessonMockService extends CallanLessonService {
 
             if (mockProgresses[id] !== undefined) {
                 observer.next(mockProgresses[id]);
+                observer.complete();
             } else {
                 throw new Error('Unknown course progress id given: ' + id);
             }
@@ -72,6 +73,99 @@ export class CallanLessonMockService extends CallanLessonService {
         )
     }
 
+    getCourseCompetences(customer: CallanCustomer): Observable<CallanCourseCompetence[]> {
+
+        const d = this.appConfig.mockDelayMs;
+
+        return new Observable<CallanCourseCompetence[]>(observer => {
+            const result = [];
+
+            console.log(mockCourseCompetences, 'all-around');
+            for (const row of mockCourseCompetences) {
+//                if (row.customer.id === customer.id) {
+                result.push(row);
+//                }
+            }
+
+            observer.next(result);
+            observer.complete();
+        }).pipe(
+            delay(d)
+        );
+    }
+
+    getCourseCompetencesByCourse(course: CallanCourse): Observable<CallanCourseCompetence[]> {
+
+        const d = this.appConfig.mockDelayMs;
+
+        return new Observable<CallanCourseCompetence[]>(observer => {
+            const result = [];
+
+            for (const row of mockCourseCompetences) {
+                if (row.course.id === course.id) {
+                    result.push(row);
+                }
+            }
+
+            observer.next(result);
+            observer.complete();
+        }).pipe(
+            delay(d)
+        );
+    }
+
+    getCourseCompetence(id: number): Observable<CallanCourseCompetence> {
+        const d = this.appConfig.mockDelayMs;
+
+        return new Observable<CallanCourseCompetence>(observer => {
+
+            if (mockCourseCompetences[id] !== undefined) {
+                observer.next(mockCourseCompetences[id]);
+                observer.complete();
+            } else {
+                throw new Error('Unknown course speciality: ' + id);
+            }
+
+            observer.complete();
+        }).pipe(
+            delay(d)
+        );
+    }
+
+    saveCourseCompetence(courseCompetence: CallanCourseCompetence): Observable<CallanCourseCompetence> {
+        const d = this.appConfig.mockDelayMs;
+        return new Observable<CallanCourseCompetence>(observer => {
+            mockCourseCompetences.push(courseCompetence);
+            observer.next(courseCompetence);
+            observer.complete();
+        }).pipe(
+            delay(d)
+        );
+    }
+
+    deleteCourseCompetence(courseCompetence: CallanCourseCompetence): Observable<boolean> {
+        const d = this.appConfig.mockDelayMs;
+        return new Observable<boolean>(observer => {
+
+            const filtered = mockCourseCompetences.filter(competence => competence.id !== courseCompetence.id);
+
+            while (mockCourseCompetences.length) {
+                mockCourseCompetences.pop();
+            }
+
+
+            for (const item of filtered) {
+                mockCourseCompetences.push(item);
+            }
+
+            observer.next(true);
+            observer.complete();
+
+        }).pipe(
+            delay(d)
+        );
+    }
+
     saveCourseProgress(progress: CallanCourseProgress): Observable<CallanCourseProgress> {
         const d = this.appConfig.mockDelayMs;
         return new Observable<CallanCourseProgress>(observer => {
@@ -80,8 +174,8 @@ export class CallanLessonMockService extends CallanLessonService {
             mockProgresses.push(progress);
             observer.next(progress);
             console.log('now:', mockProgresses);
-
             observer.complete();
+
         }).pipe(
             delay(d)
         );
@@ -208,7 +302,7 @@ export class CallanLessonMockService extends CallanLessonService {
     }
 
     mapCourseProgressToData(courseProgress: CallanCourseProgress): object {
-        return {}
+        return {};
     }
 
     mapDataToLessonEvent(lessonEvent: CallanLessonEvent, row: any): void {
@@ -216,7 +310,7 @@ export class CallanLessonMockService extends CallanLessonService {
     }
 
     mapLessonEventToData(lessonEvent: CallanLessonEvent): object {
-        return {}
+        return {};
     }
 
     mapDataToLesson(lesson: CallanLesson, row: any): void {
@@ -225,5 +319,13 @@ export class CallanLessonMockService extends CallanLessonService {
 
     mapDataToCourseStage(courseStage: CallanCourseStage, row: any): void {
 
+    }
+
+    mapDataToCourseCompetence(courseSpeciality: CallanCourseCompetence, row: any): void {
+
+    }
+
+    mapCourseCompetencyToData(courseSpeciality: CallanCourseCompetence): object {
+        return {};
     }
 }

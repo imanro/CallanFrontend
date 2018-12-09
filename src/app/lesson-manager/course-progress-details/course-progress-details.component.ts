@@ -1,6 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {CallanCourseProgress} from '../../shared/models/course-progress.model';
 import {CallanCustomer} from '../../shared/models/customer.model';
+import {CallanCourseTeacherChoiceEnum} from '../../shared/enums/course.teacher-choice.enum';
 
 @Component({
     selector: 'app-callan-course-progress-details',
@@ -10,14 +11,20 @@ import {CallanCustomer} from '../../shared/models/customer.model';
 export class CallanCourseProgressDetailsComponent implements OnInit {
 
     @Input() courseProgress: CallanCourseProgress;
+
     @Input() isTopUpLessonEventsBalanceButtonShown;
+
     @Input() isLessonEventsCreateButtonShown;
 
     @Output() lessonEventCreateEvent = new EventEmitter<void>();
+
     @Output() topUpLessonEventsBalanceEvent = new EventEmitter<CallanCourseProgress>();
+
+    courseTeacherChoiceEnum: any;
 
     constructor(
     ) {
+        this.courseTeacherChoiceEnum = CallanCourseTeacherChoiceEnum;
     }
 
     ngOnInit() {

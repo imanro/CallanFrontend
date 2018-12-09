@@ -174,7 +174,7 @@ export class CallanScheduleManagerContainerComponent implements OnInit, OnDestro
         console.log('created range', range);
 
         if (this.currentCustomer) {
-            this.scheduleService.getHoursAvailable(range[0], range[1], this.currentCustomer).subscribe(dates => {
+            this.scheduleService.getHoursAvailable(range[0], range[1], null, this.currentCustomer).subscribe(dates => {
                 // this.datesEnabled$.next(dates);
                 this.datesEnabled = dates;
 

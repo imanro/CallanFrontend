@@ -1,0 +1,18 @@
+<ul class="list-group">
+<li class="list-group-item"
+    [ngClass]="{'selected': selectedCourseCompetence && selectedCourseCompetence === competence}"
+    *ngFor="let competence of courseCompetences"
+>
+  <span class="teacher-name text-info">{{competence.customer.getFullName()}}</span>
+  <button type="button" class="btn btn-raised float-right"
+          [ngClass]="{
+          'btn-success': selectedCourseCompetence && selectedCourseCompetence === competence,
+          'btn-outline-success': !selectedCourseCompetence || selectedCourseCompetence !== competence
+          }"
+          (click)="handleSelectCourseCompetence(competence)">
+    <span *ngIf="selectedCourseCompetence && selectedCourseCompetence === competence; else promptText">Selected</span>
+    <ng-template #promptText>Select this tutor</ng-template>
+  </button>
+</li>
+
+</ul>

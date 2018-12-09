@@ -111,10 +111,30 @@
     .sidebar-content{
         margin-top: 20px;
         position: relative;
-        height: calc(100vh - 90px);
+        height: calc(92vh - 90px);
         overflow: auto;
         z-index: 4;
     }
+
+    .sidebar-footer{
+        margin-top: 10px;
+        position: relative;
+        overflow: auto;
+        z-index: 4;
+
+        .version-info {
+            font-size: 13px;
+
+            .title {
+                color: rgba(255, 255, 255, .4);
+            }
+
+            .value {
+                color: rgba(255, 255, 255, .7);
+            }
+        }
+    }
+
     .logo-img{
         width: 30px;
         display: inline-block;
