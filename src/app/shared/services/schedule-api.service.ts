@@ -9,6 +9,8 @@ import {HttpClient} from '@angular/common/http';
 import {CallanCustomerService} from './customer.service';
 import {AppError} from '../models/error.model';
 import {CallanScheduleRangeRegularityEnum} from '../enums/schedule-range.regularity.enum';
+import {CallanCourse} from '../models/course.model';
+import {CallanCourseProgress} from '../models/course-progress.model';
 
 @Injectable()
 export class CallanScheduleApiService extends CallanScheduleService {
@@ -91,6 +93,7 @@ export class CallanScheduleApiService extends CallanScheduleService {
 
         if (scheduleRange.id) {
             const url = this.getApiUrl('/ScheduleRanges/' + scheduleRange.id);
+            // Checkme: -> patch
             return this.http.put(url, data)
                 .pipe(
                     mergeMap(responseData => {
@@ -123,13 +126,17 @@ export class CallanScheduleApiService extends CallanScheduleService {
             );
     }
 
-    getHoursAvailable(startDate: Date, endDate: Date, customer?: CallanCustomer, isLookupLessonEvents = false): Observable<Date[]> {
+    getHoursAvailable(startDate: Date, endDate: Date, courseProgress?: CallanCourseProgress, customer?: CallanCustomer, isLookupLessonEvents = false): Observable<Date[]> {
 
         const params: any = {};
 
         params.startDate = startDate.toISOString();
         params.endDate = endDate.toISOString();
         params.isLookupLessonEvents = isLookupLessonEvents;
+
+        if (courseProgress) {
+            params.courseProgressId = courseProgress.id;
+        }
 
         if (customer) {
             params.customerId = customer.id;

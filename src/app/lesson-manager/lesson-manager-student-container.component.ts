@@ -26,6 +26,7 @@ import {CallanLessonManagerStudentViewEnum} from '../shared/enums/lesson-manager
 import {CallanLessonEventStateEnum} from '../shared/enums/lesson-event.state.enum';
 import {CallanLessonEventViewEnum} from '../shared/enums/lesson-event.view.enum';
 import {AppConfig} from '../app.config';
+import {CallanCourseCompetence} from '../shared/models/course-competence.model';
 
 @Component({
     selector: 'app-callan-lesson-manager-container',
@@ -39,6 +40,7 @@ export class CallanLessonManagerStudentContainerComponent implements OnInit, OnD
     authCustomer: CallanCustomer;
 
     courseProgresses$ = new BehaviorSubject<CallanCourseProgress[]>([]);
+    courseCompetences: CallanCourseCompetence[];
     currentCourseProgress$ = new BehaviorSubject<CallanCourseProgress>(null);
     currentCourseProgress: CallanCourseProgress;
 
@@ -129,7 +131,7 @@ export class CallanLessonManagerStudentContainerComponent implements OnInit, OnD
     handleLessonEventCreate() {
         // reset date first
         this.setCurrentDate(new Date());
-        this.assignDatesEnabled(this.currentDate);
+        this.assignDatesEnabled(this.currentDate, this.currentCourseProgress);
 
         this.view = CallanLessonManagerStudentViewEnum.CALENDAR;
     }
@@ -143,6 +145,7 @@ export class CallanLessonManagerStudentContainerComponent implements OnInit, OnD
     }
 
     handleCustomerCourseAddShow() {
+        this.setCurrentCourseProgress(this.createCourseProgress());
         this.view = CallanLessonManagerStudentViewEnum.CUSTOMER_COURSE_ADD;
     }
 
@@ -156,17 +159,17 @@ export class CallanLessonManagerStudentContainerComponent implements OnInit, OnD
 
     handleCalendarShowPreviousWeek() {
         this.currentDate.setDate(this.currentDate.getDate() - 7);
-        this.assignDatesEnabled(this.currentDate);
+        this.assignDatesEnabled(this.currentDate, this.currentCourseProgress);
     }
 
     handleCalendarShowNextWeek() {
         this.currentDate.setDate(this.currentDate.getDate() + 7);
-        this.assignDatesEnabled(this.currentDate);
+        this.assignDatesEnabled(this.currentDate, this.currentCourseProgress);
     }
 
     handleCalendarShowCurrentWeek() {
         this.setCurrentDate(new Date());
-        this.assignDatesEnabled(this.currentDate);
+        this.assignDatesEnabled(this.currentDate, this.currentCourseProgress);
     }
 
     handleCalendarHourSegmentClick($event) {
@@ -212,14 +215,12 @@ export class CallanLessonManagerStudentContainerComponent implements OnInit, OnD
     }
 
 
-    handleCustomerCourseAdd(course) {
+    handleCourseProgressAdd(courseProgress: CallanCourseProgress) {
 
-        const progress = CallanLessonService.createCourseProgress();
-        progress.customer = this.currentCustomer;
-        progress.course = course;
+        courseProgress.customer = this.currentCustomer;
 
-        this.lessonService.saveCourseProgress(progress)
-            .subscribe(courseProgress => {
+        this.lessonService.saveCourseProgress(courseProgress)
+            .subscribe(createdProgress => {
                 // re-read list
                 console.log('re-read');
                 this.assignCourseProgresses(this.currentCustomer);
@@ -314,6 +315,8 @@ export class CallanLessonManagerStudentContainerComponent implements OnInit, OnD
             size: 'lg'
         });
 
+        console.log('LE:', lessonEvent);
+
         modalRef.componentInstance.title = 'Confirm cancel lesson';
         modalRef.componentInstance.message = '<p>Do you confirm the lesson cancelation? Please, write a few fords about the reason</p>';
 
@@ -363,6 +366,13 @@ export class CallanLessonManagerStudentContainerComponent implements OnInit, OnD
         });
     }
 
+    handleCourseSelect(course) {
+        this.lessonService.getCourseCompetencesByCourse(course)
+            .subscribe(competences => {
+                this.courseCompetences = competences;
+            })
+    }
+
     private processRouteParams() {
         this.route.params
             .pipe(takeUntil(this.unsubscribe$))
@@ -409,12 +419,12 @@ export class CallanLessonManagerStudentContainerComponent implements OnInit, OnD
             );
     }
 
-    private assignDatesEnabled(date: Date) {
+    private assignDatesEnabled(date: Date, courseProgress: CallanCourseProgress) {
 
         const range = CallanScheduleService.getWeekDatesRangeForDate(date);
 
         // we need to getHoursAvailable also includes already booked times
-        this.scheduleService.getHoursAvailable(range[0], range[1], null, true).subscribe(dates => {
+        this.scheduleService.getHoursAvailable(range[0], range[1], courseProgress, null, true).subscribe(dates => {
             console.log(dates, 'received!');
             this.datesEnabled = dates;
 
@@ -446,7 +456,7 @@ export class CallanLessonManagerStudentContainerComponent implements OnInit, OnD
 
     private setCurrentCourseProgress(courseProgress: CallanCourseProgress) {
 
-        if (this.isInitialRouteProcessed) {
+        if (this.isInitialRouteProcessed && courseProgress && !courseProgress.isNew()) {
             this.location.replaceState('/lessons/student/' + courseProgress.id);
         }
 
@@ -560,8 +570,10 @@ export class CallanLessonManagerStudentContainerComponent implements OnInit, OnD
             if (
                 lessonEvent.state === CallanLessonEventStateEnum.PLANNED ||
                 lessonEvent.state === CallanLessonEventStateEnum.STARTED
-            )
-            this.calendarEvents.push(CallanLessonService.convertLessonEventToCalendarEvent(lessonEvent));
+
+            ) {
+                this.calendarEvents.push(CallanLessonService.convertLessonEventToCalendarEvent(lessonEvent));
+            }
         }
 
         this.calendarRefresh$.next();
@@ -699,6 +711,8 @@ export class CallanLessonManagerStudentContainerComponent implements OnInit, OnD
         return lessonEvent;
     }
 
-
+    private createCourseProgress(): CallanCourseProgress {
+        return CallanLessonService.createCourseProgress();
+    }
 
 }

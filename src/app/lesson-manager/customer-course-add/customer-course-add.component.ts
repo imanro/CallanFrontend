@@ -5,8 +5,11 @@ import {CallanCourse} from '../../shared/models/course.model';
 import {CallanCourseProgress} from '../../shared/models/course-progress.model';
 import {combineLatest as observableCombineLatest} from 'rxjs/observable/combineLatest';
 import {takeUntil} from 'rxjs/operators';
+import * as _ from 'lodash';
 import {AppFormErrors} from '../../shared/models/form-errors.model';
 import {CallanFormHelper} from '../../shared/helpers/form-helper';
+import {CallanCourseTeacherChoiceEnum} from '../../shared/enums/course.teacher-choice.enum';
+import {CallanCourseCompetence} from '../../shared/models/course-competence.model';
 
 @Component({
     selector: 'app-callan-customer-course-add',
@@ -16,16 +19,32 @@ import {CallanFormHelper} from '../../shared/helpers/form-helper';
 export class CallanCustomerCourseAddComponent implements OnInit, OnDestroy {
 
     @Input() allCourses$: Observable<CallanCourse[]>;
+
     @Input() currentCustomerCourseProgresses$: BehaviorSubject<CallanCourseProgress[]>;
+
+    @Input() courseProgress: CallanCourseProgress;
+
     @Input() formErrors$ =  new BehaviorSubject<AppFormErrors>(null);
+
+    @Input() courseCompetences: CallanCourseCompetence[];
+
     @Input() isSaving = false;
 
-    @Output() courseAddEvent = new EventEmitter<CallanCourse>();
+    @Output() courseProgressAddEvent = new EventEmitter<CallanCourseProgress>();
+
+    @Output() courseSelectEvent = new EventEmitter<CallanCourse>();
+
     @Output() cancelEvent = new EventEmitter<void>();
 
     courseAddForm: FormGroup;
+
     courses: CallanCourse[];
+
     commonFormErrors = [];
+
+    courseTeacherChoiceEnum: any;
+
+    isCourseCompetenceSelected = true;
 
     private unsubscribe: Subject<void> = new Subject();
 
@@ -33,32 +52,77 @@ export class CallanCustomerCourseAddComponent implements OnInit, OnDestroy {
         private fb: FormBuilder
     ) {
         this.buildForm();
+        this.courseTeacherChoiceEnum = CallanCourseTeacherChoiceEnum;
     }
 
     ngOnInit() {
 
-        observableCombineLatest(
-            this.allCourses$,
-            this.currentCustomerCourseProgresses$
-        )
-            .pipe(
-                takeUntil(this.unsubscribe)
-            )
-            .subscribe(results => {
-                this.courses = results[0].filter(course => {
-                    for (const progress of results[1]) {
-                        if (progress.course.id === course.id) {
-                            return false;
-                        }
-                    }
+        this.subscribeOnCustomerCoursesAndAllCourses();
 
-                    return true;
-                });
+        this.subscribeOnFormErrors();
+    }
 
-                this.setFormValues();
-                }
-            );
+    ngOnDestroy() {
+        this.unsubscribe.next();
+        this.unsubscribe.complete();
+    }
 
+    handleCancel() {
+        this.cancelEvent.next();
+    }
+
+    handleCourseProgressAdd() {
+        const courseProgress = this.prepareCourseProgressAdd();
+        this.courseProgressAddEvent.next(courseProgress);
+    }
+
+    handleCourseSelect(course: CallanCourse) {
+        if (course.teacherChoice === CallanCourseTeacherChoiceEnum.MANUAL) {
+            // to not perform an unnecessary queries
+            this.courseSelectEvent.next(course);
+            this.isCourseCompetenceSelected = false;
+        } else {
+            this.isCourseCompetenceSelected = true;
+        }
+    }
+
+    handleSelectCourseCompetence(competence: CallanCourseCompetence) {
+        this.courseProgress.primaryTeacher = competence.customer;
+        this.isCourseCompetenceSelected = true;
+    }
+
+    toNumber(value: any): number {
+        return Number(value);
+    }
+
+    private buildForm() {
+        this.courseAddForm = this.fb.group({
+            course: ['', Validators.required],
+        });
+
+        this.courseAddForm.get('course').valueChanges.subscribe(value => {
+            this.handleCourseSelect(value);
+        });
+
+    }
+
+    private setFormValues() {
+        if (this.courses && this.courses.length > 0) {
+            this.courseAddForm.patchValue({'course': this.courses[0]});
+        }
+    }
+
+    private prepareCourseProgressAdd() {
+        const addCourseProgress = _.cloneDeep(this.courseProgress);
+        addCourseProgress.course = this.courseAddForm.value.course;
+
+        console.log(addCourseProgress, 'prepared');
+
+        // TODO: finish refactoring
+        return addCourseProgress;
+    }
+
+    private subscribeOnFormErrors() {
         this.formErrors$
             .pipe(takeUntil(this.unsubscribe))
             .subscribe(formErrors => {
@@ -80,34 +144,28 @@ export class CallanCustomerCourseAddComponent implements OnInit, OnDestroy {
         this.commonFormErrors = [];
     }
 
-    private buildForm() {
-        this.courseAddForm = this.fb.group({
-            course: ['', Validators.required],
-        });
-    }
+    private subscribeOnCustomerCoursesAndAllCourses() {
+        observableCombineLatest(
+            this.allCourses$,
+            this.currentCustomerCourseProgresses$
+        )
+            .pipe(
+                takeUntil(this.unsubscribe)
+            )
+            .subscribe(results => {
+                    this.courses = results[0].filter(course => {
+                        for (const progress of results[1]) {
+                            if (progress.course.id === course.id) {
+                                return false;
+                            }
+                        }
 
-    private setFormValues() {
-        if (this.courses && this.courses.length > 0) {
-            this.courseAddForm.patchValue({'course': this.courses[0]});
-        }
-    }
+                        return true;
+                    });
 
-    private prepareCourseAdd() {
-        return this.courseAddForm.value.course;
-    }
-
-    handleCancel() {
-        this.cancelEvent.next();
-    }
-
-    handleCourseAdd() {
-        const course = this.prepareCourseAdd();
-        this.courseAddEvent.next(course);
-    }
-
-    ngOnDestroy() {
-        this.unsubscribe.next();
-        this.unsubscribe.complete();
+                    this.setFormValues();
+                }
+            );
     }
 
 }

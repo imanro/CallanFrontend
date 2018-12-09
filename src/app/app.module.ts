@@ -39,7 +39,6 @@ import {CallanActivityLogService} from './shared/services/activity-log.service';
 import {CallanActivityLogMockService} from './shared/services/activity-log-mock.service';
 import {CallanActivityLogApiService} from './shared/services/activity-log-api.service';
 
-
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
   }
@@ -54,7 +53,7 @@ export function initializeApp(appConfig: AppConfig) {
     declarations: [
         AppComponent,
         FullLayoutComponent,
-        ContentLayoutComponent
+        ContentLayoutComponent,
     ],
     imports: [
         BrowserAnimationsModule,

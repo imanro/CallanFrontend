@@ -22,6 +22,9 @@ import {AppModalContentModule} from '../shared-modules/modal-content/modal-conte
 import {AppModalContentComponent} from '../shared-modules/modal-content/modal-content.component';
 import {AppModalContentFeedbackModule} from '../shared-modules/modal-content-feedback/modal-content-feedback.module';
 import {AppModalContentFeedbackComponent} from '../shared-modules/modal-content-feedback/modal-content-feedback.component';
+import { CallanCourseCompetencesForCustomerListComponent } from './course-competences-for-customer-list/course-competences-for-customer-list.component';
+import { CallanCourseSpecialityAddComponent } from './course-competence-add/course-competence-add.component';
+import { CallanCourseCompetencesForCourseListComponent } from './course-competences-for-course-list/course-competences-for-course-list.component';
 
 @NgModule({
     declarations: [
@@ -33,7 +36,10 @@ import {AppModalContentFeedbackComponent} from '../shared-modules/modal-content-
         CallanLessonEventComponent,
         CallanLessonEventsListComponent,
         CallanCustomerCourseAddComponent,
-        CallanLessonEventsBalanceDetailsComponent
+        CallanLessonEventsBalanceDetailsComponent,
+        CallanCourseCompetencesForCustomerListComponent,
+        CallanCourseSpecialityAddComponent,
+        CallanCourseCompetencesForCourseListComponent
     ],
     imports: [
         CommonModule,

@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {Subject, timer as observableTimer, interval as observableInterval} from 'rxjs';
+import {interval as observableInterval, Subject, timer as observableTimer} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 import {CallanLessonEvent} from '../shared/models/lesson-event.model';
 import {CallanLessonManagerTeacherViewEnum} from '../shared/enums/lesson-manager-teacher.view.enum';
@@ -8,12 +8,17 @@ import {CallanLessonService} from '../shared/services/lesson.service';
 import {CallanScheduleService} from '../shared/services/schedule.service';
 import {CallanCustomer} from '../shared/models/customer.model';
 import {CallanLessonEventViewEnum} from '../shared/enums/lesson-event.view.enum';
+import {CallanCourseCompetence} from '../shared/models/course-competence.model';
 import {AppConfig} from '../app.config';
+import {AppModalContentComponent} from '../shared-modules/modal-content/modal-content.component';
 import {AppModalContentFeedbackComponent} from '../shared-modules/modal-content-feedback/modal-content-feedback.component';
 import {CallanLessonEventStateEnum} from '../shared/enums/lesson-event.state.enum';
 import {AppError} from '../shared/models/error.model';
 import {ToastrService} from 'ngx-toastr';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {CallanRoleNameEnum} from '../shared/enums/role.name.enum';
+import {CallanCourse} from '../shared/models/course.model';
+import {AppFormErrors} from '../shared/models/form-errors.model';
 
 @Component({
     selector: 'app-callan-lesson-manager-teacher-container',
@@ -23,19 +28,29 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 export class CallanLessonManagerTeacherContainerComponent implements OnInit, OnDestroy {
 
     currentLessonEvent: CallanLessonEvent;
+    currentCourseCompetence: CallanCourseCompetence;
 
     authCustomer: CallanCustomer;
     currentCustomer: CallanCustomer;
     currentDate: Date;
 
+    allCourses: CallanCourse[];
+    courseSpecialities: CallanCourseCompetence[];
     lessonEvents: CallanLessonEvent[];
 
     lessonEventsListRefresh$ = new Subject<void>();
 
     isLessonEventShown = false;
+    isAddCourseSpecialityButtonShown = false;
+    isCourseSpecialityListControlsShown = false;
+
     view = CallanLessonManagerTeacherViewEnum.DEFAULT;
     viewNameEnum: any;
     lessonEventViewNameEnum: any;
+
+    formErrors$ = new Subject<AppFormErrors>();
+
+    isSaving = false;
 
     private unsubscribe$: Subject<void> = new Subject();
 
@@ -60,6 +75,7 @@ export class CallanLessonManagerTeacherContainerComponent implements OnInit, OnD
         this.subscribeOnCurrentLessonEventUpdateInterval();
 
         this.assignAuthCustomer();
+        this.assignAllCourses();
         this.assignCurrentCustomer();
         this.setCurrentDate(new Date());
     }
@@ -136,6 +152,79 @@ export class CallanLessonManagerTeacherContainerComponent implements OnInit, OnD
         });
     }
 
+    handleCourseSpecialityAddShow() {
+        this.currentCourseCompetence = this.createCourseCompetence();
+        this.view = CallanLessonManagerTeacherViewEnum.COURSE_SPECIALITY_DETAILS;
+    }
+
+    handleCourseSpecialityAddCancel() {
+        this.view = CallanLessonManagerTeacherViewEnum.DEFAULT;
+    }
+
+    handleCourseSpecialityAdd(courseSpeciality) {
+
+        this.lessonService.saveCourseCompetence(courseSpeciality)
+            .subscribe(() => {
+                // re-read list
+                console.log('re-read');
+                this.assignCourseSpecialities(this.currentCustomer);
+                this.view = CallanLessonManagerTeacherViewEnum.DEFAULT;
+                this.toastrService.success('The new speciality has been added to teacher', 'Success');
+
+            }, err => {
+
+                this.isSaving = false;
+
+                if (err instanceof AppError) {
+                    if (err.httpStatus === 401 || err.httpStatus === 403) {
+                        throw err.error;
+                    } else {
+                        this.toastrService.warning('Please check the form', 'Warning');
+                        const formErrors = this.createFormErrors();
+                        const message = err.message;
+                        formErrors.common.push(message);
+                        formErrors.assignServerFieldErrors(err.formErrors);
+                        this.formErrors$.next(formErrors);
+                    }
+
+                } else {
+                    throw err;
+                }
+            });
+    }
+
+    handleCourseSpecialityDelete(courseSpeciality) {
+        const modalRef = this.modalService.open(AppModalContentComponent, {
+            centered: true,
+            backdrop: true,
+            size: 'lg'
+        });
+
+        modalRef.componentInstance.title = 'Confirm speciality remove';
+        modalRef.componentInstance.body = '<p>Are you sure you want to delete this speciality from customer\'s account?</p>';
+
+        modalRef.result.then((userResponse) => {
+
+            if (userResponse) {
+                this.lessonService.deleteCourseCompetence(courseSpeciality)
+                    .subscribe(result => {
+                        if (result) {
+                            this.toastrService.success('The speciality has been successfully deleted from customer\'s account', 'Success');
+                            this.assignCourseSpecialities(this.currentCustomer);
+                        } else {
+                            this.toastrService.warning('Some error occurred while delete speciality', 'Warning');
+                        }
+                    }, err => {
+                        console.error(err);
+                        this.toastrService.warning('Some error occurred while delete speciality', 'Warning');
+                    });
+            }
+        }, () => {
+            // just do nothing
+        });
+
+    }
+
     private setCurrentLessonEvent(lessonEvent) {
         this.lessonService.setCurrentLessonEvent(lessonEvent);
     }
@@ -210,7 +299,31 @@ export class CallanLessonManagerTeacherContainerComponent implements OnInit, OnD
             )
             .subscribe(customer => {
                 this.authCustomer = customer;
+                this.assignIsAddCourseSpecialityButtonShown();
+                this.assignIsCourseSpecialityListControlsShown();
             });
+    }
+
+    private assignIsAddCourseSpecialityButtonShown() {
+
+        if (this.authCustomer && this.courseSpecialities && this.allCourses) {
+            if (CallanCustomerService.hasCustomerRole(this.authCustomer, CallanRoleNameEnum.ADMIN) &&
+                this.courseSpecialities.length < this.allCourses.length) {
+                this.isAddCourseSpecialityButtonShown = true;
+            } else {
+                this.isAddCourseSpecialityButtonShown = false;
+            }
+        } else {
+            this.isAddCourseSpecialityButtonShown = false;
+        }
+    }
+
+    private assignIsCourseSpecialityListControlsShown() {
+        if (this.authCustomer && CallanCustomerService.hasCustomerRole(this.authCustomer, CallanRoleNameEnum.ADMIN)) {
+            this.isCourseSpecialityListControlsShown = true;
+        } else {
+            this.isCourseSpecialityListControlsShown = false;
+        }
     }
 
     private assignCurrentCustomer() {
@@ -222,7 +335,8 @@ export class CallanLessonManagerTeacherContainerComponent implements OnInit, OnD
                 this.currentCustomer = customer;
 
                 if (customer) {
-                    this.assignLessonEvents(customer)
+                    this.assignLessonEvents(customer);
+                    this.assignCourseSpecialities(customer);
                     //
                 }
             });
@@ -238,8 +352,34 @@ export class CallanLessonManagerTeacherContainerComponent implements OnInit, OnD
         });
     }
 
+    private assignCourseSpecialities(customer) {
+        this.lessonService.getCourseCompetences(customer).subscribe(specialities => {
+            this.courseSpecialities = specialities;
+            console.log(specialities, 'now');
+            this.assignIsAddCourseSpecialityButtonShown();
+        });
+    }
+
+    private assignAllCourses() {
+        this.lessonService.getAllCourses()
+            .subscribe(courses => {
+                this.allCourses = courses;
+                this.assignIsAddCourseSpecialityButtonShown();
+            });
+    }
+
     private setCurrentDate(date: Date) {
         this.currentDate = date;
+    }
+
+    private createCourseCompetence() {
+        const speciality = CallanLessonService.createCourseSpeciality();
+        speciality.customer = this.currentCustomer;
+        return speciality;
+    }
+
+    private createFormErrors() {
+        return new AppFormErrors();
     }
 
 }

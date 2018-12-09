@@ -19,6 +19,7 @@ baseStartDate.setSeconds(0);
 // 1st lesson event
 const event1 = new CallanLessonEvent();
 
+event1.id = 1;
 event1.title = 'Lesson 1';
 event1.startTime = baseStartDate;
 event1.lesson = lesson1;
@@ -30,6 +31,7 @@ event2StartDate.setHours(13);
 
 
 const event2 = new CallanLessonEvent();
+event2.id = 2;
 event2.title = 'Lesson 2';
 event2.startTime = event2StartDate;
 event2.lesson = lesson2;
@@ -40,6 +42,7 @@ event3StartDate.setDate(baseStartDate.getDate() + 1);
 event3StartDate.setHours(event2StartDate.getHours() + 1);
 
 const event3 = new CallanLessonEvent();
+event3.id = 3;
 event3.title = 'Lesson 3';
 event3.startTime = event3StartDate;
 event3.lesson = lesson3;

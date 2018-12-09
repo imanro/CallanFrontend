@@ -8,6 +8,7 @@ export class CallanCustomer extends CallanBaseModel {
     firstName: string;
     lastName: string;
     roles: CallanRole[];
+    availableHourInAdvanceMin: number;
 
     getFullName?(): string {
         return this.lastName && this.firstName ? this.lastName + ' ' + this.firstName : this.firstName;

@@ -4,6 +4,34 @@
       <div class="container-fluid">
 
         <section>
+
+          <app-course-competences-list
+                  [courseSpecialities]="courseSpecialities"
+                  [isSpecialityControlsShown]="isCourseSpecialityListControlsShown"
+                  (courseSpecialityDeleteEvent)="handleCourseSpecialityDelete($event)"
+                  *ngIf="view === viewNameEnum.DEFAULT"
+          ></app-course-competences-list>
+
+          <app-course-speciality-add
+                  [courseSpeciality]="currentCourseCompetence"
+                  [allCourses]="allCourses"
+                  [courseSpecialities]="courseSpecialities"
+                  [formErrors$]="formErrors$"
+                  (cancelEvent)="handleCourseSpecialityAddCancel()"
+                  (courseSpecialityAddEvent)="handleCourseSpecialityAdd($event)"
+                  *ngIf="view === viewNameEnum.COURSE_SPECIALITY_DETAILS && allCourses && courseSpecialities"
+          ></app-course-speciality-add>
+
+          <div class="row"
+               *ngIf="view === viewNameEnum.DEFAULT && isAddCourseSpecialityButtonShown && currentCustomer"
+          >
+            <div class="col-sm-12">
+              <div class="mt-2">
+                <a class="btn btn-raised gradient-mint white" href="javascript:void(0)" (click)="handleCourseSpecialityAddShow()">Add a new speciality</a>
+              </div>
+            </div>
+          </div>
+
           <app-callan-lesson-event
                   [lessonEvent]="currentLessonEvent"
                   [view]="lessonEventViewNameEnum.TEACHER"
@@ -14,9 +42,9 @@
                   [lessonEvents]="lessonEvents"
                   [refresh$]="lessonEventsListRefresh$"
                   [isLessonEditingShown]="true"
-                  *ngIf="view === viewNameEnum.DEFAULT"
                   (setCurrentLessonEventEvent)="handleSetCurrentLessonEvent($event)"
                   (cancelLessonEventEvent)="handleCancelLessonEvent($event)"
+                  *ngIf="view === viewNameEnum.DEFAULT"
           ></app-callan-lesson-events-list>
         </section>
 
