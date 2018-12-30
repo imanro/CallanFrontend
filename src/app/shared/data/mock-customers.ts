@@ -12,7 +12,7 @@ const customerData = [
         email: 'roman.denisov@biscience.com',
         firstName: 'Roman',
         lastName: 'Denisov',
-        roles: [roleTeacher, roleAdmin]
+        roles: [roleTeacher, roleAdmin],
     },
     {
         id: 3,

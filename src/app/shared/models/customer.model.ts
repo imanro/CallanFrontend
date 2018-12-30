@@ -1,5 +1,6 @@
 import {CallanBaseModel} from './base.model';
 import {CallanRole} from './role.model';
+import {CallanTimezone} from './timezone.model';
 
 export class CallanCustomer extends CallanBaseModel {
     id: number;
@@ -9,6 +10,7 @@ export class CallanCustomer extends CallanBaseModel {
     lastName: string;
     roles: CallanRole[];
     availableHourInAdvanceMin: number;
+    timezone: CallanTimezone;
 
     getFullName?(): string {
         return this.lastName && this.firstName ? this.lastName + ' ' + this.firstName : this.firstName;

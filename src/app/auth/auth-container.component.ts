@@ -9,6 +9,8 @@ import {AppError} from '../shared/models/error.model';
 import {CallanCustomerService} from '../shared/services/customer.service';
 import {CallanRoleNameEnum} from '../shared/enums/role.name.enum';
 import {CallanLessonService} from '../shared/services/lesson.service';
+import {catchError, map, mergeMap} from 'rxjs/operators';
+import {of as observableOf} from 'rxjs';
 
 @Component({
     selector: 'app-callan-auth-container',
@@ -51,6 +53,20 @@ export class CallanAuthContainerComponent implements OnInit, OnDestroy {
         this.authService.login(loginCustomer.email, loginCustomer.password)
             .subscribe(() => {
                 this.customerService.getAuthCustomer()
+                    .pipe(
+                        mergeMap(customer => this.customerService.autoUpdateTimezone(customer)
+                            .pipe(
+                                map<void, CallanCustomer>(() => {
+                                    console.log('back to customer', customer);
+                                    return customer;
+                                }),
+                                catchError(err => {
+                                    console.log(err, 'occured');
+                                    return observableOf(customer);
+                                })
+                            )
+                        )
+                    )
                     .subscribe(customer => {
 
                         this.lessonService.reset();

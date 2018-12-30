@@ -18,14 +18,19 @@ import {CallanFormHelper} from '../../shared/helpers/form-helper';
 export class CallanCustomerDetailsComponent implements OnInit, OnDestroy {
 
     @Input() customer: CallanCustomer;
+
     @Input() rolesList: CallanRole[];
+
     @Input() formErrors$ =  new BehaviorSubject<AppFormErrors>(null);
+
     @Input() isSaving = false;
 
     @Output() customerSaveEvent = new EventEmitter<CallanCustomer>();
+
     @Output() cancelEvent = new EventEmitter<void>();
 
     @ViewChild('assignedRolesInput') assignedRolesInput: ElementRef;
+
     @ViewChild('existingRolesInput') existingRolesInput: ElementRef;
 
     formTitle: string;

@@ -11,6 +11,8 @@ import {CallanRole} from '../models/role.model';
 import {CallanRoleNameEnum} from '../enums/role.name.enum';
 import {AppError} from '../models/error.model';
 import {CallanAuthService} from './auth.service';
+import {CallanTimezone} from '../models/timezone.model';
+import {CallanDateService} from './date.service';
 
 @Injectable()
 export class CallanCustomerApiService extends CallanCustomerService {
@@ -18,13 +20,14 @@ export class CallanCustomerApiService extends CallanCustomerService {
     constructor(
         protected appConfig: AppConfig,
         protected authService: CallanAuthService,
+        protected dateService: CallanDateService,
         protected http: HttpClient
     ) {
         super(appConfig, authService);
     }
 
     getCustomers(): Observable<CallanCustomer[]> {
-        const url = this.getApiUrl('/Customers?filter=' + JSON.stringify({include: ['roles']}));
+        const url = this.getApiUrl('/Customers?filter=' + JSON.stringify({include: ['roles', 'Timezone']}));
 
         return this.http.get<CallanCustomer[]>(url)
             .pipe(
@@ -45,7 +48,7 @@ export class CallanCustomerApiService extends CallanCustomerService {
     }
 
     findCustomers(term: string): Observable<CallanCustomer[]> {
-        const filter = {include: ['roles'], where: {email: {like: '___'}}};
+        const filter = {include: ['roles', 'Timezone'], where: {email: {like: '___'}}};
         const url = this.getApiUrl('/Customers?filter=' + JSON.stringify(filter).replace('___', encodeURI(term + '%')));
 
         return this.http.get<CallanCustomer[]>(url)
@@ -68,7 +71,7 @@ export class CallanCustomerApiService extends CallanCustomerService {
 
 
     getCustomer(id: number): Observable<CallanCustomer> {
-        const url = this.getApiUrl('/Customers/' + id + '?filter=' + JSON.stringify({include: 'roles'}));
+        const url = this.getApiUrl('/Customers/' + id + '?filter=' + JSON.stringify({include: ['roles', 'Timezone']}));
 
         return this.http.get<CallanCustomer>(url)
             .pipe(
@@ -82,7 +85,7 @@ export class CallanCustomerApiService extends CallanCustomerService {
     }
 
     findCustomerByEmail(email: string): Observable<CallanCustomer> {
-        const url = this.getApiUrl('/Customers/findOne?filter=' + JSON.stringify({where: {email: email}}));
+        const url = this.getApiUrl('/Customers/findOne?filter=' + JSON.stringify({where: {email: email}, include: ['roles', 'Timezone']}));
 
         return this.http.get<CallanCustomer>(url)
             .pipe(
@@ -120,6 +123,57 @@ export class CallanCustomerApiService extends CallanCustomerService {
                     return roles;
                 }),
                 catchError(this.handleHttpError<CallanRole[]>())
+            );
+    }
+
+    autoUpdateTimezone(customer: CallanCustomer): Observable<void> {
+
+        console.log('Auto updating customer timezone');
+        const url = this.getApiUrl('/Customers/' + customer.id);
+        const data = {timezoneName: Intl.DateTimeFormat().resolvedOptions().timeZone};
+        console.log('Patch to', url, 'with', data);
+
+        return this.http.patch(url, data)
+            .pipe(
+                map<any, void>(rows => {
+                    console.log('The result was', rows);
+                    return;
+                })
+            );
+    }
+
+    checkGoogleAuth(customer: CallanCustomer): Observable<boolean> {
+
+        console.log('Checking Google Auth');
+        const url = this.getApiUrl('/Customers/checkGoogleAuth');
+
+        return this.http.get(url)
+            .pipe(
+                map<any, boolean>(response => {
+                    if (response.status) {
+                        return response.status;
+                    } else {
+                        return false;
+                    }
+                }),
+                catchError(this.handleHttpError<boolean>())
+            );
+    }
+
+    getGoogleAuthLink(customer: CallanCustomer): Observable<string> {
+        console.log('Getting auth link from Google');
+        const url = this.getApiUrl('/Customers/authGoogle');
+
+        return this.http.get(url)
+            .pipe(
+                map<any, boolean>(response => {
+                    if (response.url) {
+                        return response.url;
+                    } else {
+                        return false;
+                    }
+                }),
+                catchError(this.handleHttpError<boolean>())
             );
     }
 
@@ -181,6 +235,12 @@ export class CallanCustomerApiService extends CallanCustomerService {
                     }
                 }
             }
+
+            if (row.Timezone) {
+                const timezone = CallanDateService.createTimeZone();
+                this.dateService.mapDataToTimezone(timezone, row.Timezone);
+                customer.timezone = timezone;
+            }
         }
     }
 
@@ -224,6 +284,10 @@ export class CallanCustomerApiService extends CallanCustomerService {
             for (const role of customer.roles) {
                 data.roles.push(this.mapRoleToData(role));
             }
+        }
+
+        if (customer.timezone) {
+            data.timezoneId = customer.timezone.id;
         }
 
         return data;
