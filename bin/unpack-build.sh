@@ -14,7 +14,7 @@ fi;
 echo "Type a revision number, followed by [ENTER]: ";
 read REV;
 
-echo "Type an evnironment followed by [ENTER] (default \"production\"): ";
+echo "Type an evnvironment followed by [ENTER] (default \"production\"): ";
 read ENV;
 
 if [ "$ENV" == "" ]; then

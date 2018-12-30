@@ -1,6 +1,6 @@
 <section>
     <div class="row">
-        <div class="col-lg-12">
+        <div class="col-sm-12">
             <h4 class="mt-3">{{formTitle}}</h4>
         </div>
     </div>
@@ -17,26 +17,26 @@
                                         <div class="form-group">
                                             <label for="firstName">First Name</label>
                                             <input type="text" id="firstName" class="form-control"  [formControlName]="'firstName'">
-                                            <small class="form-text text-muted danger" *ngIf="customerForm.get('firstName').hasError('required') && customerForm.get('firstName').touched">This field is required</small>
+                                            <small class="form-text text-muted danger" *ngIf="customerForm.get('firstName').hasError('required') && customerForm.get('firstName').touched">This field is mandatory</small>
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
                                         <div class="form-group">
                                             <label for="lastName">Last Name</label>
                                             <input type="text" id="lastName" class="form-control"  [formControlName]="'lastName'">
-                                            <small class="form-text text-muted danger" *ngIf="customerForm.get('lastName').hasError('required') && customerForm.get('lastName').touched">This field is required</small>
+                                            <small class="form-text text-muted danger" *ngIf="customerForm.get('lastName').hasError('required') && customerForm.get('lastName').touched">This field is mandatory</small>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-sm-6">
-                                        <div class="form-group">
-                                            <label for="email">E-mail</label>
-                                            <input type="text" id="email" class="form-control"  [formControlName]="'email'">
-                                            <small class="form-text text-muted danger" *ngIf="customerForm.get('email').hasError('required') && customerForm.get('email').touched">This field is required</small>
-                                            <small class="form-text text-muted danger" *ngIf="customerForm.get('email').hasError('email') && customerForm.get('email').touched">Please enter a valid email!</small>
-                                            <small class="form-text text-muted danger" *ngIf="customerForm.get('email').hasError('server')">{{customerForm.get('email').getError('server')}}</small>
-                                        </div>
+                                    <div class="col-sm-2">
+                                        <label for="timezone">Timezone</label>
+                                        <select class="form-control" id="timezone" [formControlName]="'timezone'" [compareWith]="compareObjects">
+                                            <option *ngFor="let timezone of timezonesList" [ngValue]="timezone">{{timezone.name}} ({{formatTimezoneOffset(timezone.offset)}})</option>
+                                        </select>
+                                        <!-- This classes because *-feedback class required a lot of another classes on containers -->
+                                        <small class="form-text text-muted danger" *ngIf="customerForm.get('timezone').hasError('required') && customerForm.get('timezone').touched">This field is mandatory</small>
+                                        <small class="form-text text-muted danger" *ngIf="customerForm.get('timezone').hasError('server')">{{customerForm.get('timezone').getError('server')}}</small>
                                     </div>
                                 </div>
                                 <h4 class="form-section"><i class="ft-zap"></i> Password</h4>
@@ -57,27 +57,6 @@
                                             <small class="form-text text-muted danger" *ngIf="customerForm.get('passwordConfirm').hasError('required') && customerForm.get('passwordConfirm').touched">This field is required</small>
                                             <small class="form-text text-muted danger" *ngIf="customerForm.get('passwordConfirm').hasError('equalTo') && customerForm.get('passwordConfirm').touched">Password and confirmation should match</small>
                                         </div>
-                                    </div>
-                                </div>
-                                <h4 class="form-section"><i class="ft-flag"></i> Access Rights</h4>
-                                <div class="row">
-                                    <div class="col-sm-2">
-                                        <label for="assigned_roles">Assigned roles</label>
-                                        <select size="4" class="form-control" id="assigned_roles" [formControlName]="'assignedRoles'" #assignedRolesInput>
-                                            <option *ngFor="let role of assignedRoles" [value]="role.id" (dblclick)="handleRefuseRole(role)">{{role.name}}</option>
-                                        </select>
-                                        <!-- This classes because *-feedback class required a lot of another classes on containers -->
-                                        <small class="form-text text-muted danger" *ngIf="customerForm.get('assignedRoles').hasError('empty')">{{customerForm.get('assignedRoles').getError('empty')}}</small>
-                                    </div>
-                                    <div class="col-sm-1">
-                                        <a class="btn btn-outline-primary role-btn add" href="javascript:void(0)" (click)="handleAssignRole()"><i class="ft-rewind"></i></a>
-                                        <a class="btn btn-outline-primary role-btn remove" href="javascript:void(0)" (click)="handleRefuseRole()"><i class="ft-fast-forward"></i></a>
-                                    </div>
-                                    <div class="col-sm-2">
-                                        <label for="existing_roles">Existing roles</label>
-                                        <select size="4" class="form-control" id="existing_roles" [formControlName]="'existingRoles'" #existingRolesInput>
-                                            <option *ngFor="let role of existingRoles" [value]="role.id" (dblclick)="handleAssignRole(role)">{{role.name}}</option>
-                                        </select>
                                     </div>
                                 </div>
                             </div>

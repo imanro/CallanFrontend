@@ -204,6 +204,12 @@ export abstract class CallanCustomerService extends CallanBaseService {
 
     abstract mapRoleToData(role: CallanRole): object;
 
+    abstract autoUpdateTimezone(customer: CallanCustomer): Observable<void>;
+
+    abstract checkGoogleAuth(customer: CallanCustomer): Observable<boolean>;
+
+    abstract getGoogleAuthLink(customer: CallanCustomer): Observable<string>;
+
     initNewCustomerDev(customer: CallanCustomer): Observable<void> {
 
         return new Observable<void>(observer => {

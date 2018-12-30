@@ -38,6 +38,8 @@ import {CallanScheduleApiService} from './shared/services/schedule-api.service';
 import {CallanActivityLogService} from './shared/services/activity-log.service';
 import {CallanActivityLogMockService} from './shared/services/activity-log-mock.service';
 import {CallanActivityLogApiService} from './shared/services/activity-log-api.service';
+import {CallanDateApiService} from './shared/services/date-api.service';
+import {CallanDateService} from './shared/services/date.service';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -101,7 +103,8 @@ export function initializeApp(appConfig: AppConfig) {
         // {provide: CallanScheduleService, useClass: CallanScheduleMockService},
         {provide: CallanScheduleService, useClass: CallanScheduleApiService},
         // {provide: CallanActivityLogService, useClass: CallanActivityLogMockService}
-        {provide: CallanActivityLogService, useClass: CallanActivityLogApiService}
+        {provide: CallanActivityLogService, useClass: CallanActivityLogApiService},
+        {provide: CallanDateService, useClass: CallanDateApiService}
     ],
     bootstrap: [AppComponent]
 })

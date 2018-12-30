@@ -77,6 +77,27 @@ export class CallanCustomerMockService extends CallanCustomerService {
         );
     }
 
+    autoUpdateTimezone(customer: CallanCustomer): Observable<void> {
+        return new Observable<void>(observer => {
+            observer.next();
+            observer.complete();
+        });
+    }
+
+    checkGoogleAuth(customer: CallanCustomer): Observable<boolean> {
+        return new Observable(observer => {
+            observer.next(false);
+            observer.complete();
+        })
+    }
+
+    getGoogleAuthLink(customer: CallanCustomer): Observable<string> {
+        return new Observable(observer => {
+            observer.next('http://google.com');
+            observer.complete();
+        })
+    }
+
     mapDataToCustomer(customer: CallanCustomer, row: any): void {
     }
 
