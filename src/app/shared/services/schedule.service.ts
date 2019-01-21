@@ -6,6 +6,7 @@ import {Observable} from 'rxjs';
 import {CallanCustomer} from '../models/customer.model';
 import {CallanCourse} from '../models/course.model';
 import {CallanCourseProgress} from '../models/course-progress.model';
+import {CallanLessonEvent} from '../models/lesson-event.model';
 
 export abstract class CallanScheduleService extends CallanBaseService {
 
@@ -92,7 +93,26 @@ export abstract class CallanScheduleService extends CallanBaseService {
         return [dateFrom, dateTo];
     }
 
-    initScheduleRange(scheduleRange: CallanScheduleRange) {
+    static getLessonEndTime(lessonEvent: CallanLessonEvent, scheduleMinuteStep: number): number {
+        return Math.round(lessonEvent.startTime.getTime() - (lessonEvent.startTime.getTime() % (scheduleMinuteStep * 60000))) + (lessonEvent.duration * 60000);
+    }
+
+    static isDateAvailable(checkDate: Date, dates: Date[]) {
+        for (const date of dates) {
+            if(date.getTime() - 60000 < checkDate.getTime() && date.getTime() + 60000 > checkDate.getTime()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    static checkLessonDurationAgainstDatesEnabled(lessonEvent: CallanLessonEvent, datesEnabled: Date[], scheduleMinuteStep: number) {
+        const endTime = CallanScheduleService.getLessonEndTime(lessonEvent, scheduleMinuteStep);
+        return CallanScheduleService.isDateAvailable(new Date(endTime - (scheduleMinuteStep * 60000)), datesEnabled);
+    }
+
+    static initScheduleRange(scheduleRange: CallanScheduleRange) {
 
         const currentDate = new Date();
         scheduleRange.dayOfWeek = currentDate.getDay();
@@ -112,7 +132,7 @@ export abstract class CallanScheduleService extends CallanBaseService {
 
     abstract getScheduleRange(id: number): Observable<CallanScheduleRange>;
 
-    abstract getHoursAvailable(startDate: Date, endDate: Date, courseProgress?: CallanCourseProgress, customer?: CallanCustomer, isLookupLessonEvents?: boolean): Observable<Date[]>;
+    abstract getDatesAvailable(startDate: Date, endDate: Date, courseProgress?: CallanCourseProgress, customer?: CallanCustomer, isLookupLessonEvents?: boolean): Observable<Date[]>;
 
     abstract saveScheduleRange(scheduleRange: CallanScheduleRange): Observable<CallanScheduleRange>;
 

@@ -1,23 +1,8 @@
-import {Component, EventEmitter, Input, Output, OnInit, ViewChild, TemplateRef, OnDestroy} from '@angular/core';
+import {Component, EventEmitter, Input, Output, OnInit} from '@angular/core';
 import {CallanCourseProgress} from '../../shared/models/course-progress.model';
 import {Subject} from 'rxjs';
 
-import {
-    startOfDay,
-    endOfDay,
-    subDays,
-    addDays,
-    endOfMonth,
-    isSameDay,
-    isSameMonth,
-    addHours
-} from 'date-fns';
-
-import {
-    CalendarEvent,
-    /*    CalendarEventAction,
-        CalendarEventTimesChangedEvent */
-} from 'angular-calendar';
+import {CalendarEvent } from 'angular-calendar';
 import {CallanLessonEvent} from '../../shared/models/lesson-event.model';
 import {CallanCustomer} from '../../shared/models/customer.model';
 
@@ -41,6 +26,8 @@ export class CallanLessonEventsCalendarComponent implements OnInit {
 
     @Input() refresh$ = new Subject();
 
+    @Input() scheduleMinuteStep: number;
+
     @Output() cancelEvent = new EventEmitter<void>();
 
     @Output() showNextWeekEvent = new EventEmitter<void>();
@@ -55,11 +42,16 @@ export class CallanLessonEventsCalendarComponent implements OnInit {
 
     @Output() lessonEventClickEvent = new EventEmitter<{ event: CalendarEvent }>();
 
+    hourSegmentsAmount = 4;
+
     constructor(
     ) {
     }
 
     ngOnInit() {
+        if (this.scheduleMinuteStep){
+            this.hourSegmentsAmount = 60 / this.scheduleMinuteStep;
+        }
     }
 
 

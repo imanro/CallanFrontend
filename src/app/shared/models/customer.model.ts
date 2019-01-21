@@ -8,6 +8,7 @@ export class CallanCustomer extends CallanBaseModel {
     password?: string;
     firstName: string;
     lastName: string;
+    description: string;
     roles: CallanRole[];
     availableHourInAdvanceMin: number;
     timezone: CallanTimezone;

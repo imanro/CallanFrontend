@@ -17,6 +17,7 @@
         ></app-callan-schedule-ranges-list>
         <app-callan-schedule-range-details
                 [scheduleRange]="currentScheduleRange"
+                [scheduleMinuteStep]="scheduleMinuteStep"
                 (cancelEvent)="handleScheduleRangeDetailsCancel()"
                 (scheduleRangeSaveEvent)="handleScheduleRangeSave($event)"
                 *ngIf="view === viewNameEnum.RANGE_DETAILS"
@@ -25,6 +26,7 @@
                 [customer]="currentCustomer"
                 [currentDate]="currentDate"
                 [datesEnabled]="datesEnabled"
+                [scheduleMinuteStep]="scheduleMinuteStep"
                 [refresh$]="refresh$"
                 (setCurrentDateEvent)="handleSetCurrentDate($event)"
                 *ngIf="view === viewNameEnum.DEFAULT && currentCustomer && currentDate"

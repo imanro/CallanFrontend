@@ -126,7 +126,7 @@ export class CallanScheduleApiService extends CallanScheduleService {
             );
     }
 
-    getHoursAvailable(startDate: Date, endDate: Date, courseProgress?: CallanCourseProgress, customer?: CallanCustomer, isLookupLessonEvents = false): Observable<Date[]> {
+    getDatesAvailable(startDate: Date, endDate: Date, courseProgress?: CallanCourseProgress, customer?: CallanCustomer, isLookupLessonEvents = false): Observable<Date[]> {
 
         const params: any = {};
 
@@ -142,7 +142,7 @@ export class CallanScheduleApiService extends CallanScheduleService {
             params.customerId = customer.id;
         }
 
-        const url = this.getApiUrl('/ScheduleRanges/availableHours') + '?' + this.buildQueryString(params);
+        const url = this.getApiUrl('/ScheduleRanges/availableDates') + '?' + this.buildQueryString(params);
 
         return this.http.get<Date[]>(url)
             .pipe(

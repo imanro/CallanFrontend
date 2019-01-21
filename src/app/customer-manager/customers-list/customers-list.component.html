@@ -10,7 +10,7 @@
             <div class="card-body">
                 <div class="card-block pt-4">
                     <ng2-smart-table [settings]="settings" [source]="source"
-                                     (custom)="handleCustomAction($event)"></ng2-smart-table>
+                                     (custom)="handleCustomAction($event)" (userRowSelect)="handleRowSelect($event)"></ng2-smart-table>
                 </div>
             </div>
         </div>

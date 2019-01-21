@@ -246,7 +246,6 @@ export class CallanLessonApiService extends CallanLessonService {
 
 
                         this.mapDataToLessonEvent(lessonEvent, row);
-                        console.log('mapping list:', lessonEvent);
                         lessonEvents.push(lessonEvent);
                     }
 
@@ -453,10 +452,6 @@ export class CallanLessonApiService extends CallanLessonService {
 
         if (progress.id) {
             data.id = progress.id;
-        }
-
-        if (progress.completedLessonEventsCount !== undefined) {
-            data.completedLessonEventsCount = progress.completedLessonEventsCount;
         }
 
         if (progress.lessonEventsBalance !== undefined) {

@@ -16,10 +16,9 @@ import {CallanFormHelper} from '../../shared/helpers/form-helper';
 })
 export class CallanLessonEventsBalanceDetailsComponent implements OnInit, OnDestroy
 {
-
     @Input() courseProgress: CallanCourseProgress;
 
-    @Input() formErrors$ =  new BehaviorSubject<AppFormErrors>(null);
+    @Input() formErrors$ =  new Subject<AppFormErrors>();
 
     @Output() cancelEvent = new EventEmitter<void>();
 

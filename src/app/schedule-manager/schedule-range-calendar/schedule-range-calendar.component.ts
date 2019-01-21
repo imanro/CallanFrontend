@@ -17,15 +17,20 @@ export class CallanScheduleRangeCalendarComponent implements OnInit {
 
     @Input() datesEnabled: Date[];
 
+    @Input() scheduleMinuteStep: number;
+
     @Output() setCurrentDateEvent = new EventEmitter<Date>();
 
     calendarView: string;
 
-    hourSegmentsAmount: number;
+    hourSegmentsAmount = 4;
 
     ngOnInit() {
         this.calendarView = 'week';
-        this.hourSegmentsAmount = 1;
+
+        if (this.scheduleMinuteStep){
+            this.hourSegmentsAmount = 60 / this.scheduleMinuteStep;
+        }
     }
 
     handleShowPreviousWeek() {

@@ -166,8 +166,6 @@ export class CallanLessonEventsListComponent implements OnInit, OnDestroy {
         this.refresh$.pipe(
             takeUntil(this.unsubscribe$)
         ).subscribe(() => {
-            console.log(this.lessonEvents);
-            console.log('loaddd');
             this.loadTableData();
         });
     }

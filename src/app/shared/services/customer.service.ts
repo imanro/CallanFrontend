@@ -208,7 +208,7 @@ export abstract class CallanCustomerService extends CallanBaseService {
 
     abstract checkGoogleAuth(customer: CallanCustomer): Observable<boolean>;
 
-    abstract getGoogleAuthLink(customer: CallanCustomer): Observable<string>;
+    abstract getGoogleAuthLink(customer: CallanCustomer): Observable<string|boolean>;
 
     initNewCustomerDev(customer: CallanCustomer): Observable<void> {
 

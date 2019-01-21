@@ -14,15 +14,28 @@ import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
             <div [innerHTML]="body"></div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-outline-secondary" (click)="activeModal.close(false)">Cancel</button>
-
-            <button type="button" class="btn btn-outline-primary" (click)="activeModal.close(true)">OK</button>
+            <button type="button" class="btn btn-outline-secondary" (click)="activeModal.close(false)" *ngIf="buttons.cancel">Cancel</button>
+            <button type="button" class="btn btn-outline-primary" (click)="activeModal.close(true)" *ngIf="buttons.ok">OK</button>
         </div>
   `
 })
 export class AppModalContentComponent {
     @Input() title;
     @Input() body;
+    @Input() buttons: {[name: string]: boolean};
+    private allButtons = {ok: true, cancel: true};
 
-    constructor(public activeModal: NgbActiveModal) {}
+    constructor(public activeModal: NgbActiveModal) {
+        if (!this.buttons) {
+            this.buttons = this.allButtons;
+        } else {
+            for (const i in this.allButtons) {
+                if (this.buttons[i] === undefined) {
+                    this.buttons[i] = this.allButtons[i];
+                }
+            }
+        }
+
+        console.log('btns', this.buttons);
+    }
 }

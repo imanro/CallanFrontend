@@ -60,24 +60,20 @@ export class SidebarComponent implements OnInit {
 
                 if (CallanCustomerService.hasCustomerRole(authCustomer, CallanRoleNameEnum.ADMIN)) {
                     choosenRoutes.push(...['/customers', '/admin-dashboard']);
-
-                    if (currentCustomer) {
-                        if (CallanCustomerService.hasCustomerRole(currentCustomer, CallanRoleNameEnum.TEACHER)){
-                            choosenRoutes.push(...['/lessons/teacher', '/schedule']);
-                        } else if (CallanCustomerService.hasCustomerRole(currentCustomer, CallanRoleNameEnum.STUDENT)){
-                            choosenRoutes.push(...['/lessons/student']);
-                        }
-                    }
                     routeTitleReplacement = {'/lessons/student': 'Student Lessons', '/lessons/teacher': 'Teacher Lessons'}
+                }
 
-                } else if (CallanCustomerService.hasCustomerRole(authCustomer, CallanRoleNameEnum.TEACHER)) {
-                    choosenRoutes.push(...['/lessons/teacher', '/schedule']);
-                } else if (CallanCustomerService.hasCustomerRole(authCustomer, CallanRoleNameEnum.STUDENT)) {
+                if (CallanCustomerService.hasCustomerRole(authCustomer, CallanRoleNameEnum.STUDENT)) {
                     choosenRoutes.push(...['/lessons/student']);
-                } else if (CallanCustomerService.hasCustomerRole(authCustomer, CallanRoleNameEnum.SUPPORT)) {
+                }
+
+                if (CallanCustomerService.hasCustomerRole(authCustomer, CallanRoleNameEnum.TEACHER)) {
+                    choosenRoutes.push(...['/lessons/teacher', '/schedule']);
+                }
+
+
+                if (CallanCustomerService.hasCustomerRole(authCustomer, CallanRoleNameEnum.SUPPORT)) {
                     choosenRoutes.push(...['/claims']);
-                } else {
-                    choosenRoutes.push(...['/lessons']);
                 }
 
                 for (const name of choosenRoutes) {

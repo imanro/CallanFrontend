@@ -16,6 +16,8 @@ export class CallanCourseProgressDetailsComponent implements OnInit {
 
     @Input() isLessonEventsCreateButtonShown;
 
+    @Input() completedLessonEventsCount: number;
+
     @Output() lessonEventCreateEvent = new EventEmitter<void>();
 
     @Output() topUpLessonEventsBalanceEvent = new EventEmitter<CallanCourseProgress>();

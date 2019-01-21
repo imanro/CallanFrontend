@@ -11,19 +11,29 @@ export interface IAppConfig {
     appVersion: string;
     nearestLessonEventRemainingMinutesCheckIntervalMs: number;
     nearestLessonEventCheckIntervalMs: number;
+    scheduleMinuteStep: number;
 }
 
 @Injectable()
 export class AppConfig implements IAppConfig {
 
     mockDelayMs = 1000;
+
     modalSize = 'lg';
+
     apiUrl:  string;
+
     appVersion = versionInfo.hash;
+
     nearestLessonEventRemainingMinutesCheckIntervalMs = 30000;
+
     nearestLessonEventCheckIntervalMs = 60000;
+
     lessonEventsUpdateIntervalMs = 60000;
+
     lessonEventAllowStartOffsetMinutes = 5;
+
+    scheduleMinuteStep = 15;
 
     constructor(
         private http: HttpClient
