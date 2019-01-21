@@ -79,7 +79,7 @@ export class CallanScheduleMockService extends CallanScheduleService {
         );
     }
 
-    getHoursAvailable(startDate: Date, endDate: Date, courseProgress?: CallanCourseProgress, customer?: CallanCustomer, isLookupLessonEvents = false): Observable<Date[]> {
+    getDatesAvailable(startDate: Date, endDate: Date, courseProgress?: CallanCourseProgress, customer?: CallanCustomer, isLookupLessonEvents = false): Observable<Date[]> {
 
         return new Observable<Date[]>(observer => {
             const segment1 = new Date();

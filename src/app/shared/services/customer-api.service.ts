@@ -160,7 +160,7 @@ export class CallanCustomerApiService extends CallanCustomerService {
             );
     }
 
-    getGoogleAuthLink(customer: CallanCustomer): Observable<string> {
+    getGoogleAuthLink(customer: CallanCustomer): Observable<string|boolean> {
         console.log('Getting auth link from Google');
         const url = this.getApiUrl('/Customers/authGoogle');
 
@@ -221,6 +221,7 @@ export class CallanCustomerApiService extends CallanCustomerService {
             customer.lastName = row.lastName;
             customer.email = row.email;
             customer.availableHourInAdvanceMin = row.availableHourInAdvanceMin;
+            customer.description = row.description;
 
             if (row.roles) {
 
@@ -272,6 +273,7 @@ export class CallanCustomerApiService extends CallanCustomerService {
         data.firstName = customer.firstName;
         data.lastName = customer.lastName;
         data.email = customer.email;
+        data.description = customer.description;
         data.availableHourInAdvanceMin = customer.availableHourInAdvanceMin;
 
         if (customer.password) {

@@ -16,15 +16,15 @@
                             [isConfirmButtonCanBeShown]="isConfirmLessonButtonShown"
                             [view]="lessonEventViewNameEnum.STUDENT"
                             (lessonEventConfirmEvent)="handleLessonEventConfirm($event)"
-                            *ngIf="currentLessonEvent && isLessonEventShown"
+                            *ngIf="currentLessonEvent && isLessonEventShown && view === viewNameEnum.DEFAULT"
                     ></app-callan-lesson-event>
 
                     <app-callan-courses-list
-                            [allCourses$]="allCourses$"
-                            [currentCustomerCourseProgresses$]="courseProgresses$"
+                            [courseProgresses]="courseProgresses"
                             [isLessonEventsCreateButtonShown]="isLessonEventsCreateButtonShown"
                             [isTopUpLessonEventsBalanceButtonShown]="isTopUpLessonEventsBalanceButtonShown"
-                            [currentCourseProgress$]="currentCourseProgress$"
+                            [currentCourseProgress]="currentCourseProgress"
+                            [completedLessonEvents]="completedLessonEvents"
                             (courseSelectEvent)="handleSelectCourseProgress($event)"
                             (lessonEventCreateEvent)="handleLessonEventCreate($event)"
                             (topUpLessonEventsBalanceEvent)="handleLessonEventsBalanceShown($event)"
@@ -42,8 +42,8 @@
                     </div>
 
                     <app-callan-customer-course-add
-                            [allCourses$]="allCourses$"
-                            [currentCustomerCourseProgresses$]="courseProgresses$"
+                            [allCourses]="allCourses"
+                            [currentCustomerCourseProgresses]="courseProgresses"
                             [courseProgress]="currentCourseProgress"
                             [courseCompetences]="courseCompetences"
                             [formErrors$]="formErrors$"
@@ -68,6 +68,7 @@
                             [refresh$]="calendarRefresh$"
                             [currentDate]="currentDate"
                             [student]="currentCustomer"
+                            [scheduleMinuteStep]="scheduleMinuteStep"
                             (cancelEvent)="handleLessonEventCreateCancel()"
                             (lessonEventCreateEvent)="lessonEventSave($event)"
                             (showCurrentWeekEvent)="handleCalendarShowCurrentWeek()"

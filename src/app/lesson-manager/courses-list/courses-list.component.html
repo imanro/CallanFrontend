@@ -9,7 +9,7 @@
     <div class="col-lg-12">
         <ngb-accordion class="card" [closeOthers]="true" activeIds="{{currentCourseProgress && currentCourseProgress.id}}"
                        (panelChange)="handleCourseProgressChange($event)">
-            <ngb-panel *ngFor="let progress of currentCustomerCourseProgresses$|async" id="{{progress.id}}"
+            <ngb-panel *ngFor="let progress of courseProgresses" id="{{progress.id}}"
                        title="{{progress.course.title}}">
                 <ng-template ngbPanelContent>
                     <div class="px-3">
@@ -17,6 +17,7 @@
                                 [courseProgress]="progress"
                                 [isLessonEventsCreateButtonShown]="isLessonEventsCreateButtonShown"
                                 [isTopUpLessonEventsBalanceButtonShown]="isTopUpLessonEventsBalanceButtonShown"
+                                [completedLessonEventsCount]="completedLessonEvents[progress.id]"
                                 (topUpLessonEventsBalanceEvent)="handleTopUpLessonEventsBalance(progress)"
                                 (lessonEventCreateEvent)="handleLessonEventsCreate()"
                         ></app-callan-course-progress-details>

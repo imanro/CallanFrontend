@@ -8,7 +8,6 @@ import {CallanLessonManagerTeacherContainerComponent} from './lesson-manager-tea
 const routes: Routes = [
     {
         path: 'student',
-        component: CallanLessonManagerStudentContainerComponent,
         children: [
             {
                 path: '',
@@ -16,6 +15,7 @@ const routes: Routes = [
                 data: {
                     title: 'Lessons'
                 },
+                pathMatch: 'full'
             },
             {
                 path: ':courseProgressId',

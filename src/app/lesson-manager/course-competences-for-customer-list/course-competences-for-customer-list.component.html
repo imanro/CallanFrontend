@@ -13,10 +13,10 @@
              *ngIf="courseSpecialities && courseSpecialities.length > 0; else noRows"
         >
           <div class="row pb-2" *ngFor="let speciality of courseSpecialities">
-            <div class="col-sm-2">
+            <div class="col-sm-6">
               <h5 class="text-info">{{speciality.course.title}}</h5>
             </div>
-            <div class="col-sm-10">
+            <div class="col-sm-1">
 
               <div *ngIf="isSpecialityControlsShown">
               <a href="javascript:;" (click)="handleCourseSpecialityDelete(speciality)"><i class="ft-trash-2 danger cancel font-medium-1 mr-2" title="Delete speciality"></i></a>

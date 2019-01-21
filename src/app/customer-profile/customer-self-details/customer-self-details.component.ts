@@ -103,7 +103,8 @@ export class CallanCustomerSelfDetailsComponent implements OnInit, OnDestroy {
             email: ['', [Validators.required, Validators.email]],
             password: password,
             passwordConfirm: passwordConfirm,
-            timezone: ['', [Validators.required]]
+            timezone: ['', [Validators.required]],
+            description: ''
         });
 
         this.customerForm.valueChanges.subscribe(() => {
@@ -117,7 +118,8 @@ export class CallanCustomerSelfDetailsComponent implements OnInit, OnDestroy {
             'firstName': this.customer.firstName,
             'lastName': this.customer.lastName,
             'email': this.customer.email,
-            'timezone': this.customer.timezone
+            'timezone': this.customer.timezone,
+            'description': this.customer.description
         });
     }
 
@@ -131,6 +133,7 @@ export class CallanCustomerSelfDetailsComponent implements OnInit, OnDestroy {
         saveCustomer.email = formModel.email;
         saveCustomer.password = formModel.password;
         saveCustomer.timezone = formModel.timezone;
+        saveCustomer.description = formModel.description;
 
         return saveCustomer;
     }

@@ -65,8 +65,6 @@ export abstract class CallanLessonService extends CallanBaseService {
         endDate.setHours(lessonEvent.startTime.getHours() + endHours);
         endDate.setMinutes(lessonEvent.startTime.getMinutes() + endMinutes);
 
-        console.log('end date now:', endDate, endMinutes, endHours, lessonEvent.duration);
-
         const subTitle = lessonEvent.courseProgress ? lessonEvent.courseProgress.course.title : '';
         const title = lessonEvent.title ? (subTitle ? lessonEvent.title + '(' + subTitle + ')' : '') : subTitle;
 
@@ -95,6 +93,10 @@ export abstract class CallanLessonService extends CallanBaseService {
             case(CallanLessonEventStateEnum.CANCELED):
                 return 'Canceled';
         }
+    }
+
+    static countCompletedLessonEvents(lessonEvents: CallanLessonEvent[], courseProgressId: number): number {
+        return lessonEvents.filter(lessonEvent => (lessonEvent.state === CallanLessonEventStateEnum.COMPLETED || lessonEvent.state === CallanLessonEventStateEnum.CONFIRMED) && lessonEvent.courseProgress && lessonEvent.courseProgress.id === courseProgressId).length;
     }
 
     abstract getLessonEvents(courseProgress: CallanCourseProgress): Observable<CallanLessonEvent[]>;

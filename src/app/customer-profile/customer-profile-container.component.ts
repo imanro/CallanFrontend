@@ -94,16 +94,24 @@ export class CustomerProfileContainerComponent implements OnInit, OnDestroy {
     handleAuthorizeGoogle() {
         console.log('Sending request to obtain auth link');
         this.customerService.getGoogleAuthLink(this.currentCustomer)
-            .subscribe(link => {
-                const win = window.open(link, '_blank');
-                win.focus();
+            .subscribe(result => {
 
-                observableInterval(60000)
-                    .pipe(takeUntil(this.unsubscribe$))
-                    .subscribe(() => {
-                        console.log('Checking again google auth');
-                       this.checkGoogleAuth();
-                    });
+
+                if (result) {
+                    const link = result.toString();
+                    const win = window.open(link, '_blank');
+                    win.focus();
+
+                    observableInterval(60000)
+                        .pipe(takeUntil(this.unsubscribe$))
+                        .subscribe(() => {
+                            console.log('Checking again google auth');
+                            this.checkGoogleAuth();
+                        });
+                } else {
+                    console.error('Something went wrong, unable to obtain auth link');
+                    this.toastrService.warning('Something went wrong, please, try again later');
+                }
 
 
                 // + set timeout to refresh status of google auth every 1min

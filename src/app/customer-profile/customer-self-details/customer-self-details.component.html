@@ -29,14 +29,35 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-sm-2">
-                                        <label for="timezone">Timezone</label>
-                                        <select class="form-control" id="timezone" [formControlName]="'timezone'" [compareWith]="compareObjects">
-                                            <option *ngFor="let timezone of timezonesList" [ngValue]="timezone">{{timezone.name}} ({{formatTimezoneOffset(timezone.offset)}})</option>
-                                        </select>
-                                        <!-- This classes because *-feedback class required a lot of another classes on containers -->
-                                        <small class="form-text text-muted danger" *ngIf="customerForm.get('timezone').hasError('required') && customerForm.get('timezone').touched">This field is mandatory</small>
-                                        <small class="form-text text-muted danger" *ngIf="customerForm.get('timezone').hasError('server')">{{customerForm.get('timezone').getError('server')}}</small>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label for="timezone">Timezone</label>
+                                            <select class="form-control" id="timezone" [formControlName]="'timezone'"
+                                                    [compareWith]="compareObjects">
+                                                <option *ngFor="let timezone of timezonesList" [ngValue]="timezone">
+                                                    {{timezone.name}} ({{formatTimezoneOffset(timezone.offset)}})
+                                                </option>
+                                            </select>
+                                            <!-- This classes because *-feedback class required a lot of another classes on containers -->
+                                            <small class="form-text text-muted danger"
+                                                   *ngIf="customerForm.get('timezone').hasError('required') && customerForm.get('timezone').touched">
+                                                This field is mandatory
+                                            </small>
+                                            <small class="form-text text-muted danger"
+                                                   *ngIf="customerForm.get('timezone').hasError('server')">
+                                                {{customerForm.get('timezone').getError('server')}}
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label for="description">Description</label>
+                                            <textarea type="text" id="description" class="form-control"  [formControlName]="'description'"></textarea>
+                                            <small class="form-text text-muted danger" *ngIf="customerForm.get('description').hasError('required') && customerForm.get('description').touched">This field is required</small>
+                                            <small class="form-text text-muted danger" *ngIf="customerForm.get('description').hasError('server')">{{customerForm.get('description').getError('server')}}</small>
+                                        </div>
                                     </div>
                                 </div>
                                 <h4 class="form-section"><i class="ft-zap"></i> Password</h4>

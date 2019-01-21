@@ -168,6 +168,7 @@ export class CallanCustomerDetailsComponent implements OnInit, OnDestroy {
             firstName: ['', Validators.required],
             lastName: ['', Validators.required],
             email: ['', [Validators.required, Validators.email]],
+            description: '',
             password: password,
             passwordConfirm: passwordConfirm,
             assignedRoles: '',
@@ -178,6 +179,17 @@ export class CallanCustomerDetailsComponent implements OnInit, OnDestroy {
             this.commonFormErrors = [];
         });
     }
+
+    private setFormValues() {
+
+        this.customerForm.patchValue({
+            'firstName': this.customer.firstName,
+            'lastName': this.customer.lastName,
+            'email': this.customer.email,
+            'description': this.customer.description
+        });
+    }
+
 
     private updateValidators() {
         const passwordValidators = [
@@ -202,15 +214,6 @@ export class CallanCustomerDetailsComponent implements OnInit, OnDestroy {
         );
     }
 
-    private setFormValues() {
-
-        this.customerForm.patchValue({
-            'firstName': this.customer.firstName,
-            'lastName': this.customer.lastName,
-            'email': this.customer.email
-        });
-    }
-
     private validateForm() {
 
         if (!this.assignedRoles.length) {
@@ -230,6 +233,7 @@ export class CallanCustomerDetailsComponent implements OnInit, OnDestroy {
         saveCustomer.lastName = formModel.lastName;
         saveCustomer.email = formModel.email;
         saveCustomer.password = formModel.password;
+        saveCustomer.description = formModel.description;
 
         saveCustomer.roles = this.assignedRoles;
 

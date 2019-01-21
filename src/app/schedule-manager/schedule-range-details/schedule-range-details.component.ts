@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {BehaviorSubject, Observable, Subject} from 'rxjs';
+import {BehaviorSubject, timer as observableTimer, Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 import * as _ from 'lodash';
 import {CallanFormHelper} from '../../shared/helpers/form-helper';
@@ -21,14 +21,20 @@ export class ScheduleRangeDetailsComponent implements OnInit, OnDestroy {
 
     @Input() formErrors$ =  new BehaviorSubject<AppFormErrors>(null);
 
+    @Input() scheduleMinuteStep = 60;
+
     @Output() cancelEvent = new EventEmitter<void>();
+
     @Output() scheduleRangeSaveEvent = new EventEmitter<CallanScheduleRange>();
 
     regularitiesList: any;
+
     typesList: any;
+
     daysOfWeekList: any;
 
     scheduleRangeDetailsForm: FormGroup;
+
     commonFormErrors = [];
 
     scheduleRangeRegularityEnum: any;
@@ -46,9 +52,13 @@ export class ScheduleRangeDetailsComponent implements OnInit, OnDestroy {
     ngOnInit() {
 
         this.assignFormErrors();
+
         this.assignDaysOfWeekList();
+
         this.assignRegularitiesList();
+
         this.assignTypesList();
+
         this.setFormValues();
     }
 
@@ -84,12 +94,16 @@ export class ScheduleRangeDetailsComponent implements OnInit, OnDestroy {
             this.commonFormErrors = [];
         });
 
+
+
         this.scheduleRangeDetailsForm.get('startMinutes').valueChanges.subscribe(value => {
-           this.fixEndMinutes(value);
+            this.fixStartMinutes();
+           this.fixEndMinutesByStart(value);
         });
 
         this.scheduleRangeDetailsForm.get('endMinutes').valueChanges.subscribe(value => {
-            this.fixStartMinutes(value);
+            this.fixEndMinutes();
+            this.fixStartMinutesByEnd(value);
         });
     }
 
@@ -190,21 +204,68 @@ export class ScheduleRangeDetailsComponent implements OnInit, OnDestroy {
         return date;
     }
 
-    private fixEndMinutes(startValue: NgbTimeStruct): void {
-        const endValue: NgbTimeStruct = this.scheduleRangeDetailsForm.get('endMinutes').value;
+    private fixEndMinutesByStart(startValue: NgbTimeStruct): void {
+        let endValue: NgbTimeStruct = this.scheduleRangeDetailsForm.get('endMinutes').value;
+
         if (startValue.hour > endValue.hour || (startValue.hour === endValue.hour && startValue.minute >= endValue.minute)) {
             if (startValue.hour < 23) {
-                this.scheduleRangeDetailsForm.patchValue({'endMinutes': {hour: startValue.hour + 1, minute: startValue.minute, second: endValue.second}}, {emitEvent: false});
+                this.scheduleRangeDetailsForm.patchValue({
+                    'endMinutes': {
+                        hour: startValue.hour + 1,
+                        minute: startValue.minute,
+                        second: endValue.second
+                    }
+                }, {emitEvent: false});
             }
         }
     }
 
-    private fixStartMinutes(endValue: NgbTimeStruct): void {
+    private fixStartMinutesByEnd(endValue: NgbTimeStruct): void {
         const startValue: NgbTimeStruct = this.scheduleRangeDetailsForm.get('startMinutes').value;
+
         if (endValue.hour < startValue.hour || (endValue.hour === startValue.hour && endValue.minute <= startValue.minute)) {
             if (endValue.hour > 0) {
-                this.scheduleRangeDetailsForm.patchValue({'startMinutes': {hour: endValue.hour - 1, minute: endValue.minute, second: startValue.second}}, {emitEvent: false});
+                this.scheduleRangeDetailsForm.patchValue({
+                    'startMinutes': {
+                        hour: endValue.hour - 1,
+                        minute: endValue.minute,
+                        second: startValue.second
+                    }
+                }, {emitEvent: false});
             }
+        }
+    }
+
+    private fixStartMinutes(): void {
+        const startValue: NgbTimeStruct = this.scheduleRangeDetailsForm.get('startMinutes').value;
+
+        if (startValue.minute % this.scheduleMinuteStep) {
+            observableTimer(100).subscribe(() => {
+                this.scheduleRangeDetailsForm.patchValue({
+                    'startMinutes': {
+                        hour: startValue.hour,
+                        minute: startValue.minute - (startValue.minute % this.scheduleMinuteStep),
+                        second: startValue.second
+                    }
+                }, {emitEvent: false});
+            });
+        }
+
+    }
+
+    private fixEndMinutes(): void {
+        const endValue: NgbTimeStruct = this.scheduleRangeDetailsForm.get('endMinutes').value;
+
+        if (endValue.minute % this.scheduleMinuteStep) {
+            observableTimer(100).subscribe(() => {
+                this.scheduleRangeDetailsForm.patchValue({
+                    'endMinutes': {
+                        hour: endValue.hour,
+                        minute: endValue.minute - (endValue.minute % this.scheduleMinuteStep),
+                        second: endValue.second
+                    }
+                }, {emitEvent: false});
+            });
         }
     }
 }

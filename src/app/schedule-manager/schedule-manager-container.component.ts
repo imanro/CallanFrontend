@@ -11,6 +11,7 @@ import {CallanCustomerService} from '../shared/services/customer.service';
 import {takeUntil} from 'rxjs/operators';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {AppModalContentComponent} from '../shared-modules/modal-content/modal-content.component';
+import {AppConfig} from '../app.config';
 
 @Component({
     selector: 'app-schedule-manager-container',
@@ -23,12 +24,19 @@ export class CallanScheduleManagerContainerComponent implements OnInit, OnDestro
     viewNameEnum: any;
 
     currentCustomer: CallanCustomer;
+
     datesEnabled: Date[] = [];
+
     scheduleRanges$ = new BehaviorSubject<CallanScheduleRange[]>([]);
+
     currentScheduleRange: CallanScheduleRange;
+
     currentDate: Date;
 
+    scheduleMinuteStep: number;
+
     formErrors$ = new BehaviorSubject<AppFormErrors>(null);
+
     refresh$ = new Subject<void>();
 
     isSaving = false;
@@ -36,13 +44,14 @@ export class CallanScheduleManagerContainerComponent implements OnInit, OnDestro
     private unsubscribe: Subject<void> = new Subject();
 
     constructor(
+        private appConfig: AppConfig,
         private scheduleService: CallanScheduleService,
         private customerService: CallanCustomerService,
         private toastrService: ToastrService,
         private modalService: NgbModal
     ) {
         this.viewNameEnum = CallanScheduleManagerViewEnum;
-        console.log('tof:', typeof(this.viewNameEnum));
+        this.scheduleMinuteStep = appConfig.scheduleMinuteStep;
     }
 
     ngOnInit() {
@@ -62,7 +71,7 @@ export class CallanScheduleManagerContainerComponent implements OnInit, OnDestro
     handleShowScheduleRangeDetails() {
 
         this.currentScheduleRange = CallanScheduleService.createScheduleRange();
-        this.scheduleService.initScheduleRange(this.currentScheduleRange);
+        CallanScheduleService.initScheduleRange(this.currentScheduleRange);
 
         this.view = CallanScheduleManagerViewEnum.RANGE_DETAILS;
     }
@@ -174,7 +183,7 @@ export class CallanScheduleManagerContainerComponent implements OnInit, OnDestro
         console.log('created range', range);
 
         if (this.currentCustomer) {
-            this.scheduleService.getHoursAvailable(range[0], range[1], null, this.currentCustomer).subscribe(dates => {
+            this.scheduleService.getDatesAvailable(range[0], range[1], null, this.currentCustomer).subscribe(dates => {
                 // this.datesEnabled$.next(dates);
                 this.datesEnabled = dates;
 

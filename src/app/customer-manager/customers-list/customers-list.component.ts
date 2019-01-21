@@ -9,7 +9,7 @@ import {Subject} from 'rxjs';
 @Component({
     selector: 'app-callan-customers-list',
     templateUrl: './customers-list.component.html',
-    styleUrls: ['./callan-customers-list.component.scss']
+    styleUrls: ['./customers-list.component.scss']
 })
 
 export class CallanCustomersListComponent implements OnInit, OnDestroy {
@@ -36,7 +36,7 @@ export class CallanCustomersListComponent implements OnInit, OnDestroy {
                 },
                 email: {
                     title: 'E-mail',
-                    filter: false,
+                    filter: false
                 },
                 firstName: {
                     title: 'First Name',
@@ -121,5 +121,9 @@ export class CallanCustomersListComponent implements OnInit, OnDestroy {
                 console.log($e);
                 break;
         }
+    }
+
+    handleRowSelect($e) {
+        this.setCurrentCustomer.next($e.data);
     }
 }

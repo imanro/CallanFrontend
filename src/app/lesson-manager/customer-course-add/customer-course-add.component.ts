@@ -1,6 +1,6 @@
-import {Component, EventEmitter, Input, Output, OnDestroy, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, Output, OnDestroy, OnInit, OnChanges, SimpleChanges} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import {BehaviorSubject, Observable, Subject} from 'rxjs';
+import {Subject} from 'rxjs';
 import {CallanCourse} from '../../shared/models/course.model';
 import {CallanCourseProgress} from '../../shared/models/course-progress.model';
 import {combineLatest as observableCombineLatest} from 'rxjs/observable/combineLatest';
@@ -16,15 +16,15 @@ import {CallanCourseCompetence} from '../../shared/models/course-competence.mode
     templateUrl: './customer-course-add.component.html',
     styleUrls: ['./customer-course-add.component.scss']
 })
-export class CallanCustomerCourseAddComponent implements OnInit, OnDestroy {
+export class CallanCustomerCourseAddComponent implements OnInit, OnDestroy, OnChanges {
 
-    @Input() allCourses$: Observable<CallanCourse[]>;
+    @Input() allCourses: CallanCourse[];
 
-    @Input() currentCustomerCourseProgresses$: BehaviorSubject<CallanCourseProgress[]>;
+    @Input() currentCustomerCourseProgresses: CallanCourseProgress[];
 
     @Input() courseProgress: CallanCourseProgress;
 
-    @Input() formErrors$ =  new BehaviorSubject<AppFormErrors>(null);
+    @Input() formErrors$ =  new Subject<AppFormErrors>();
 
     @Input() courseCompetences: CallanCourseCompetence[];
 
@@ -57,7 +57,7 @@ export class CallanCustomerCourseAddComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
 
-        this.subscribeOnCustomerCoursesAndAllCourses();
+        // this.subscribeOnCustomerCoursesAndAllCourses();
 
         this.subscribeOnFormErrors();
     }
@@ -65,6 +65,15 @@ export class CallanCustomerCourseAddComponent implements OnInit, OnDestroy {
     ngOnDestroy() {
         this.unsubscribe.next();
         this.unsubscribe.complete();
+    }
+
+    ngOnChanges(changes: SimpleChanges) {
+        console.log('changes', changes);
+
+        if(changes.allCourses !== undefined) {
+            this.setCourses();
+            this.setFormValues();
+        }
     }
 
     handleCancel() {
@@ -144,28 +153,17 @@ export class CallanCustomerCourseAddComponent implements OnInit, OnDestroy {
         this.commonFormErrors = [];
     }
 
-    private subscribeOnCustomerCoursesAndAllCourses() {
-        observableCombineLatest(
-            this.allCourses$,
-            this.currentCustomerCourseProgresses$
-        )
-            .pipe(
-                takeUntil(this.unsubscribe)
-            )
-            .subscribe(results => {
-                    this.courses = results[0].filter(course => {
-                        for (const progress of results[1]) {
-                            if (progress.course.id === course.id) {
-                                return false;
-                            }
-                        }
-
-                        return true;
-                    });
-
-                    this.setFormValues();
+    private setCourses() {
+        if (this.allCourses.length && this.currentCustomerCourseProgresses) {
+            this.courses = this.allCourses.filter(course => {
+                for (const progress of this.currentCustomerCourseProgresses) {
+                    if (progress.course.id === course.id) {
+                        return false;
+                    }
                 }
-            );
-    }
 
+                return true;
+            });
+        }
+    }
 }

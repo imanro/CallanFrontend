@@ -11,24 +11,26 @@
 
 
                 <div class="card-header">
-                    <h5 class="card-title">{{lessonEvent.courseProgress.course.title}}</h5>
+                    <h5 class="card-title">{{lessonEvent.courseProgress?.course.title}}</h5>
                 </div>
 
                 <div class="card-body">
                     <div class="card-block pb-0">
 
                         <div class="row" *ngIf="view === viewNameEnum.STUDENT; else studentInfoBlock">
-                            <dl class="col-sm-5">
-                                <dt>Tutor:</dt>
-                                <dd>{{lessonEvent.teacher?.getFullName()}}</dd>
-                            </dl>
                             <div class="col-sm-5">
+                                <dl *ngIf="lessonEvent.teacher">
+                                    <dt>Tutor:</dt>
+                                    <dd>{{lessonEvent.teacher?.getFullName()}}</dd>
+                                </dl>
+                            </div>
+                            <div class="col-sm-4">
                                 <dl class="contact-info mr-1" *ngIf="lessonEvent.isStarted()">
                                     <dt>Email:</dt>
                                     <dd>{{lessonEvent.teacher?.email}}</dd>
                                 </dl>
                             </div>
-                            <div class="col-sm-2 meta-info">
+                            <div class="col-sm-3 meta-info">
                                 <div class="row">
                                     <i class="ft-clock font-medium-3"></i>
                                     <span>{{lessonEvent.startTime|date: 'short'}}</span>
@@ -46,13 +48,13 @@
                                     <dt>Student:</dt>
                                     <dd>{{lessonEvent.student?.getFullName()}}</dd>
                                 </dl>
-                                <div class="col-sm-5">
+                                <div class="col-sm-4">
                                     <dl class="contact-info mr-1" *ngIf="lessonEvent.isStarted()">
                                         <dt>Email:</dt>
                                         <dd>{{lessonEvent.student?.email}}</dd>
                                     </dl>
                                 </div>
-                                <div class="col-sm-2 meta-info">
+                                <div class="col-sm-3 meta-info">
                                     <div class="row">
                                         <i class="ft-clock font-medium-3"></i>
                                         <span>{{lessonEvent.startTime|date: 'short'}}</span>

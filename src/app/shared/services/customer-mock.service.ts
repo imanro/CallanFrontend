@@ -91,7 +91,7 @@ export class CallanCustomerMockService extends CallanCustomerService {
         })
     }
 
-    getGoogleAuthLink(customer: CallanCustomer): Observable<string> {
+    getGoogleAuthLink(customer: CallanCustomer): Observable<string|boolean> {
         return new Observable(observer => {
             observer.next('http://google.com');
             observer.complete();
