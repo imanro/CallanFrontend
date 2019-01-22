@@ -157,7 +157,7 @@ export class CustomerProfileContainerComponent implements OnInit, OnDestroy {
             .subscribe(customer => {
                 console.log(customer.timezone);
                 this.customerService.setAuthCustomer(customer);
-                this.assignCurrentCustomer();
+                this.assignCurrentCustomer().subscribe(() => {});
             });
     }
 

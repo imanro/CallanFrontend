@@ -41,6 +41,7 @@ export class SidebarComponent implements OnInit {
         $.getScript('./assets/js/app-sidebar.js');
 
         this.customerService.getCurrentCustomer().subscribe(() => {
+            console.log('changed');
             //   call this to set current customer by default for admin
             observableCombineLatest(
                 this.customerService.getAuthCustomer(),
@@ -58,21 +59,29 @@ export class SidebarComponent implements OnInit {
                 const choosenRoutes = [];
                 let routeTitleReplacement = {};
 
+                let checkCustomer;
                 if (CallanCustomerService.hasCustomerRole(authCustomer, CallanRoleNameEnum.ADMIN)) {
+                    checkCustomer = currentCustomer;
+                } else {
+                    checkCustomer = authCustomer;
+                }
+
+                if (CallanCustomerService.hasCustomerRole(authCustomer, CallanRoleNameEnum.ADMIN)) {
+                    // admin-specific (auth user check)
                     choosenRoutes.push(...['/customers', '/admin-dashboard']);
                     routeTitleReplacement = {'/lessons/student': 'Student Lessons', '/lessons/teacher': 'Teacher Lessons'}
                 }
 
-                if (CallanCustomerService.hasCustomerRole(authCustomer, CallanRoleNameEnum.STUDENT)) {
+                if (CallanCustomerService.hasCustomerRole(checkCustomer, CallanRoleNameEnum.STUDENT)) {
                     choosenRoutes.push(...['/lessons/student']);
                 }
 
-                if (CallanCustomerService.hasCustomerRole(authCustomer, CallanRoleNameEnum.TEACHER)) {
+                if (CallanCustomerService.hasCustomerRole(checkCustomer, CallanRoleNameEnum.TEACHER)) {
                     choosenRoutes.push(...['/lessons/teacher', '/schedule']);
                 }
 
 
-                if (CallanCustomerService.hasCustomerRole(authCustomer, CallanRoleNameEnum.SUPPORT)) {
+                if (CallanCustomerService.hasCustomerRole(checkCustomer, CallanRoleNameEnum.SUPPORT)) {
                     choosenRoutes.push(...['/claims']);
                 }
 
