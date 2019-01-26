@@ -151,7 +151,7 @@ export class CallanLessonEventsListComponent implements OnInit, OnDestroy {
                 deleteButtonContent: '<i class="ft-x danger font-medium-1 mr-2"></i>'
             },
             rowClassFunction: function(row) {
-                return row.data.state === CallanLessonEventStateEnum.PLANNED ? 'cancel-shown' : '';
+                return (row.data.state === CallanLessonEventStateEnum.PLANNED && (!row.data.startTime || row.data.startTime.getTime() > new Date().getTime())) ? 'cancel-shown' : '';
             }
         };
     }
