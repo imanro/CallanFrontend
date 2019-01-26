@@ -192,7 +192,7 @@ export class CallanLessonManagerStudentContainerComponent implements OnInit, OnD
 
             if (!CallanScheduleService.checkLessonDurationAgainstDatesEnabled(lessonEvent, this.datesEnabled, this.scheduleMinuteStep)){
                 modalRef.componentInstance.buttons.cancel = false;
-                modalRef.componentInstance.title = 'This time is\'nt available';
+                modalRef.componentInstance.title = 'This time isn\'t available';
                 modalRef.componentInstance.body = `Sorry, the Lesson duration (${lessonEvent.duration} min.) would exceed on not available time. `+
                 `Please, choose another time so that the whole lesson duration would fit the available time range`;
             } else {
