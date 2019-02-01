@@ -1,5 +1,5 @@
 export enum CallanLessonManagerStudentViewEnum {
-    DEFAULT = 'default',
+    DASHBOARD = 'dashboard',
     BALANCE_DETAILS = 'balance-details',
     CALENDAR = 'calendar',
     CUSTOMER_COURSE_ADD = 'customer-course-add'

@@ -11,7 +11,15 @@ const routes: Routes = [
         data: {
             title: 'Customers'
         },
+    },
+    {
+        path: ':customerId',
+        component: CallanCustomerManagerContainerComponent,
+        data: {
+            title: 'Customers'
+        },
     }
+
 ];
 
 @NgModule({

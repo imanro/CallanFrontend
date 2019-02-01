@@ -17,6 +17,6 @@ export const ROUTES: RouteInfo[] = [
         path: '/schedule', title: 'Time Table', icon: 'ft-list', class: '', badge: '', badgeClass: '', isExternalLink: false, submenu: []
     },
     {
-        path: '/admin-dashboard', title: 'Dashboard', icon: 'icon-speedometer', class: '', badge: '', badgeClass: '', isExternalLink: false, submenu: []
+        path: '/admin-dashboard', title: 'Admin Dashboard', icon: 'icon-speedometer', class: '', badge: '', badgeClass: '', isExternalLink: false, submenu: []
     }
 ];

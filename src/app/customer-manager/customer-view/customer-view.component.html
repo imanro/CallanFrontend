@@ -1,0 +1,55 @@
+<div *ngIf="customer">
+
+<div class="row">
+  <div class="col-sm-12">
+    <h4>{{customer.firstName}} {{customer.lastName}}</h4>
+  </div>
+</div>
+
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="card">
+        <div class="card-body row">
+          <div class="card-block col-sm-6">
+            <div class="card-text">
+              <dl class="row">
+                <dt class="col-sm-3 text-sm-right">Roles</dt>
+                <dd class="col-sm-9">{{formatCustomerRoles(customer)}}</dd>
+              </dl>
+              <dl class="row">
+                <dt class="col-sm-3 text-sm-right">Description (goals etc.)</dt>
+                <dd class="col-sm-9">{{customer.description}}</dd>
+              </dl>
+            </div>
+          </div>
+          <div class="card-block col-sm-6">
+            <div class="card-text">
+              <dl class="row">
+                <dt class="col-sm-3 text-sm-right">Active?</dt>
+                <dd class="col-sm-9">{{customer.isActive ? 'Yes' : 'No'}}</dd>
+              </dl>
+              <dl class="row">
+                <dt class="col-sm-3 text-sm-right">Registered</dt>
+                <dd class="col-sm-9">{{customer.created | date: 'shortDate'}}</dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-6 mt-2">
+        <a class="btn btn-raised btn-secondary mr-1" href="javascript:void(0)" (click)="handleNavigateBack()">Back</a>
+    </div>
+    <div class="col-sm-6 mt-2 text-right">
+      <a class="btn btn-raised gradient-purple-bliss white mr-1" href="javascript:void(0)" (click)="handleSetCurrentCustomer(customer)">Work on Behalf</a>
+      <a class="btn btn-raised gradient-purple-love white mr-1" href="javascript:void(0)" (click)="handleDeactivateCustomer(customer)" *ngIf="customer.isActive">Deactivate</a>
+      <a class="btn btn-raised gradient-indigo-dark-blue white mr-1" href="javascript:void(0)" (click)="handleActivateCustomer(customer)" *ngIf="!customer.isActive">Activate</a>
+      <a class="btn btn-raised gradient-harmonic-energy white" href="javascript:void(0)" (click)="handleEditCustomer(customer)">Edit Details</a>
+    </div>
+  </div>
+
+
+</div>

@@ -16,7 +16,7 @@
                             [isConfirmButtonCanBeShown]="isConfirmLessonButtonShown"
                             [view]="lessonEventViewNameEnum.STUDENT"
                             (lessonEventConfirmEvent)="handleLessonEventConfirm($event)"
-                            *ngIf="currentLessonEvent && isLessonEventShown && view === viewNameEnum.DEFAULT"
+                            *ngIf="currentLessonEvent && isLessonEventShown && view === viewNameEnum.DASHBOARD"
                     ></app-callan-lesson-event>
 
                     <app-callan-courses-list
@@ -28,15 +28,15 @@
                             (courseSelectEvent)="handleSelectCourseProgress($event)"
                             (lessonEventCreateEvent)="handleLessonEventCreate($event)"
                             (topUpLessonEventsBalanceEvent)="handleLessonEventsBalanceShown($event)"
-                            *ngIf="view === viewNameEnum.DEFAULT"
+                            *ngIf="view === viewNameEnum.DASHBOARD"
                     ></app-callan-courses-list>
 
                     <div class="row"
-                         *ngIf="view === viewNameEnum.DEFAULT && isCustomerCourseAddButtonShown && currentCustomer"
+                         *ngIf="view === viewNameEnum.DASHBOARD && isCustomerCourseAddButtonShown && currentCustomer"
                     >
                         <div class="col-sm-12">
                             <div class="mt-2">
-                                <a class="btn btn-raised gradient-mint white" href="javascript:void(0)" (click)="handleCustomerCourseAddShow()">Add a new course</a>
+                                <a class="btn btn-raised gradient-mint white" href="javascript:void(0)" (click)="handleCustomerCourseAddShow()">Add a New Course</a>
                             </div>
                         </div>
                     </div>
@@ -84,12 +84,10 @@
                             [lessonEvents]="lessonEvents"
                             [refresh$]="lessonEventsListRefresh$"
                             [isLessonEditingShown]="true"
-                            *ngIf="view === viewNameEnum.DEFAULT"
+                            *ngIf="view === viewNameEnum.DASHBOARD"
                             (setCurrentLessonEventEvent)="handleSetCurrentLessonEvent($event)"
                             (cancelLessonEventEvent)="handleCancelLessonEvent($event)"
                     ></app-callan-lesson-events-list>
-
-                    <p *ngIf="currentCustomer">Current customer: {{currentCustomer.email}}</p>
                 </section>
             </div>
         </div>

@@ -221,6 +221,8 @@ export class CallanCustomerApiService extends CallanCustomerService {
             customer.lastName = row.lastName;
             customer.email = row.email;
             customer.availableHourInAdvanceMin = row.availableHourInAdvanceMin;
+            customer.created = new Date(row.created);
+            customer.isActive = row.isActive === 1 || false;
             customer.description = row.description;
 
             if (row.roles) {

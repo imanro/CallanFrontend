@@ -4,29 +4,36 @@
             <div class="container-fluid">
 
                 <section>
-                <div class="row" *ngIf="view === viewNameEnum.DEFAULT">
+                <div class="row" *ngIf="view === viewNameEnum.LIST">
                     <div class="col-sm-12">
-                        <a class="mb-0 btn btn-raised gradient-blueberry white" href="javascript:void(0)" (click)="handleCustomerCreate()">Add a new
-                            user</a>
+                        <a class="mb-0 btn btn-raised gradient-blueberry white" href="javascript:void(0)" (click)="handleCustomerCreate()">Add a New
+                            Customer</a>
                     </div>
                 </div>
 
                 <app-callan-customers-list [customers$]="customers$"
                                            (setCurrentCustomer)="handleSetCurrentCustomer($event)"
-                                           (editCustomer)="handleEditCustomer($event)"
-                                           *ngIf="view === viewNameEnum.DEFAULT"></app-callan-customers-list>
+                                           (viewCustomer)="handleViewCustomer($event)"
+                                           *ngIf="view === viewNameEnum.LIST"></app-callan-customers-list>
 
-                <app-callan-customer-details [customer]="currentCustomer"
+                    <app-callan-customer-view [customer]="operateCustomer"
+                                              (navigateBack)="handleNavigateBack()"
+                                              (editCustomer)="handleEditCustomer($event)"
+                                              (activateCustomer)="handleCustomerSave($event, operationNameEnum.ACTIVATE)"
+                                              (deactivateCustomer)="handleCustomerSave($event, operationNameEnum.DEACTIVATE)"
+                                              (setCurrentCustomer)="handleSetCurrentCustomer($event)"
+                                               *ngIf="operateCustomer && view === viewNameEnum.CUSTOMER_VIEW"></app-callan-customer-view>
+
+
+                    <app-callan-customer-details [customer]="operateCustomer"
                                              [rolesList]="rolesList"
                                              [formErrors$]="formErrors$"
                                              [isSaving]="isSaving"
                                              (customerSaveEvent)="handleCustomerSave($event)"
-                                             (cancelEvent)="handleDetailsReset()"
-                                             *ngIf="currentCustomer && view === viewNameEnum.CUSTOMER_DETAILS"></app-callan-customer-details>
+                                             (cancelEvent)="handleViewCustomer()"
+                                             *ngIf="operateCustomer && view === viewNameEnum.CUSTOMER_DETAILS"></app-callan-customer-details>
 
                 </section>
-
-                <p *ngIf="currentCustomer">Current customer: {{currentCustomer.email}}</p>
             </div>
         </div>
     </div>

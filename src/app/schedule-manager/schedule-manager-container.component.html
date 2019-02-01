@@ -3,7 +3,7 @@
     <div class="content-wrapper">
       <div class="container-fluid">
         <section>
-        <div class="row" *ngIf="view === viewNameEnum.DEFAULT && currentCustomer">
+        <div class="row" *ngIf="view === viewNameEnum.DASHBOARD && currentCustomer">
           <div class="col-sm-12">
             <a class="btn mb-0 btn-raised gradient-summer white" href="javascript:void(0)" (click)="handleShowScheduleRangeDetails()">Add a new time range</a>
           </div>
@@ -13,7 +13,7 @@
                 [scheduleRanges$]="scheduleRanges$"
                 [currentDate]="currentDate"
                 (scheduleRangeDeleteEvent)="handleScheduleRangeDelete($event)"
-                *ngIf="view === viewNameEnum.DEFAULT && currentCustomer"
+                *ngIf="view === viewNameEnum.DASHBOARD && currentCustomer"
         ></app-callan-schedule-ranges-list>
         <app-callan-schedule-range-details
                 [scheduleRange]="currentScheduleRange"
@@ -29,10 +29,9 @@
                 [scheduleMinuteStep]="scheduleMinuteStep"
                 [refresh$]="refresh$"
                 (setCurrentDateEvent)="handleSetCurrentDate($event)"
-                *ngIf="view === viewNameEnum.DEFAULT && currentCustomer && currentDate"
+                *ngIf="view === viewNameEnum.DASHBOARD && currentCustomer && currentDate"
         ></app-callan-schedule-range-calendar>
         </section>
-        <p *ngIf="currentCustomer">Current customer: {{currentCustomer.email}}</p>
       </div>
     </div>
   </div>

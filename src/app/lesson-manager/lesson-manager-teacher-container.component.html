@@ -9,7 +9,7 @@
                   [courseSpecialities]="courseSpecialities"
                   [isSpecialityControlsShown]="isCourseSpecialityListControlsShown"
                   (courseSpecialityDeleteEvent)="handleCourseSpecialityDelete($event)"
-                  *ngIf="view === viewNameEnum.DEFAULT"
+                  *ngIf="view === viewNameEnum.DASHBOARD"
           ></app-course-competences-list>
 
           <app-course-speciality-add
@@ -23,7 +23,7 @@
           ></app-course-speciality-add>
 
           <div class="row"
-               *ngIf="view === viewNameEnum.DEFAULT && isAddCourseSpecialityButtonShown && currentCustomer"
+               *ngIf="view === viewNameEnum.DASHBOARD && isAddCourseSpecialityButtonShown && currentCustomer"
           >
             <div class="col-sm-12">
               <div class="mt-2">
@@ -44,11 +44,9 @@
                   [isLessonEditingShown]="true"
                   (setCurrentLessonEventEvent)="handleSetCurrentLessonEvent($event)"
                   (cancelLessonEventEvent)="handleCancelLessonEvent($event)"
-                  *ngIf="view === viewNameEnum.DEFAULT"
+                  *ngIf="view === viewNameEnum.DASHBOARD"
           ></app-callan-lesson-events-list>
         </section>
-
-          <p *ngIf="currentCustomer">Current customer: {{currentCustomer.email}}</p>
       </div>
     </div>
   </div>

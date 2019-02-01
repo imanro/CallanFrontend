@@ -7,13 +7,15 @@ import {CallanCustomersRoutingModule} from './customer-manager-routing.module';
 import {CallanCustomerManagerContainerComponent} from './customer-manager-container.component';
 import {CallanCustomersListComponent} from './customers-list/customers-list.component';
 import { CallanCustomerDetailsComponent } from './customer-details/customer-details.component';
+import { CustomerViewComponent } from './customer-view/customer-view.component';
 
 
 @NgModule({
     declarations: [
         CallanCustomerManagerContainerComponent,
         CallanCustomersListComponent,
-        CallanCustomerDetailsComponent
+        CallanCustomerDetailsComponent,
+        CustomerViewComponent
     ],
     imports: [
         CommonModule,

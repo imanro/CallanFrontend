@@ -12,6 +12,8 @@ export class CallanCustomer extends CallanBaseModel {
     roles: CallanRole[];
     availableHourInAdvanceMin: number;
     timezone: CallanTimezone;
+    isActive: boolean;
+    created: Date;
 
     getFullName?(): string {
         return this.lastName && this.firstName ? this.lastName + ' ' + this.firstName : this.firstName;

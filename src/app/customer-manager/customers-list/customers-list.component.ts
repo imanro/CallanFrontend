@@ -18,7 +18,7 @@ export class CallanCustomersListComponent implements OnInit, OnDestroy {
 
     @Output() setCurrentCustomer = new EventEmitter<any>();
 
-    @Output() editCustomer = new EventEmitter<CallanCustomer>();
+    @Output() viewCustomer = new EventEmitter<CallanCustomer>();
 
     source: LocalDataSource;
     settings: any;
@@ -70,8 +70,8 @@ export class CallanCustomersListComponent implements OnInit, OnDestroy {
                         title: '<i class="ft-user-check success font-medium-1 mr-2" title="Set user for on-behave"></i>',
                     },
                     {
-                        name: 'edit',
-                        title: '<i class="ft-edit-2 info font-medium-1 mr-2" title="Edit customer"></i>'
+                        name: 'view',
+                        title: '<i class="ft-eye info font-medium-1 mr-2" title="View customer"></i>'
                     }
                 ],
                 add: false,
@@ -116,14 +116,14 @@ export class CallanCustomersListComponent implements OnInit, OnDestroy {
             case('setCurrent'):
                 this.setCurrentCustomer.next($e.data);
                 break;
-            case('edit'):
-                this.editCustomer.next($e.data);
+            case('view'):
+                this.viewCustomer.next($e.data);
                 console.log($e);
                 break;
         }
     }
 
     handleRowSelect($e) {
-        this.setCurrentCustomer.next($e.data);
+        this.viewCustomer.next($e.data);
     }
 }

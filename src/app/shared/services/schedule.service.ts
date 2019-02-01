@@ -46,6 +46,12 @@ export abstract class CallanScheduleService extends CallanBaseService {
     }
 
     static convertMinutesToTimeString(minutes, isMilitaryFormat = false) {
+        const dayMinutes = 24 * 60;
+
+        if (minutes >= dayMinutes) {
+            minutes -= dayMinutes;
+        }
+
         const hoursValue = Math.floor(minutes / 60);
         let minutesValue: string;
 
@@ -120,12 +126,44 @@ export abstract class CallanScheduleService extends CallanBaseService {
         scheduleRange.regularity = CallanScheduleRangeRegularityEnum.REGULAR;
 
         scheduleRange.startMinutes = 60 * 9;
-        scheduleRange.endMinutes = 60 * 10;
+        scheduleRange.minutesAmount = 60;
 
         console.log(scheduleRange.dayOfWeek, 'ttt', (new Date()).getDay());
 
         scheduleRange.date = new Date();
         scheduleRange.date.setDate(currentDate.getDate());
+    }
+
+    static convertToUtcTime(scheduleRange: CallanScheduleRange) {
+        const timezoneOffset = new Date().getTimezoneOffset();
+        scheduleRange.startMinutes = scheduleRange.startMinutes + timezoneOffset;
+        CallanScheduleService.fixScheduleRangeDayBoundMinutes(scheduleRange);
+    }
+
+    static convertToLocalTime(scheduleRange: CallanScheduleRange) {
+        const timezoneOffset = new Date().getTimezoneOffset();
+
+        scheduleRange.startMinutes = scheduleRange.startMinutes - timezoneOffset;
+        CallanScheduleService.fixScheduleRangeDayBoundMinutes(scheduleRange);
+    }
+
+    static fixScheduleRangeDayBoundMinutes(scheduleRange: CallanScheduleRange) {
+        if (scheduleRange.startMinutes < 0) {
+            // if minutes is less than 0, move to previous day
+            scheduleRange.startMinutes = 24 * 60 + scheduleRange.startMinutes;
+            scheduleRange.dayOfWeek -= 1;
+        } else if (scheduleRange.startMinutes >= 24 * 60) {
+            scheduleRange.startMinutes = scheduleRange.startMinutes % (24 * 60);
+            scheduleRange.dayOfWeek += 1;
+
+            if (scheduleRange.dayOfWeek > 6) {
+                scheduleRange.dayOfWeek = 0;
+            }
+        }
+    }
+
+    static getMinutesAmountByMinutesRange(startMinutes, endMinutes) {
+        return endMinutes > 0 ? endMinutes - startMinutes : 24 * 60 - startMinutes;
     }
 
     abstract getScheduleRanges(customer: CallanCustomer): Observable<CallanScheduleRange[]>;

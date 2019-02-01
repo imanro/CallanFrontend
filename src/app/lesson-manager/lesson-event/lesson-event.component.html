@@ -18,13 +18,17 @@
                     <div class="card-block pb-0">
 
                         <div class="row" *ngIf="view === viewNameEnum.STUDENT; else studentInfoBlock">
-                            <div class="col-sm-5">
+                            <div class="col-sm-5 info-container">
                                 <dl *ngIf="lessonEvent.teacher">
                                     <dt>Tutor:</dt>
                                     <dd>{{lessonEvent.teacher?.getFullName()}}</dd>
                                 </dl>
+                                <dl *ngIf="lessonEvent.teacher?.description">
+                                    <dt>Teacher's short info:</dt>
+                                    <dd>{{lessonEvent.teacher?.description}}</dd>
+                                </dl>
                             </div>
-                            <div class="col-sm-4">
+                            <div class="col-sm-4 info-container">
                                 <dl class="contact-info mr-1" *ngIf="lessonEvent.isStarted()">
                                     <dt>Email:</dt>
                                     <dd>{{lessonEvent.teacher?.email}}</dd>
@@ -44,11 +48,17 @@
 
                         <ng-template class="row" #studentInfoBlock>
                             <div class="row">
-                                <dl class="col-sm-5">
-                                    <dt>Student:</dt>
-                                    <dd>{{lessonEvent.student?.getFullName()}}</dd>
-                                </dl>
-                                <div class="col-sm-4">
+                                <div class="col-sm-5 info-container">
+                                    <dl>
+                                        <dt>Student:</dt>
+                                        <dd>{{lessonEvent.student?.getFullName()}}</dd>
+                                    </dl>
+                                    <dl *ngIf="lessonEvent.student?.description">
+                                        <dt>Student's short info:</dt>
+                                        <dd>{{lessonEvent.student?.description}}</dd>
+                                    </dl>
+                                </div>
+                                <div class="col-sm-4 info-container">
                                     <dl class="contact-info mr-1" *ngIf="lessonEvent.isStarted()">
                                         <dt>Email:</dt>
                                         <dd>{{lessonEvent.student?.email}}</dd>
@@ -68,7 +78,7 @@
                         </ng-template>
 
                         <div class="row" *ngIf="lessonEvent.state === lessonEventStateEnum.COMPLETED && isConfirmButtonCanBeShown">
-                            <div class="col-sm-12 mt-2 text-right">
+                            <div class="col-sm-12 mt-2 text-sm-right">
                                 <button class="btn btn-raised gradient-blackberry white" href="javascript:void(0)" (click)="handleLessonEventConfirm(lessonEvent)">Confirm the lesson</button>
                             </div>
                         </div>

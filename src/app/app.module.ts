@@ -63,7 +63,11 @@ export function initializeApp(appConfig: AppConfig) {
         AppRoutingModule,
         SharedModule,
         HttpClientModule,
-        ToastrModule.forRoot(),
+        ToastrModule.forRoot({
+            timeOut: 2000,
+            positionClass: 'toast-top-center',
+            preventDuplicates: true,
+        }),
         NgbModule.forRoot(),
         TranslateModule.forRoot({
             loader: {

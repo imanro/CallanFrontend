@@ -2,11 +2,12 @@
 
 :host {
 
-  dl {
+  .info-container {
     padding: 1rem;
   }
 
   .contact-info {
+    padding: 1rem;
     background: map-get($grey, 'lighten-3');
     border-radius: 5px;
   }

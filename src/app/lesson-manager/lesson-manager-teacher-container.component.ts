@@ -44,7 +44,7 @@ export class CallanLessonManagerTeacherContainerComponent implements OnInit, OnD
     isAddCourseSpecialityButtonShown = false;
     isCourseSpecialityListControlsShown = false;
 
-    view = CallanLessonManagerTeacherViewEnum.DEFAULT;
+    view = CallanLessonManagerTeacherViewEnum.DASHBOARD;
     viewNameEnum: any;
     lessonEventViewNameEnum: any;
 
@@ -158,7 +158,7 @@ export class CallanLessonManagerTeacherContainerComponent implements OnInit, OnD
     }
 
     handleCourseSpecialityAddCancel() {
-        this.view = CallanLessonManagerTeacherViewEnum.DEFAULT;
+        this.view = CallanLessonManagerTeacherViewEnum.DASHBOARD;
     }
 
     handleCourseSpecialityAdd(courseSpeciality) {
@@ -168,7 +168,7 @@ export class CallanLessonManagerTeacherContainerComponent implements OnInit, OnD
                 // re-read list
                 console.log('re-read');
                 this.assignCourseSpecialities(this.currentCustomer);
-                this.view = CallanLessonManagerTeacherViewEnum.DEFAULT;
+                this.view = CallanLessonManagerTeacherViewEnum.DASHBOARD;
                 this.toastrService.success('The new speciality has been added to teacher', 'Success');
 
             }, err => {
