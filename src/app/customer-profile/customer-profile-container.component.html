@@ -8,7 +8,7 @@
 
                     <app-callan-customer-self-view
                             [customer]="currentCustomer"
-                            *ngIf="view === viewNameEnum.LIST && currentCustomer"
+                            *ngIf="view === viewNameEnum.DASHBOARD && currentCustomer"
                     ></app-callan-customer-self-view>
 
                     <app-callan-customer-self-details
@@ -20,7 +20,7 @@
                             *ngIf="view === viewNameEnum.CUSTOMER_SELF_DETAILS && currentCustomer"
                     ></app-callan-customer-self-details>
 
-                    <div class="row mt-3" *ngIf="view === viewNameEnum.LIST">
+                    <div class="row mt-3" *ngIf="view === viewNameEnum.DASHBOARD">
                         <div class="col-sm-12">
                             <button class="mb-0 btn btn-raised gradient-blueberry white"
                                (click)="handleCustomerSelfDetailsShow()">Edit details</button>
@@ -30,7 +30,7 @@
                     <app-callan-customer-google-auth
                             [isAuthorized]="isGoogleAuthorized"
                             (authorize)="handleAuthorizeGoogle()"
-                            *ngIf="view === viewNameEnum.LIST && currentCustomer"
+                            *ngIf="view === viewNameEnum.DASHBOARD && currentCustomer"
                     ></app-callan-customer-google-auth>
 
                 </section>

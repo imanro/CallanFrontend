@@ -21,7 +21,7 @@ export class CustomerProfileContainerComponent implements OnInit, OnDestroy {
 
     timezonesList: CallanTimezone[];
 
-    view = CallanCustomerProfileViewEnum.DEFAULT;
+    view = CallanCustomerProfileViewEnum.DASHBOARD;
 
     formErrors$ = new Subject<AppFormErrors>();
 
@@ -58,7 +58,7 @@ export class CustomerProfileContainerComponent implements OnInit, OnDestroy {
     }
 
     handleCustomerSelfDetailsCancel() {
-        this.view = CallanCustomerProfileViewEnum.DEFAULT;
+        this.view = CallanCustomerProfileViewEnum.DASHBOARD;
     }
 
     handleCustomerSave(customer: CallanCustomer) {
@@ -67,7 +67,7 @@ export class CustomerProfileContainerComponent implements OnInit, OnDestroy {
             this.isSaving = false;
             this.updateCurrentCustomer();
             this.toastrService.success('User has been successfully saved', 'Success');
-            this.view = CallanCustomerProfileViewEnum.DEFAULT;
+            this.view = CallanCustomerProfileViewEnum.DASHBOARD;
 
         }, err => {
 

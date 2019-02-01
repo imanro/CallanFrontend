@@ -1,4 +1,4 @@
 export enum CallanCustomerProfileViewEnum {
-    DEFAULT = 'default',
+    DASHBOARD = 'dashboard',
     CUSTOMER_SELF_DETAILS = 'customer-self-details'
 }
