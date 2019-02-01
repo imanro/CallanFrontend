@@ -9,6 +9,7 @@ import {CallanRoleNameEnum} from '../enums/role.name.enum';
 import {environment} from '../../../environments/environment';
 import {AppEnvironmentNameEnum} from '../enums/environment.name.enum';
 import {AppConfig} from '../../app.config';
+import {CallanCustomer} from '../models/customer.model';
 
 declare var $: any;
 
@@ -23,6 +24,7 @@ export class SidebarComponent implements OnInit {
     environment: {name: string, title: string};
     environmentNameEnum: any;
     appVersion: string;
+    currentCustomer: CallanCustomer;
 
     constructor(
         private router: Router,
@@ -48,9 +50,9 @@ export class SidebarComponent implements OnInit {
                 this.customerService.getCurrentCustomer$()
             ).subscribe(results => {
                 const authCustomer = results[0];
-                const currentCustomer = results[1];
+                this.currentCustomer = results[1];
 
-                console.log('Now, current and auth:', authCustomer, currentCustomer);
+                console.log('Now, current and auth:', authCustomer, this.currentCustomer);
 
 
                 // clear menu items
@@ -61,7 +63,7 @@ export class SidebarComponent implements OnInit {
 
                 let checkCustomer;
                 if (CallanCustomerService.hasCustomerRole(authCustomer, CallanRoleNameEnum.ADMIN)) {
-                    checkCustomer = currentCustomer;
+                    checkCustomer = this.currentCustomer;
                 } else {
                     checkCustomer = authCustomer;
                 }

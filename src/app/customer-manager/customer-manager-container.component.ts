@@ -1,4 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Location} from '@angular/common';
+import {ToastrService} from 'ngx-toastr';
 
 import {CallanCustomer} from '../shared/models/customer.model';
 import {CallanCustomerService} from '../shared/services/customer.service';
@@ -6,10 +8,12 @@ import {BehaviorSubject, Subject} from 'rxjs';
 import {CallanRole} from '../shared/models/role.model';
 import {AppFormErrors} from '../shared/models/form-errors.model';
 import {CallanFormHelper} from '../shared/helpers/form-helper';
-import {ToastrService} from 'ngx-toastr';
 import {AppError} from '../shared/models/error.model';
 import {CallanCustomerManagerViewEnum} from '../shared/enums/customer-manager.view.enum';
 import {CallanLessonService} from '../shared/services/lesson.service';
+import {ActivatedRoute} from '@angular/router';
+import {takeUntil} from 'rxjs/operators';
+import {CallanCustomerManagerOperationEnum} from '../shared/enums/customer-manager.operation.enum';
 
 @Component({
     selector: 'app-callan-customer-manager-container',
@@ -19,12 +23,17 @@ import {CallanLessonService} from '../shared/services/lesson.service';
 
 export class CallanCustomerManagerContainerComponent implements OnInit, OnDestroy {
 
-    view = CallanCustomerManagerViewEnum.DEFAULT;
+    view = CallanCustomerManagerViewEnum.LIST;
+
     viewNameEnum: any;
+
+    operationNameEnum: any;
 
     customers$ = new BehaviorSubject<CallanCustomer[]>([]);
 
     rolesList: CallanRole[];
+
+    operateCustomer: CallanCustomer;
 
     currentCustomer: CallanCustomer;
 
@@ -35,14 +44,18 @@ export class CallanCustomerManagerContainerComponent implements OnInit, OnDestro
     private unsubscribe$: Subject<void> = new Subject();
 
     constructor(
+        private location: Location,
+        private route: ActivatedRoute,
         private customerService: CallanCustomerService,
         private lessonService: CallanLessonService,
         private toastrService: ToastrService
     ) {
         this.viewNameEnum = CallanCustomerManagerViewEnum;
+        this.operationNameEnum = CallanCustomerManagerOperationEnum;
     }
 
     ngOnInit() {
+        this.processRouteParams();
         this.fetchCustomers();
         this.fetchRolesList();
         this.subscribeOnCurrentCustomer();
@@ -57,26 +70,37 @@ export class CallanCustomerManagerContainerComponent implements OnInit, OnDestro
     }
 
     handleSetCurrentCustomer(customer: CallanCustomer) {
-        this.customerService.setCurrentCustomer(customer);
-        // resetting current data in lessonService
-        this.lessonService.reset();
-        this.toastrService.clear();
-        this.toastrService.success('Current customer now is ' + customer.firstName);
+        console.log(customer, '??');
+        this.setCurrentCustomer(customer);
+    }
+
+    handleViewCustomer(customer?: CallanCustomer) {
+
+        if (customer) {
+            this.location.replaceState('/customers/' + customer.id);
+            this.operateCustomer = customer;
+        }
+
+        if (this.operateCustomer && this.operateCustomer.id) {
+            this.view = CallanCustomerManagerViewEnum.CUSTOMER_VIEW;
+        } else {
+            this.view = CallanCustomerManagerViewEnum.LIST;
+        }
     }
 
     handleEditCustomer(customer: CallanCustomer) {
+        this.operateCustomer = customer;
         this.view = CallanCustomerManagerViewEnum.CUSTOMER_DETAILS;
-        this.currentCustomer = customer;
     }
 
     handleCustomerCreate() {
-        this.currentCustomer = CallanCustomerService.createCustomer();
-        this.customerService.initNewCustomer(this.currentCustomer).subscribe(() => {
+        this.operateCustomer = CallanCustomerService.createCustomer();
+        this.customerService.initNewCustomer(this.operateCustomer).subscribe(() => {
             this.view = CallanCustomerManagerViewEnum.CUSTOMER_DETAILS;
         });
     }
 
-    handleCustomerSave(customer: CallanCustomer) {
+    handleCustomerSave(customer: CallanCustomer, operation?: string) {
 
         this.isSaving = true;
 
@@ -92,11 +116,23 @@ export class CallanCustomerManagerContainerComponent implements OnInit, OnDestro
                     this.formErrors$.next(formErrors);
                 } else {
                     this.customerService.saveCustomer(customer).subscribe(() => {
-
                         this.isSaving = false;
                         this.fetchCustomers();
-                        this.toastrService.success('User has been successfully saved', 'Success');
-                        this.handleDetailsReset();
+
+                        switch (operation) {
+                            case (CallanCustomerManagerOperationEnum.SAVE):
+                            default:
+                                this.toastrService.success('The Customer has been successfully saved', 'Success');
+                                break;
+                            case (CallanCustomerManagerOperationEnum.ACTIVATE):
+                                this.toastrService.success('The Customer has been successfully activate', 'Success');
+                                break;
+                            case (CallanCustomerManagerOperationEnum.DEACTIVATE):
+                                this.toastrService.warning('The Customer has been successfully blocked', 'Warning');
+                                break;
+                        }
+
+                        this.handleViewCustomer(customer);
                     }, err => {
 
                         this.isSaving = false;
@@ -135,8 +171,23 @@ export class CallanCustomerManagerContainerComponent implements OnInit, OnDestro
                         this.isSaving = false;
 
                         this.fetchCustomers();
-                        this.toastrService.success('User has been successfully saved', 'Success');
-                        this.handleDetailsReset();
+
+                        switch (operation) {
+                            case (CallanCustomerManagerOperationEnum.SAVE):
+                            default:
+                                this.toastrService.success('The Customer has been successfully saved', 'Success');
+                                break;
+                            case (CallanCustomerManagerOperationEnum.ACTIVATE):
+                                this.toastrService.success('The Customer has been successfully activate', 'Success');
+                                break;
+                            case (CallanCustomerManagerOperationEnum.DEACTIVATE):
+                                this.toastrService.warning('The Customer has been successfully blocked', 'Warning');
+                                break;
+                        }
+
+
+                        this.handleViewCustomer(customer);
+
                     }, err => {
 
                         this.isSaving = false;
@@ -163,13 +214,33 @@ export class CallanCustomerManagerContainerComponent implements OnInit, OnDestro
     }
 
     handleDetailsReset() {
-        this.view = CallanCustomerManagerViewEnum.DEFAULT;
+        this.view = CallanCustomerManagerViewEnum.LIST;
         this.formErrors$.next(null);
+    }
+
+    handleNavigateBack() {
+        this.view = CallanCustomerManagerViewEnum.LIST;
+        this.location.replaceState('/customers');
+    }
+
+    private processRouteParams() {
+        this.route.params
+            .pipe(takeUntil(this.unsubscribe$))
+            .subscribe(params => {
+                if (params['customerId'] !== undefined) {
+                    console.log('customer id set');
+                    this.customerService.getCustomer(params['customerId']).subscribe(customer => {
+                        this.setOperateCustomer(customer);
+                        this.view = CallanCustomerManagerViewEnum.CUSTOMER_VIEW;
+                    })
+                }
+            });
     }
 
     private subscribeOnCurrentCustomer() {
         this.customerService.getCurrentCustomer$().subscribe(customer => {
-            this.currentCustomer = customer;
+            // CHECKME
+            // this.currentCustomer = customer;
         });
     }
 
@@ -188,6 +259,19 @@ export class CallanCustomerManagerContainerComponent implements OnInit, OnDestro
             console.log('roles received');
             this.rolesList = roles;
         });
+    }
+
+    private setOperateCustomer(customer: CallanCustomer) {
+        // resetting current data in lessonService
+        this.operateCustomer = customer;
+    }
+
+    private setCurrentCustomer(customer: CallanCustomer) {
+        this.customerService.setCurrentCustomer(customer);
+        // resetting current data in lessonService
+        this.lessonService.reset();
+        this.toastrService.clear();
+        this.toastrService.success('Current customer now is ' + customer.firstName);
     }
 
 }

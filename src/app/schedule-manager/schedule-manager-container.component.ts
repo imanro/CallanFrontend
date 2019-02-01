@@ -20,7 +20,7 @@ import {AppConfig} from '../app.config';
 })
 export class CallanScheduleManagerContainerComponent implements OnInit, OnDestroy {
 
-    view = CallanScheduleManagerViewEnum.DEFAULT;
+    view = CallanScheduleManagerViewEnum.DASHBOARD;
     viewNameEnum: any;
 
     currentCustomer: CallanCustomer;
@@ -65,7 +65,7 @@ export class CallanScheduleManagerContainerComponent implements OnInit, OnDestro
     }
 
     handleScheduleRangeDetailsCancel() {
-        this.view = CallanScheduleManagerViewEnum.DEFAULT;
+        this.view = CallanScheduleManagerViewEnum.DASHBOARD;
     }
 
     handleShowScheduleRangeDetails() {
@@ -86,7 +86,7 @@ export class CallanScheduleManagerContainerComponent implements OnInit, OnDestro
 
             // this.fetchScheduleRanges();
             this.toastrService.success('Time range has been successfully saved', 'Success');
-            this.view = CallanScheduleManagerViewEnum.DEFAULT;
+            this.view = CallanScheduleManagerViewEnum.DASHBOARD;
             // re-read
             this.assignScheduleRanges();
             this.assignDatesEnabled(this.currentDate);

@@ -9,6 +9,6 @@ export class CallanScheduleRange extends CallanBaseModel {
     regularity: number; // regular / ad-hoc
     dayOfWeek: number;
     startMinutes: number; // in minutes
-    endMinutes: number;
+    minutesAmount: number;
     timezoneOffset: number; // for saving in db
 }

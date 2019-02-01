@@ -1,4 +1,5 @@
 export enum CallanCustomerManagerViewEnum {
-    DEFAULT = 'default',
-    CUSTOMER_DETAILS = 'customer-details'
+    LIST = 'list',
+    CUSTOMER_DETAILS = 'customer-details',
+    CUSTOMER_VIEW = 'customer-view'
 }

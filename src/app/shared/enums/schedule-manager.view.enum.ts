@@ -1,4 +1,4 @@
 export enum CallanScheduleManagerViewEnum {
-    DEFAULT = 'default',
+    DASHBOARD = 'dashboard',
     RANGE_DETAILS = 'range-details'
 }

@@ -10,7 +10,7 @@ range1.dayOfWeek = 1;
 range1.regularity = CallanScheduleRangeRegularityEnum.REGULAR;
 range1.type = CallanScheduleRangeTypeEnum.INCLUSIVE;
 range1.startMinutes = 9 * 60;
-range1.endMinutes = 17 * 60;
+range1.minutesAmount = 17;
 
 const range2 = new CallanScheduleRange();
 range2.id = 2;
@@ -18,7 +18,7 @@ range2.dayOfWeek = 1;
 range2.regularity = CallanScheduleRangeRegularityEnum.REGULAR;
 range2.type = CallanScheduleRangeTypeEnum.INCLUSIVE;
 range2.startMinutes = 19 * 60;
-range2.endMinutes = 22 * 60;
+range2.minutesAmount = 22;
 
 
 const range3 = new CallanScheduleRange();
@@ -27,7 +27,7 @@ range3.dayOfWeek = 1;
 range3.regularity = CallanScheduleRangeRegularityEnum.REGULAR;
 range3.type = CallanScheduleRangeTypeEnum.EXCLUSIVE;
 range3.startMinutes = 13 * 60;
-range3.endMinutes = 14 * 60 + 45;
+range3.minutesAmount = 45;
 
 mockScheduleRanges.push(range1);
 mockScheduleRanges.push(range2);

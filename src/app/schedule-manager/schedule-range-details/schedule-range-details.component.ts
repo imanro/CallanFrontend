@@ -9,6 +9,7 @@ import {CallanScheduleRange} from '../../shared/models/schedule-range.model';
 import {CallanScheduleRangeRegularityEnum} from '../../shared/enums/schedule-range.regularity.enum';
 import {CallanScheduleRangeTypeEnum} from '../../shared/enums/schedule-range.type.enum';
 import {NgbDateStruct, NgbTimeStruct} from '@ng-bootstrap/ng-bootstrap';
+import {CallanScheduleService} from '../../shared/services/schedule.service';
 
 @Component({
     selector: 'app-callan-schedule-range-details',
@@ -116,7 +117,7 @@ export class ScheduleRangeDetailsComponent implements OnInit, OnDestroy {
                 'dayOfWeek': this.scheduleRange.dayOfWeek,
 
                 'startMinutes': this.convertMinutesToNgbTimeStruct(this.scheduleRange.startMinutes),
-                'endMinutes': this.convertMinutesToNgbTimeStruct(this.scheduleRange.endMinutes),
+                'endMinutes': this.convertMinutesToNgbTimeStruct(this.scheduleRange.startMinutes + this.scheduleRange.minutesAmount),
 
                 'date': this.convertDateToNgbDateStruct(this.scheduleRange.date)
             });
@@ -125,7 +126,6 @@ export class ScheduleRangeDetailsComponent implements OnInit, OnDestroy {
 
     private prepareSaveScheduleRange(): CallanScheduleRange {
         const saveScheduleRange = _.cloneDeep(this.scheduleRange);
-        saveScheduleRange.timezoneOffset = new Date().getTimezoneOffset();
         const formModel = this.scheduleRangeDetailsForm.value;
 
         saveScheduleRange.dayOfWeek = formModel.dayOfWeek;
@@ -133,9 +133,16 @@ export class ScheduleRangeDetailsComponent implements OnInit, OnDestroy {
         saveScheduleRange.type = Number(formModel.type);
 
         saveScheduleRange.startMinutes = this.convertNgbTimeStructToMinutes(formModel.startMinutes);
-        saveScheduleRange.endMinutes = this.convertNgbTimeStructToMinutes(formModel.endMinutes);
+        const endMinutes = this.convertNgbTimeStructToMinutes(formModel.endMinutes);
+
+        saveScheduleRange.minutesAmount = CallanScheduleService.getMinutesAmountByMinutesRange(saveScheduleRange.startMinutes, endMinutes);
+        console.log('em:', endMinutes);
+        console.log('sm:', saveScheduleRange.startMinutes);
+        console.log('dif:', endMinutes - saveScheduleRange.startMinutes);
 
         saveScheduleRange.date = this.convertNgbDateStructToDate(formModel.date);
+
+        CallanScheduleService.convertToUtcTime(saveScheduleRange);
 
         return saveScheduleRange;
     }
@@ -193,6 +200,7 @@ export class ScheduleRangeDetailsComponent implements OnInit, OnDestroy {
     }
 
     private convertNgbTimeStructToMinutes(struct: NgbTimeStruct): number {
+        console.log('convert?', struct.hour);
         return struct.hour * 60 + struct.minute;
     }
 
@@ -205,13 +213,13 @@ export class ScheduleRangeDetailsComponent implements OnInit, OnDestroy {
     }
 
     private fixEndMinutesByStart(startValue: NgbTimeStruct): void {
-        let endValue: NgbTimeStruct = this.scheduleRangeDetailsForm.get('endMinutes').value;
+        const endValue: NgbTimeStruct = this.scheduleRangeDetailsForm.get('endMinutes').value;
 
-        if (startValue.hour > endValue.hour || (startValue.hour === endValue.hour && startValue.minute >= endValue.minute)) {
-            if (startValue.hour < 23) {
+        if ((startValue.hour > endValue.hour && endValue.hour !== 0) || (startValue.hour === endValue.hour && startValue.minute >= endValue.minute)) {
+            if (startValue.hour <= 23) {
                 this.scheduleRangeDetailsForm.patchValue({
                     'endMinutes': {
-                        hour: startValue.hour + 1,
+                        hour: startValue.hour + 1 < 24 ? startValue.hour + 1 : 0,
                         minute: startValue.minute,
                         second: endValue.second
                     }
@@ -223,11 +231,12 @@ export class ScheduleRangeDetailsComponent implements OnInit, OnDestroy {
     private fixStartMinutesByEnd(endValue: NgbTimeStruct): void {
         const startValue: NgbTimeStruct = this.scheduleRangeDetailsForm.get('startMinutes').value;
 
-        if (endValue.hour < startValue.hour || (endValue.hour === startValue.hour && endValue.minute <= startValue.minute)) {
-            if (endValue.hour > 0) {
+        if ((endValue.hour !== 0 && endValue.hour < startValue.hour) || (endValue.hour === startValue.hour && endValue.minute <= startValue.minute)) {
+            if (endValue.hour >= 0) {
+                console.log('fixing', endValue.hour - 1, '!!!');
                 this.scheduleRangeDetailsForm.patchValue({
                     'startMinutes': {
-                        hour: endValue.hour - 1,
+                        hour: endValue.hour - 1 >= 0 ? endValue.hour - 1 : 23,
                         minute: endValue.minute,
                         second: startValue.second
                     }
