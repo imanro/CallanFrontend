@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Observable, of as observableOf} from 'rxjs';
-import {map, catchError} from 'rxjs/operators';
+import {map, catchError, delay} from 'rxjs/operators';
 import {HttpClient} from '@angular/common/http';
 
 // import { CallanCustomersModule } from '../callan.module';
@@ -192,7 +192,7 @@ export class CallanCustomerApiService extends CallanCustomerService {
                     map<any, CallanCustomer>(responseData => {
                         console.log('The response is follow:', responseData);
                         const newCustomer = CallanCustomerService.createCustomer();
-                        this.mapDataToCustomer(responseData, newCustomer);
+                        this.mapDataToCustomer(newCustomer, responseData);
                         return newCustomer;
                     }),
                     catchError(this.handleHttpError<CallanCustomer>())
@@ -205,7 +205,7 @@ export class CallanCustomerApiService extends CallanCustomerService {
                     map<any, CallanCustomer>(responseData => {
                         console.log('The response is follow:', responseData);
                         const newCustomer = CallanCustomerService.createCustomer();
-                        this.mapDataToCustomer(responseData, newCustomer);
+                        this.mapDataToCustomer(newCustomer, responseData);
                         return newCustomer;
                     }),
                     catchError(this.handleHttpError<CallanCustomer>())
@@ -275,6 +275,7 @@ export class CallanCustomerApiService extends CallanCustomerService {
         data.firstName = customer.firstName;
         data.lastName = customer.lastName;
         data.email = customer.email;
+        data.isActive = customer.isActive;
         data.description = customer.description;
         data.availableHourInAdvanceMin = customer.availableHourInAdvanceMin;
 

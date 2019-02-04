@@ -1,5 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {CallanCustomer} from '../../shared/models/customer.model';
+import * as _ from 'lodash';
 
 @Component({
     selector: 'app-callan-customer-view',
@@ -42,18 +43,19 @@ export class CustomerViewComponent implements OnInit {
     }
 
     handleSetCurrentCustomer(customer: CallanCustomer) {
-        console.log(customer, '!!');
         this.setCurrentCustomer.next(customer);
     }
 
     handleActivateCustomer(customer: CallanCustomer) {
-        customer.isActive = true;
-        this.activateCustomer.next(customer);
+        const saveCustomer = _.cloneDeep(customer);
+        saveCustomer.isActive = true;
+        this.activateCustomer.next(saveCustomer);
     }
 
     handleDeactivateCustomer(customer: CallanCustomer) {
-        customer.isActive = false;
-        this.deactivateCustomer.next(customer);
+        const saveCustomer = _.cloneDeep(customer);
+        saveCustomer.isActive = false;
+        this.deactivateCustomer.next(saveCustomer);
     }
 
     handleEditCustomer(customer: CallanCustomer) {

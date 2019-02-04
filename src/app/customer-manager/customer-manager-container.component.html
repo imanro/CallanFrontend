@@ -2,6 +2,9 @@
     <div class="main-content">
         <div class="content-wrapper">
             <div class="container-fluid">
+                <div class="mb-1" *ngIf="isSaving">
+                    <ngb-progressbar type="info" [value]="100"  [striped]="true" [animated]="true" class="progress-bar-sm"></ngb-progressbar>
+                </div>
 
                 <section>
                 <div class="row" *ngIf="view === viewNameEnum.LIST">

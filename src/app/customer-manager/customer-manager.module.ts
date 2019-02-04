@@ -1,4 +1,5 @@
 import {NgModule} from '@angular/core';
+import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {CommonModule} from '@angular/common';
 import { Ng2SmartTableModule } from 'ng2-smart-table';
 import {ReactiveFormsModule} from '@angular/forms';
@@ -20,6 +21,7 @@ import { CustomerViewComponent } from './customer-view/customer-view.component';
     imports: [
         CommonModule,
         Ng2SmartTableModule,
+        NgbModule,
         ReactiveFormsModule,
         CallanCustomersRoutingModule,
     ],
