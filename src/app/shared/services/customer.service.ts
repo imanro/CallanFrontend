@@ -169,6 +169,7 @@ export abstract class CallanCustomerService extends CallanBaseService {
     initNewCustomer(customer: CallanCustomer): Observable<void> {
 
         return new Observable<void>(observer => {
+            customer.isActive = true;
             customer.roles = [];
 
             this.getRoles().subscribe(roles => {

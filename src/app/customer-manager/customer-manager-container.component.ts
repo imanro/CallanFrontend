@@ -106,7 +106,7 @@ export class CallanCustomerManagerContainerComponent implements OnInit, OnDestro
 
         // checking if this user exists
         if (customer.id) {
-            console.log('This case');
+            console.log('This case', customer);
             this.customerService.findCustomerByEmail(customer.email).subscribe(existingCustomer => {
                 if (existingCustomer && existingCustomer.id !== customer.id) {
                     // create form errors object
