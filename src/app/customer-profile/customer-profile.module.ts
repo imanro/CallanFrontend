@@ -6,12 +6,14 @@ import {CallanCustomerProfileRoutingModule} from './customer-profile-routing.mod
 import {ReactiveFormsModule} from '@angular/forms';
 import { CallanCustomerSelfViewComponent } from './customer-self-view/customer-self-view.component';
 import { CallanCustomerGoogleAuthComponent } from './customer-google-auth/customer-google-auth.component';
+import {CallanCustomerHeaderModule} from '../shared-modules/customer-header/customer-header.module';
 
 @NgModule({
   imports: [
       CommonModule,
       CallanCustomerProfileRoutingModule,
       ReactiveFormsModule,
+      CallanCustomerHeaderModule
   ],
   declarations: [
       CustomerProfileContainerComponent,

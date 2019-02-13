@@ -40,6 +40,7 @@ import {CallanActivityLogMockService} from './shared/services/activity-log-mock.
 import {CallanActivityLogApiService} from './shared/services/activity-log-api.service';
 import {CallanDateApiService} from './shared/services/date-api.service';
 import {CallanDateService} from './shared/services/date.service';
+import {CallanUiService} from './shared/services/ui.service';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -100,6 +101,7 @@ export function initializeApp(appConfig: AppConfig) {
         AuthGuard,
         DragulaService,
         AppConfig,
+        CallanUiService,
         // {provide: CallanCustomerService, useClass: CallanCustomerMockService},
         {provide: CallanCustomerService, useClass: CallanCustomerApiService},
         // {provide: CallanLessonService, useClass: CallanLessonMockService},
@@ -108,7 +110,7 @@ export function initializeApp(appConfig: AppConfig) {
         {provide: CallanScheduleService, useClass: CallanScheduleApiService},
         // {provide: CallanActivityLogService, useClass: CallanActivityLogMockService}
         {provide: CallanActivityLogService, useClass: CallanActivityLogApiService},
-        {provide: CallanDateService, useClass: CallanDateApiService}
+        {provide: CallanDateService, useClass: CallanDateApiService},
     ],
     bootstrap: [AppComponent]
 })

@@ -28,14 +28,14 @@ const lastLessonEvent1 = new CallanLessonEvent();
 lastLessonEvent1.lesson = mockLessons[0];
 lastLessonEvent1.duration = 1200;
 lastLessonEvent1.startTime = new Date();
-lastLessonEvent1.student = customer1;
+lastLessonEvent1.teacher = customer1;
 lastLessonEvent1.teacher = customer2;
 
 const lastLessonEvent2 = new CallanLessonEvent();
 lastLessonEvent1.lesson = mockLessons[1];
 lastLessonEvent1.duration = 3600;
 lastLessonEvent1.startTime = new Date();
-lastLessonEvent1.student = customer2;
+lastLessonEvent1.teacher = customer2;
 lastLessonEvent1.teacher = customer1;
 
 const courseProgressData = [

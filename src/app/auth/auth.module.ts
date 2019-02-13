@@ -1,4 +1,5 @@
 import {NgModule} from '@angular/core';
+import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {CommonModule} from '@angular/common';
 import {CallanAuthRoutingModule} from './auth-routing.module';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
@@ -12,6 +13,7 @@ import {CallanAuthContainerComponent} from './auth-container.component';
     ],
     imports: [
         CommonModule,
+        NgbModule,
         FormsModule,
         ReactiveFormsModule,
         CallanAuthRoutingModule

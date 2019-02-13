@@ -225,7 +225,7 @@ export class CallanLessonManagerStudentContainerComponent implements OnInit, OnD
         });
 
         modalRef.componentInstance.title = $event.event.title;
-        modalRef.componentInstance.body = '<p>Lesson start:<br/>' + moment($event.event.start).format('D.MM.YYYY h:mm A') + '</p>';
+        modalRef.componentInstance.body = '<p>Lesson starts:<br/>' + moment($event.event.start).format('D.MM.YYYY h:mm A') + '</p>';
     }
 
 
@@ -315,9 +315,11 @@ export class CallanLessonManagerStudentContainerComponent implements OnInit, OnD
                 this.toggleLessonEventShown();
             } else {
                 this.setIsLessonEventShown(true);
+                window.scrollTo(0,0);
             }
         } else {
             this.setIsLessonEventShown(true);
+            window.scrollTo(0,0);
         }
 
         this.setCurrentLessonEvent(lessonEvent);

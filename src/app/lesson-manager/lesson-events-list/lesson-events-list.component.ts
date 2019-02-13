@@ -63,6 +63,10 @@ export class CallanLessonEventsListComponent implements OnInit, OnDestroy {
         }
     }
 
+    handleRowSelect($e) {
+        this.setCurrentLessonEventEvent.next($e.data);
+    }
+
     private buildTable() {
         const _this = this;
 

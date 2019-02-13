@@ -1,3 +1,14 @@
-:host {
+:host /deep/ ng2-smart-table {
+  table-cell-view-mode {
+    cursor: pointer;
+  }
 
+  tbody {
+    .ng2-smart-row.selected {
+      background: inherit !important;
+    }
+    .ng2-smart-row.selected:nth-child(odd) {
+      background: rgba(0, 0, 0, 0.05) !important;
+    }
+  }
 }

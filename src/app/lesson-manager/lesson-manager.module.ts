@@ -13,7 +13,8 @@ import {CallanLessonManagerStudentContainerComponent} from './lesson-manager-stu
 import { CallanLessonManagerTeacherContainerComponent } from './lesson-manager-teacher-container.component';
 import {CallanCoursesListComponent} from './courses-list/courses-list.component';
 import {CallanCourseProgressDetailsComponent} from './course-progress-details/course-progress-details.component';
-import {CallanLessonEventsCalendarComponent} from './lesson-events-calendar/lesson-events-calendar.component';
+import {CallanLessonEventsStudentCalendarComponent} from './lesson-events-student-calendar/lesson-events-student-calendar.component';
+import {CallanLessonEventsTeacherCalendarComponent} from './lesson-events-teacher-calendar/lesson-events-teacher-calendar.component';
 import {CallanLessonEventComponent} from './lesson-event/lesson-event.component';
 import {CallanLessonEventsListComponent} from './lesson-events-list/lesson-events-list.component';
 import {CallanCustomerCourseAddComponent} from './customer-course-add/customer-course-add.component';
@@ -25,6 +26,7 @@ import {AppModalContentFeedbackComponent} from '../shared-modules/modal-content-
 import { CallanCourseCompetencesForCustomerListComponent } from './course-competences-for-customer-list/course-competences-for-customer-list.component';
 import { CallanCourseSpecialityAddComponent } from './course-competence-add/course-competence-add.component';
 import { CallanCourseCompetencesForCourseListComponent } from './course-competences-for-course-list/course-competences-for-course-list.component';
+import {CallanCustomerHeaderModule} from '../shared-modules/customer-header/customer-header.module';
 
 @NgModule({
     declarations: [
@@ -32,7 +34,8 @@ import { CallanCourseCompetencesForCourseListComponent } from './course-competen
         CallanLessonManagerTeacherContainerComponent,
         CallanCoursesListComponent,
         CallanCourseProgressDetailsComponent,
-        CallanLessonEventsCalendarComponent,
+        CallanLessonEventsStudentCalendarComponent,
+        CallanLessonEventsTeacherCalendarComponent,
         CallanLessonEventComponent,
         CallanLessonEventsListComponent,
         CallanCustomerCourseAddComponent,
@@ -49,6 +52,7 @@ import { CallanCourseCompetencesForCourseListComponent } from './course-competen
         ReactiveFormsModule,
         CalendarModule.forRoot(),
         CalendarWeekHoursViewModule,
+        CallanCustomerHeaderModule,
         AppModalContentModule,
         AppModalContentFeedbackModule,
     ],

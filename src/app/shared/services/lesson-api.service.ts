@@ -230,7 +230,7 @@ export class CallanLessonApiService extends CallanLessonService {
 
         const url = this.getApiUrl('/LessonEvents?filter=' + JSON.stringify({
             where: {studentId: student.id},
-            order: ['state ASC', 'startTime ASC'],
+            order: ['state ASC', 'startTime DESC'],
             include: ['Teacher', 'Student', {CourseProgress: ['Course']}, {Lesson: ['Course']}]
         }));
 
@@ -259,7 +259,7 @@ export class CallanLessonApiService extends CallanLessonService {
 
         const url = this.getApiUrl('/LessonEvents?filter=' + JSON.stringify({
             where: {teacherId: teacher.id},
-            order: ['state ASC', 'startTime ASC'],
+            order: ['state ASC', 'startTime DESC'],
             include: ['Teacher', 'Student', {CourseProgress: ['Course']}, {Lesson: ['Course']}]
         }));
 

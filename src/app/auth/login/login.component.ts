@@ -17,6 +17,9 @@ import {CallanFormHelper} from '../../shared/helpers/form-helper';
 export class CallanLoginComponent implements OnInit, OnDestroy {
 
     @Input() formErrors$ =  new BehaviorSubject<AppFormErrors>(null);
+
+    @Input() isLoading = false;
+
     @Output() loginEvent = new EventEmitter<CallanCustomer>();
 
     loginForm: FormGroup;

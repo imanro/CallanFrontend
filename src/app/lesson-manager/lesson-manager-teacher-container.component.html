@@ -38,6 +38,20 @@
                   *ngIf="currentLessonEvent && isLessonEventShown"
           ></app-callan-lesson-event>
 
+          <app-callan-lesson-events-teacher-calendar
+                  [calendarEvents]="calendarEvents"
+                  [datesEnabled]="datesEnabled"
+                  [refresh$]="calendarRefresh$"
+                  [currentDate]="currentDate"
+                  [scheduleMinuteStep]="scheduleMinuteStep"
+                  (showCurrentWeekEvent)="handleCalendarShowCurrentWeek()"
+                  (showNextWeekEvent)="handleCalendarShowNextWeek()"
+                  (showPreviousWeekEvent)="handleCalendarShowPreviousWeek()"
+                  (lessonEventClickEvent)="handleCalendarLessonEventClick($event)"
+
+                  *ngIf="view === viewNameEnum.DASHBOARD"
+          ></app-callan-lesson-events-teacher-calendar>
+
           <app-callan-lesson-events-list
                   [lessonEvents]="lessonEvents"
                   [refresh$]="lessonEventsListRefresh$"
@@ -46,6 +60,7 @@
                   (cancelLessonEventEvent)="handleCancelLessonEvent($event)"
                   *ngIf="view === viewNameEnum.DASHBOARD"
           ></app-callan-lesson-events-list>
+
         </section>
       </div>
     </div>

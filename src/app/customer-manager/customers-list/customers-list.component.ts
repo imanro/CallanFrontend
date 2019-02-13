@@ -38,13 +38,16 @@ export class CallanCustomersListComponent implements OnInit, OnDestroy {
                     title: 'E-mail',
                     filter: false
                 },
-                firstName: {
-                    title: 'First Name',
-                    filter: false,
-                },
-                lastName: {
-                    title: 'Last Name',
-                    filter: false,
+                name: {
+                    title: 'Name',
+                    valuePrepareFunction: function (cell, row) {
+                        if (row instanceof CallanCustomer) {
+                            return row.getFullName();
+                        } else {
+                            return '';
+                        }
+                    },
+                    filter: false
                 },
                 roles: {
                     title: 'Roles',

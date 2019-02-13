@@ -9,7 +9,7 @@ import {AppError} from '../shared/models/error.model';
 import {CallanCustomerService} from '../shared/services/customer.service';
 import {CallanRoleNameEnum} from '../shared/enums/role.name.enum';
 import {CallanLessonService} from '../shared/services/lesson.service';
-import {catchError, map, mergeMap} from 'rxjs/operators';
+import {catchError, map, mergeMap, finalize} from 'rxjs/operators';
 import {of as observableOf} from 'rxjs';
 
 @Component({
@@ -22,7 +22,11 @@ import {of as observableOf} from 'rxjs';
 export class CallanAuthContainerComponent implements OnInit, OnDestroy {
 
     view: string;
+
     formErrors$ = new BehaviorSubject<AppFormErrors>(null);
+
+    isLoading = false;
+
     private unsubscribe: Subject<void> = new Subject();
 
     constructor(
@@ -48,77 +52,68 @@ export class CallanAuthContainerComponent implements OnInit, OnDestroy {
     }
 
     handleLogin(loginCustomer: CallanCustomer) {
-        console.log('Try to login', loginCustomer);
+        this.isLoading = true;
 
         this.authService.login(loginCustomer.email, loginCustomer.password)
-            .subscribe(() => {
-                this.customerService.getAuthCustomer()
-                    .pipe(
-                        mergeMap(customer => this.customerService.autoUpdateTimezone(customer)
-                            .pipe(
-                                map<void, CallanCustomer>(() => {
-                                    console.log('back to customer', customer);
-                                    return customer;
-                                }),
-                                catchError(err => {
-                                    console.log(err, 'occured');
-                                    return observableOf(customer);
-                                })
-                            )
-                        )
-                    )
-                    .subscribe(customer => {
+            .pipe(
+                mergeMap(() => {
+                    return this.customerService.getAuthCustomer();
+                }),
+                mergeMap(customer => {
+                    this.lessonService.reset();
+                    // now, we can redirect to main area
+                    // redirection will depend on the customer's roles
 
-                        this.lessonService.reset();
-                        // now, we can redirect to main area
-                        // redirection will depend on the customer's roles
+                    // admin: customer-manager, teacher, student: lesson-manager, support: claim-manager
+                    if (CallanCustomerService.hasCustomerRole(customer, CallanRoleNameEnum.ADMIN)) {
+                        console.log('will redirect to customers');
+                        this.router.navigate(['/customers']);
 
-                        // admin: customer-manager, teacher, student: lesson-manager, support: claim-manager
-                        if (CallanCustomerService.hasCustomerRole(customer, CallanRoleNameEnum.ADMIN)) {
-                            console.log('will redirect to customers');
-                            this.router.navigate(['/customers']);
+                    } else if (CallanCustomerService.hasCustomerRole(customer, CallanRoleNameEnum.STUDENT)) {
+                        console.log('redirect to lessons (student realm)');
+                        this.router.navigate(['/lessons/student']);
+                    } else if (CallanCustomerService.hasCustomerRole(customer, CallanRoleNameEnum.TEACHER)) {
+                        console.log('redirect to lessons (teacher realm)');
+                        this.router.navigate(['/lessons/teacher']);
 
-                        } else if (CallanCustomerService.hasCustomerRole(customer, CallanRoleNameEnum.STUDENT)) {
-                            console.log('redirect to lessons (student realm)');
-                            this.router.navigate(['/lessons/student']);
-                        } else if (CallanCustomerService.hasCustomerRole(customer, CallanRoleNameEnum.TEACHER)) {
-                            console.log('redirect to lessons (teacher realm)');
-                            this.router.navigate(['/lessons/teacher']);
+                    } else if (CallanCustomerService.hasCustomerRole(customer, CallanRoleNameEnum.SUPPORT)) {
+                        console.log('redirect to claim-manager');
+                        this.router.navigate(['/lessons/student']);
 
-                        } else if (CallanCustomerService.hasCustomerRole(customer, CallanRoleNameEnum.SUPPORT)) {
-                            console.log('redirect to claim-manager');
-                            this.router.navigate(['/lessons/student']);
+                    } else {
+                        console.log('redirect to lessons anyway');
+                        this.router.navigate(['/lessons/student']);
+                    }
 
-                        } else {
-                            console.log('redirect to lessons anyway')
-                            this.router.navigate(['/lessons/student']);
-                        }
+                    return observableOf();
 
-                }, err => {
+                }),
+                catchError(err => {
 
-                        // error on customer details stage
+                    // close spinner only in the case of error
+                    this.isLoading = false;
+
+                    if (err instanceof AppError) {
+
+                        // error on login stage
                         const formErrors = this.createFormErrors();
                         const message = err.message;
                         formErrors.common.push(message);
                         formErrors.assignServerFieldErrors(err.formErrors);
                         this.formErrors$.next(formErrors);
-                });
 
-        }, err => {
+                    } else {
+                        throw err;
+                    }
 
-                if (err instanceof AppError) {
+                    console.log(err, 'occured');
+                    return observableOf();
 
-                    // error on login stage
-                    const formErrors = this.createFormErrors();
-                    const message = err.message;
-                    formErrors.common.push(message);
-                    formErrors.assignServerFieldErrors(err.formErrors);
-                    this.formErrors$.next(formErrors);
-
-                } else {
-                    throw err;
-                }
-        });
+                })
+            )
+            .subscribe(() => {
+                console.log('processing');
+            });
     }
 
     handleLogout() {

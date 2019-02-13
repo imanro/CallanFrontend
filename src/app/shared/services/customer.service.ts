@@ -44,6 +44,10 @@ export abstract class CallanCustomerService extends CallanBaseService {
         return false;
     }
 
+    static getCustomerAvatarInitials(customer: CallanCustomer): string {
+        return customer.firstName.charAt(0).toUpperCase() + customer.lastName.charAt(0).toUpperCase();
+    }
+
     constructor(
         protected appConfig: AppConfig,
         protected authService: CallanAuthService

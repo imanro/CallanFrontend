@@ -9,6 +9,7 @@ import {CallanCustomerManagerContainerComponent} from './customer-manager-contai
 import {CallanCustomersListComponent} from './customers-list/customers-list.component';
 import { CallanCustomerDetailsComponent } from './customer-details/customer-details.component';
 import { CustomerViewComponent } from './customer-view/customer-view.component';
+import {CallanCustomerHeaderModule} from '../shared-modules/customer-header/customer-header.module';
 
 
 @NgModule({
@@ -24,6 +25,7 @@ import { CustomerViewComponent } from './customer-view/customer-view.component';
         NgbModule,
         ReactiveFormsModule,
         CallanCustomersRoutingModule,
+        CallanCustomerHeaderModule
     ],
     providers: [],
     bootstrap: [

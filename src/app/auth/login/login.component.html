@@ -33,7 +33,14 @@
 
                                 <div class="form-group">
                                     <div class="col-md-12">
-                                        <button type="submit" class="btn btn-pink btn-block btn-raised" [disabled]="loginForm.invalid" (click)="handleLogin()">Submit</button>
+                                        <button type="submit" class="btn btn-pink btn-block btn-raised login" [disabled]="loginForm.invalid" (click)="handleLogin()">
+                                            <ngb-progressbar type="danger" [value]="100"  [striped]="true" [animated]="true" class="progress-bar-sm" *ngIf="isLoading; else spacer"></ngb-progressbar>
+                                            <ng-template #spacer>
+                                                <span class="spacer"></span>
+                                            </ng-template>
+
+                                            Submit
+                                        </button>
                                         <button type="button" class="btn btn-secondary btn-block btn-raised">Cancel</button>
                                     </div>
                                 </div>

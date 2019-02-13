@@ -61,16 +61,13 @@
                             *ngIf="view === viewNameEnum.BALANCE_DETAILS"
                     ></app-lesson-events-balance-details>
 
-                    <app-callan-lesson-events-calendar
-                            [courseProgress]="currentCourseProgress"
+                    <app-callan-lesson-events-student-calendar
                             [calendarEvents]="calendarEvents"
                             [datesEnabled]="datesEnabled"
                             [refresh$]="calendarRefresh$"
                             [currentDate]="currentDate"
-                            [student]="currentCustomer"
                             [scheduleMinuteStep]="scheduleMinuteStep"
                             (cancelEvent)="handleLessonEventCreateCancel()"
-                            (lessonEventCreateEvent)="lessonEventSave($event)"
                             (showCurrentWeekEvent)="handleCalendarShowCurrentWeek()"
                             (showNextWeekEvent)="handleCalendarShowNextWeek()"
                             (showPreviousWeekEvent)="handleCalendarShowPreviousWeek()"
@@ -78,7 +75,7 @@
                             (lessonEventClickEvent)="handleCalendarLessonEventClick($event)"
 
                             *ngIf="currentCourseProgress && view === viewNameEnum.CALENDAR"
-                    ></app-callan-lesson-events-calendar>
+                    ></app-callan-lesson-events-student-calendar>
 
                     <app-callan-lesson-events-list
                             [lessonEvents]="lessonEvents"

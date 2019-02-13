@@ -1,0 +1,40 @@
+<div class="row">
+  <div class="col-sm-12">
+    <div class="content-header">Lessons calendar</div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12 mt-2">
+
+  <div class="btn-group d-none d-sm-none d-md-none d-lg-block">
+  <a class="btn btn-raised btn-primary" (click)="handleShowPreviousWeek()">
+    Previous
+  </a>
+  <a class="btn btn-raised btn-danger" (click)="handleShowCurrentWeek()">
+    Today
+  </a>
+  <a class="btn btn-raised btn-primary" (click)="handleShowNextWeek()">
+    Next
+  </a>
+</div>
+  </div>
+</div>
+
+<iq-calendar-week-hours-view
+        [viewDate]="currentDate"
+        [events]="calendarEvents"
+        [hourSegments]="hourSegmentsAmount"
+        [hourSegmentHeight]="30"
+        [dayStartHour]="0"
+
+        [dayEndHour]="23"
+        [weekStartsOn]="1"
+        [headerColVisible]="false"
+        [datesEnabled]="datesEnabled"
+        [disableSegmentsInPast]="true"
+        [refresh]="refresh$"
+        (hourSegmentClicked)="handleClickHourSegment($event)"
+        (eventClicked)="handleLessonEventClicked($event)"
+>
+</iq-calendar-week-hours-view>

@@ -2,7 +2,7 @@
 
 <div class="row">
   <div class="col-sm-12">
-    <h4>{{customer.firstName}} {{customer.lastName}}</h4>
+    <app-callan-customer-header [customer]="customer"></app-callan-customer-header>
   </div>
 </div>
 
@@ -12,6 +12,10 @@
         <div class="card-body row">
           <div class="card-block col-sm-6">
             <div class="card-text">
+              <dl class="row">
+                <dt class="col-sm-3 text-sm-right">E-mail</dt>
+                <dd class="col-sm-9">{{customer.email}}</dd>
+              </dl>
               <dl class="row">
                 <dt class="col-sm-3 text-sm-right">Roles</dt>
                 <dd class="col-sm-9">{{formatCustomerRoles(customer)}}</dd>

@@ -5,7 +5,7 @@ import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
     selector: 'ngbd-modal-content',
     template: `
         <div class="modal-header">
-            <h5 class="modal-title">{{title}}</h5>
+            <h5 class="modal-title" [innerHtml]="title"></h5>
             <button type="button" class="close" (click)="activeModal.dismiss(false)">
                 <span aria-hidden="true">&times;</span>
             </button>

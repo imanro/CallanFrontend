@@ -228,7 +228,7 @@ export class CallanLessonMockService extends CallanLessonService {
 
                         for (const lessonEvent of list) {
                             CallanLessonService.initLessonEvent(lessonEvent);
-                            lessonEvent.student = currentCustomer;
+                            lessonEvent.teacher = currentCustomer;
                             lessonEvent.teacher = anotherCustomer;
                         }
 
