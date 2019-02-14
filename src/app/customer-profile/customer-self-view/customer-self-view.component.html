@@ -2,5 +2,6 @@
   <div class="col-sm-12">
     <app-callan-customer-header [customer]="customer"></app-callan-customer-header>
     <div class="mt-2">{{formatCustomerRoles(customer)}}</div>
+    <div class="mt-2" *ngIf="customer.description">{{customer.description}}</div>
   </div>
 </div>

@@ -15,6 +15,8 @@ import {CallanAuthService} from './auth.service';
 import {AppConfig} from '../../app.config';
 import {CallanRoleNameEnum} from '../enums/role.name.enum';
 import {CallanLessonService} from './lesson.service';
+import {CallanGeneralEvent} from '../models/general-event.model';
+import {CalendarEvent } from 'angular-calendar';
 
 @Injectable()
 export abstract class CallanCustomerService extends CallanBaseService {
@@ -34,6 +36,10 @@ export abstract class CallanCustomerService extends CallanBaseService {
         return new CallanRole();
     }
 
+    static createGeneralEvent(): CallanGeneralEvent {
+        return new CallanGeneralEvent();
+    }
+
     static hasCustomerRole(customer: CallanCustomer, roleName: string) {
         for (const role of customer.roles) {
             if (role.name === roleName) {
@@ -46,6 +52,20 @@ export abstract class CallanCustomerService extends CallanBaseService {
 
     static getCustomerAvatarInitials(customer: CallanCustomer): string {
         return customer.firstName.charAt(0).toUpperCase() + customer.lastName.charAt(0).toUpperCase();
+    }
+
+    static convertGeneralEventToCalendarEvent(generalEvent: CallanGeneralEvent): CalendarEvent {
+
+        return {
+            start: generalEvent.startTime,
+            end: generalEvent.endTime,
+            title: generalEvent.title,
+            color: {
+                primary: '#5744ff',
+                secondary:
+                    '#dcecfc'
+            }
+        };
     }
 
     constructor(
@@ -213,7 +233,11 @@ export abstract class CallanCustomerService extends CallanBaseService {
 
     abstract checkGoogleAuth(customer: CallanCustomer): Observable<boolean>;
 
+    abstract getGoogleCalendarEvents(customer: CallanCustomer, startDate: Date, endDate: Date): Observable<CallanGeneralEvent[]>;
+
     abstract getGoogleAuthLink(customer: CallanCustomer): Observable<string|boolean>;
+
+    abstract mapDataToGeneralEvent(generalEvent: CallanGeneralEvent, row: any): void;
 
     initNewCustomerDev(customer: CallanCustomer): Observable<void> {
 

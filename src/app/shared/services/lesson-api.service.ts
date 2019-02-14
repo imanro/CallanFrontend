@@ -309,9 +309,13 @@ export class CallanLessonApiService extends CallanLessonService {
             .pipe(
                 map<any, CallanLessonEvent>(row => {
 
-                    const lessonEvent = CallanLessonService.createLessonEvent();
-                    this.mapDataToLessonEvent(lessonEvent, row);
-                    return lessonEvent;
+                    if (row) {
+                        const lessonEvent = CallanLessonService.createLessonEvent();
+                        this.mapDataToLessonEvent(lessonEvent, row);
+                        return lessonEvent;
+                    } else {
+                        return null;
+                    }
                 }),
                 catchError(this.handleHttpError<CallanLessonEvent>())
             );
@@ -325,10 +329,11 @@ export class CallanLessonApiService extends CallanLessonService {
         return this.http.get<CallanLessonEvent>(url)
             .pipe(
                 map<any, CallanLessonEvent>(row => {
-
-                    const lessonEvent = CallanLessonService.createLessonEvent();
-                    this.mapDataToLessonEvent(lessonEvent, row);
-                    return lessonEvent;
+                    if (row) {
+                        const lessonEvent = CallanLessonService.createLessonEvent();
+                        this.mapDataToLessonEvent(lessonEvent, row);
+                        return lessonEvent;
+                    }
                 }),
                 catchError(this.handleHttpError<CallanLessonEvent>())
             );

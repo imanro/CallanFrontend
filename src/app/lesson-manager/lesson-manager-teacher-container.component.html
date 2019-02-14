@@ -5,33 +5,6 @@
 
         <section>
 
-          <app-course-competences-list
-                  [courseSpecialities]="courseSpecialities"
-                  [isSpecialityControlsShown]="isCourseSpecialityListControlsShown"
-                  (courseSpecialityDeleteEvent)="handleCourseSpecialityDelete($event)"
-                  *ngIf="view === viewNameEnum.DASHBOARD"
-          ></app-course-competences-list>
-
-          <app-course-speciality-add
-                  [courseSpeciality]="currentCourseCompetence"
-                  [allCourses]="allCourses"
-                  [courseSpecialities]="courseSpecialities"
-                  [formErrors$]="formErrors$"
-                  (cancelEvent)="handleCourseSpecialityAddCancel()"
-                  (courseSpecialityAddEvent)="handleCourseSpecialityAdd($event)"
-                  *ngIf="view === viewNameEnum.COURSE_SPECIALITY_DETAILS && allCourses && courseSpecialities"
-          ></app-course-speciality-add>
-
-          <div class="row"
-               *ngIf="view === viewNameEnum.DASHBOARD && isAddCourseSpecialityButtonShown && currentCustomer"
-          >
-            <div class="col-sm-12">
-              <div class="mt-2">
-                <a class="btn btn-raised gradient-mint white" href="javascript:void(0)" (click)="handleCourseSpecialityAddShow()">Add a new speciality</a>
-              </div>
-            </div>
-          </div>
-
           <app-callan-lesson-event
                   [lessonEvent]="currentLessonEvent"
                   [view]="lessonEventViewNameEnum.TEACHER"
@@ -60,6 +33,33 @@
                   (cancelLessonEventEvent)="handleCancelLessonEvent($event)"
                   *ngIf="view === viewNameEnum.DASHBOARD"
           ></app-callan-lesson-events-list>
+
+          <app-course-competences-list
+                  [courseSpecialities]="courseSpecialities"
+                  [isSpecialityControlsShown]="isCourseSpecialityListControlsShown"
+                  (courseSpecialityDeleteEvent)="handleCourseSpecialityDelete($event)"
+                  *ngIf="view === viewNameEnum.DASHBOARD"
+          ></app-course-competences-list>
+
+          <app-course-speciality-add
+                  [courseSpeciality]="currentCourseCompetence"
+                  [allCourses]="allCourses"
+                  [courseSpecialities]="courseSpecialities"
+                  [formErrors$]="formErrors$"
+                  (cancelEvent)="handleCourseSpecialityAddCancel()"
+                  (courseSpecialityAddEvent)="handleCourseSpecialityAdd($event)"
+                  *ngIf="view === viewNameEnum.COURSE_SPECIALITY_DETAILS && allCourses && courseSpecialities"
+          ></app-course-speciality-add>
+
+          <div class="row"
+               *ngIf="view === viewNameEnum.DASHBOARD && isAddCourseSpecialityButtonShown && currentCustomer"
+          >
+            <div class="col-sm-12">
+              <div class="mt-2">
+                <a class="btn btn-raised gradient-mint white" href="javascript:void(0)" (click)="handleCourseSpecialityAddShow()">Add a new speciality</a>
+              </div>
+            </div>
+          </div>
 
         </section>
       </div>

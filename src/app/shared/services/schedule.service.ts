@@ -7,6 +7,8 @@ import {CallanCustomer} from '../models/customer.model';
 import {CallanCourse} from '../models/course.model';
 import {CallanCourseProgress} from '../models/course-progress.model';
 import {CallanLessonEvent} from '../models/lesson-event.model';
+import {CallanDateService} from './date.service';
+import {CallanGeneralEvent} from '../models/general-event.model';
 
 export abstract class CallanScheduleService extends CallanBaseService {
 
@@ -99,12 +101,8 @@ export abstract class CallanScheduleService extends CallanBaseService {
         return [dateFrom, dateTo];
     }
 
-    static getLessonEndTime(lessonEvent: CallanLessonEvent, scheduleMinuteStep: number): number {
-        return Math.round(lessonEvent.startTime.getTime() - (lessonEvent.startTime.getTime() % (scheduleMinuteStep * 60000))) + (lessonEvent.duration * 60000);
-    }
-
-    static isDateAvailable(checkDate: Date, dates: Date[]) {
-        for (const date of dates) {
+    static isScheduleDateAvailable(checkDate: Date, scheduleDates: Date[]) {
+        for (const date of scheduleDates) {
             if(date.getTime() - 60000 < checkDate.getTime() && date.getTime() + 60000 > checkDate.getTime()) {
                 return true;
             }
@@ -113,9 +111,98 @@ export abstract class CallanScheduleService extends CallanBaseService {
         return false;
     }
 
-    static checkLessonDurationAgainstDatesEnabled(lessonEvent: CallanLessonEvent, datesEnabled: Date[], scheduleMinuteStep: number) {
-        const endTime = CallanScheduleService.getLessonEndTime(lessonEvent, scheduleMinuteStep);
-        return CallanScheduleService.isDateAvailable(new Date(endTime - (scheduleMinuteStep * 60000)), datesEnabled);
+    static isScheduleDatesAvailable(checkDates: Date[], scheduleDates: Date[]) {
+        for (const checkDate of checkDates) {
+            const res = CallanScheduleService.isScheduleDateAvailable(checkDate, scheduleDates);
+
+            if (!res) {
+                return res;
+            }
+        }
+
+        return true;
+    }
+
+    static isNotLessonEventsOverlapesDate(checkDate: Date, lessonEvents: CallanLessonEvent[]) {
+        for (const lessonEvent of lessonEvents) {
+
+            const endTime = new Date(lessonEvent.startTime.getTime() + (60000 * lessonEvent.duration));
+
+            const res = endTime.getTime() <= checkDate.getTime() || lessonEvent.startTime.getTime() > checkDate.getTime();
+
+            if (!res) {
+                console.log('lesson declines date', lessonEvent.startTime);
+                return res;
+            }
+        }
+
+        return true;
+    }
+
+    static isNotLessonEventsOverlapesDates(checkDates, lessonEvents: CallanLessonEvent[]) {
+        for (const checkDate of checkDates) {
+            const res = CallanScheduleService.isNotLessonEventsOverlapesDate(checkDate, lessonEvents);
+
+            if (!res) {
+                return res;
+            }
+        }
+
+        return true;
+    }
+
+    static isNotGeneralEventsOverlapesDate(checkDate: Date, generalEvents: CallanGeneralEvent[]) {
+        for (const generalEvent of generalEvents) {
+
+            const res = generalEvent.endTime.getTime() <= checkDate.getTime() || generalEvent.startTime.getTime() > checkDate.getTime();
+
+            if (!res) {
+                console.log('general event declines date', generalEvent.startTime);
+                return res;
+            }
+        }
+
+        return true;
+    }
+
+    static isNotGeneralEventsOverlapesDates(checkDates, generalEvents: CallanGeneralEvent[]) {
+        for (const checkDate of checkDates) {
+            const res = CallanScheduleService.isNotGeneralEventsOverlapesDate(checkDate, generalEvents);
+
+            if (!res) {
+                return res;
+            }
+        }
+
+        return true;
+    }
+
+    static checkLessonTime(lessonEvent: CallanLessonEvent, datesEnabled: Date[], scheduleMinuteStep: number, lessonEvents: CallanLessonEvent[], generalEvents: CallanGeneralEvent[]): boolean {
+
+        const amount = Math.floor(lessonEvent.duration / scheduleMinuteStep);
+        const segments = CallanDateService.createSegmentsFromDate(lessonEvent.startTime, scheduleMinuteStep, amount);
+
+        console.log('created sgm:', segments);
+
+        let res = CallanScheduleService.isScheduleDatesAvailable(segments, datesEnabled);
+
+        console.log('Received res:', res);
+
+        if (res){
+            // checking against lessonEvents
+            res = CallanScheduleService.isNotLessonEventsOverlapesDates(segments, lessonEvents);
+            console.log('Received lesson res:', res);
+            if (res) {
+                res = CallanScheduleService.isNotGeneralEventsOverlapesDates(segments, generalEvents);
+                console.log('Received general res:', res);
+                return res;
+            } else {
+                return res;
+            }
+
+        } else {
+            return res;
+        }
     }
 
     static initScheduleRange(scheduleRange: CallanScheduleRange) {
