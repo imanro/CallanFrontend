@@ -21,7 +21,12 @@ import {AppConfig} from '../app.config';
 export class CallanScheduleManagerContainerComponent implements OnInit, OnDestroy {
 
     view = CallanScheduleManagerViewEnum.DASHBOARD;
+
     viewNameEnum: any;
+
+    tabs: {[id: string]: string} = {};
+
+    tabSelected: string;
 
     currentCustomer: CallanCustomer;
 
@@ -52,6 +57,8 @@ export class CallanScheduleManagerContainerComponent implements OnInit, OnDestro
     ) {
         this.viewNameEnum = CallanScheduleManagerViewEnum;
         this.scheduleMinuteStep = appConfig.scheduleMinuteStep;
+
+        this.buildTabs();
     }
 
     ngOnInit() {
@@ -144,6 +151,19 @@ export class CallanScheduleManagerContainerComponent implements OnInit, OnDestro
     handleSetCurrentDate(date) {
         this.setCurrentDate(date);
         this.assignDatesEnabled(date);
+    }
+
+    handleTabSelected(id: CallanScheduleManagerViewEnum) {
+        console.log('selected tab', id);
+        this.view = id;
+        this.tabSelected = id;
+    }
+
+    private buildTabs() {
+        this.tabs[CallanScheduleManagerViewEnum.DASHBOARD] = 'Ranges Time Table';
+        this.tabs[CallanScheduleManagerViewEnum.CALENDAR] = 'Resulting Schedule';
+
+        this.tabSelected = CallanScheduleManagerViewEnum.DASHBOARD;
     }
 
     private assignCurrentCustomer() {

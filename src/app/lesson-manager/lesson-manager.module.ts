@@ -8,7 +8,6 @@ import {CallanLessonManagerRoutingModule} from './lesson-manager-routing.module'
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {CalendarModule} from 'angular-calendar';
 import {CalendarWeekHoursViewModule} from '@imanro/angular-calendar-week-hours-view';
-
 import {CallanLessonManagerStudentContainerComponent} from './lesson-manager-student-container.component';
 import { CallanLessonManagerTeacherContainerComponent } from './lesson-manager-teacher-container.component';
 import {CallanCoursesListComponent} from './courses-list/courses-list.component';
@@ -27,6 +26,7 @@ import { CallanCourseCompetencesForCustomerListComponent } from './course-compet
 import { CallanCourseSpecialityAddComponent } from './course-competence-add/course-competence-add.component';
 import { CallanCourseCompetencesForCourseListComponent } from './course-competences-for-course-list/course-competences-for-course-list.component';
 import {CallanCustomerHeaderModule} from '../shared-modules/customer-header/customer-header.module';
+import {CallanNavTabsModule} from '../shared-modules/nav-tabs/nav-tabs.module';
 
 @NgModule({
     declarations: [
@@ -53,6 +53,7 @@ import {CallanCustomerHeaderModule} from '../shared-modules/customer-header/cust
         CalendarModule.forRoot(),
         CalendarWeekHoursViewModule,
         CallanCustomerHeaderModule,
+        CallanNavTabsModule,
         AppModalContentModule,
         AppModalContentFeedbackModule,
     ],

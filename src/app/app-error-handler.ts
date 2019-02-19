@@ -32,7 +32,7 @@ export class AppErrorHandler implements ErrorHandler {
         } else {
 
             if (error.message && error.message.indexOf('token') !== -1) {
-                console.log('Seems like token-related error, logging out');
+                console.log('Seems like token-related error, logging out', error);
                 this.logoutAndRedirect();
             } else {
                 console.log('This is another kind of error', error.message, error, typeof(error), error.message);

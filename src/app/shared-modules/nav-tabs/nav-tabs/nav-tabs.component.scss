@@ -1,0 +1,20 @@
+:host {
+
+  .card-body {
+
+    div.img-cont {
+    }
+
+    div.active {
+
+      a {
+        border-bottom: 2px solid;
+        margin-bottom: -2px;
+      }
+    }
+
+    div.img-cont {
+      line-height: 0;
+    }
+  }
+}

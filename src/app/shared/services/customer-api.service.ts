@@ -161,7 +161,7 @@ export class CallanCustomerApiService extends CallanCustomerService {
             );
     }
 
-    getGoogleCalendarEvents(customer: CallanCustomer, startDate: Date, endDate: Date): Observable<CallanGeneralEvent[]> {
+    getGoogleCalendarEvents(customer: CallanCustomer, startDate: Date, endDate: Date, isIncludeEventTitles = false): Observable<CallanGeneralEvent[]> {
 
         console.log('Checking Google Auth');
 
@@ -170,6 +170,8 @@ export class CallanCustomerApiService extends CallanCustomerService {
         params.customerId = customer.id;
         params.startDate = startDate.toISOString();
         params.endDate = endDate.toISOString();
+        params.isIncludeEventTitles =
+        params.isIncludeEventTitles = isIncludeEventTitles;
 
         const url = this.getApiUrl('/Customers/getGoogleCalendarEvents') + '?' + this.buildQueryString(params);
 

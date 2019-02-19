@@ -233,7 +233,7 @@ export abstract class CallanCustomerService extends CallanBaseService {
 
     abstract checkGoogleAuth(customer: CallanCustomer): Observable<boolean>;
 
-    abstract getGoogleCalendarEvents(customer: CallanCustomer, startDate: Date, endDate: Date): Observable<CallanGeneralEvent[]>;
+    abstract getGoogleCalendarEvents(customer: CallanCustomer, startDate: Date, endDate: Date, isIncludeEventTitles?): Observable<CallanGeneralEvent[]>;
 
     abstract getGoogleAuthLink(customer: CallanCustomer): Observable<string|boolean>;
 

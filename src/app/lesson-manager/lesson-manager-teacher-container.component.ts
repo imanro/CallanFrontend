@@ -31,33 +31,50 @@ import {CallanGeneralEvent} from '../shared/models/general-event.model';
 })
 export class CallanLessonManagerTeacherContainerComponent implements OnInit, OnDestroy {
 
-    currentLessonEvent: CallanLessonEvent;
-    currentCourseCompetence: CallanCourseCompetence;
+    view = CallanLessonManagerTeacherViewEnum.DASHBOARD;
+
+    viewNameEnum: any;
+
+    tabs: {[id: string]: string} = {};
+
+    tabSelected: string;
 
     authCustomer: CallanCustomer;
+
     currentCustomer: CallanCustomer;
+
+    currentLessonEvent: CallanLessonEvent;
+
+    currentCourseCompetence: CallanCourseCompetence;
+
     currentDate: Date;
+
     datesEnabled: Date[];
 
     allCourses: CallanCourse[];
+
     courseSpecialities: CallanCourseCompetence[];
+
     lessonEvents: CallanLessonEvent[];
+
     generalEvents: CallanGeneralEvent[];
 
     calendarEvents: CalendarEvent[];
 
     isLessonEventShown = false;
+
     isAddCourseSpecialityButtonShown = false;
+
     isCourseSpecialityListControlsShown = false;
 
-    view = CallanLessonManagerTeacherViewEnum.DASHBOARD;
-    viewNameEnum: any;
     lessonEventViewNameEnum: any;
 
     scheduleMinuteStep: number;
 
     formErrors$ = new Subject<AppFormErrors>();
+
     lessonEventsListRefresh$ = new Subject<void>();
+
     calendarRefresh$ = new Subject<void>();
 
     isSaving = false;
@@ -75,10 +92,11 @@ export class CallanLessonManagerTeacherContainerComponent implements OnInit, OnD
         this.viewNameEnum = CallanLessonManagerTeacherViewEnum;
         this.lessonEventViewNameEnum = CallanLessonEventViewEnum;
         this.scheduleMinuteStep = appConfig.scheduleMinuteStep;
+
+        this.buildTabs();
     }
 
     ngOnInit() {
-        console.log('oninit');
         this.subscribeOnLessonEventShown();
         this.subscribeOnCurrentLessonEvent();
 
@@ -98,6 +116,12 @@ export class CallanLessonManagerTeacherContainerComponent implements OnInit, OnD
     ngOnDestroy() {
         this.unsubscribe$.next();
         this.unsubscribe$.complete();
+    }
+
+    handleTabSelected(id: CallanLessonManagerTeacherViewEnum) {
+        console.log('selected tab', id);
+        this.view = id;
+        this.tabSelected = id;
     }
 
     handleSetCurrentLessonEvent(lessonEvent) {
@@ -267,6 +291,14 @@ export class CallanLessonManagerTeacherContainerComponent implements OnInit, OnD
             this.setIsLessonEventShown(true);
             window.scrollTo(0,0);
         }
+    }
+
+    private buildTabs() {
+        this.tabs[CallanLessonManagerTeacherViewEnum.DASHBOARD] = 'Schedule';
+        this.tabs[CallanLessonManagerTeacherViewEnum.COURSE_SPECIALITY_LIST] = 'Your qualifications';
+        this.tabs[CallanLessonManagerTeacherViewEnum.LESSON_LIST] = 'Lessons';
+
+        this.tabSelected = CallanLessonManagerTeacherViewEnum.DASHBOARD;
     }
 
     private setCalendarEvents() {
@@ -471,7 +503,7 @@ export class CallanLessonManagerTeacherContainerComponent implements OnInit, OnD
         const range = CallanScheduleService.getWeekDatesRangeForDate(date);
 
         // we need to getHoursAvailable also includes already booked times
-        this.customerService.getGoogleCalendarEvents(customer, range[0], range[1]).subscribe(events => {
+        this.customerService.getGoogleCalendarEvents(customer, range[0], range[1], true).subscribe(events => {
             console.log('general events came', events);
             this.generalEvents = events;
             this.setCalendarEvents();
