@@ -8,7 +8,7 @@ import {BehaviorSubject, Subject} from 'rxjs';
 @Injectable()
 export  class CallanUiService extends CallanBaseService {
 
-    private elementClasses$ = new BehaviorSubject<{[id: string]: string}>();
+    private elementClasses$ = new BehaviorSubject<{[id: string]: string[]}>(null);
 
     static getStudentAvatarColorsSet(): { bg: string, fg: string }[] {
         return [
@@ -92,7 +92,7 @@ export  class CallanUiService extends CallanBaseService {
 
         if (container[id] !== undefined) {
 
-            const list = container[id];
+            let list = container[id];
             list = list.filter(item => {
                 return item !== value;
             });
@@ -102,7 +102,7 @@ export  class CallanUiService extends CallanBaseService {
         }
     }
 
-    getElementClasses$(): BehaviorSubject<{[id: string]: string}> {
+    getElementClasses$(): BehaviorSubject<{[id: string]: string[]}> {
         return this.elementClasses$;
     }
 }
