@@ -2,7 +2,7 @@ import {Routes, RouterModule} from '@angular/router';
 
 // Route for content layout with sidebar, navbar and footer.
 
-export const MAIN_ROUTES: Routes = [
+export const CABINET_ROUTES: Routes = [
     {
         path: 'customers',
         loadChildren: './customer-manager/customer-manager.module#CallanCustomerManagerModule'

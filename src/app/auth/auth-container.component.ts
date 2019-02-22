@@ -120,6 +120,7 @@ export class CallanAuthContainerComponent implements OnInit, OnDestroy {
         this.authService.logout().subscribe(() => {
             this.customerService.setAuthCustomer(null);
             this.customerService.setCurrentCustomer(null);
+            //
         });
     }
 
@@ -130,9 +131,15 @@ export class CallanAuthContainerComponent implements OnInit, OnDestroy {
     private setView(currentUrl) {
         switch (currentUrl) {
             case('login'):
+                console.log('Performing logout and showing login');
+                this.handleLogout();
+                this.view = currentUrl;
+                break;
+            case('logout'):
                 console.log('Performing logout');
                 this.handleLogout();
                 this.view = currentUrl;
+                this.router.navigate(['/']);
                 break;
             default:
                 break;

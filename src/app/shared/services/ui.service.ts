@@ -3,9 +3,12 @@ import {CallanBaseService} from './base.service';
 import {CallanCustomer} from '../models/customer.model';
 import {CallanCustomerService} from './customer.service';
 import {CallanRoleNameEnum} from '../enums/role.name.enum';
+import {BehaviorSubject, Subject} from 'rxjs';
 
 @Injectable()
 export  class CallanUiService extends CallanBaseService {
+
+    private elementClasses$ = new BehaviorSubject<{[id: string]: string}>();
 
     static getStudentAvatarColorsSet(): { bg: string, fg: string }[] {
         return [
@@ -68,5 +71,38 @@ export  class CallanUiService extends CallanBaseService {
 
          // console.log('set number:', number % 6, pool[number % 6]);
          return pool[number % 6];
+    }
+
+    addElementClass(id: string, value: string): void {
+        const container = this.elementClasses$.getValue();
+
+
+        if (container[id] === undefined) {
+            container[id] = [];
+        }
+
+        const ref = container[id];
+        ref.push(value);
+
+        this.elementClasses$.next(container);
+    }
+
+    removeElementClass(id: string, value: string): void {
+        const container = this.elementClasses$.getValue();
+
+        if (container[id] !== undefined) {
+
+            const list = container[id];
+            list = list.filter(item => {
+                return item !== value;
+            });
+
+            container[id] = list;
+            this.elementClasses$.next(container);
+        }
+    }
+
+    getElementClasses$(): BehaviorSubject<{[id: string]: string}> {
+        return this.elementClasses$;
     }
 }

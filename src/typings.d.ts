@@ -8,6 +8,8 @@ declare module '*.json' {
     export default value;
 }
 
+declare module 'granim';
+
 declare module 'quill';
 declare module 'leaflet';
 declare module 'perfect-scrollbar';

@@ -1,0 +1,221 @@
+<div id="top"></div>
+	<!-- Start Header Area -->
+	<nav class="navbar navbar-expand-md navbar-dark fixed-top p-2" #navbar>
+		<a class="navbar-brand pl-5" routerLink="." fragment="home">
+			<img src="assets/img/pages/front/logo.png" class="mr-3 brand-logo" alt="logo">Callan
+		</a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse"
+		 aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarCollapse">
+			<ul class="navbar-nav ml-auto pr-5">
+				<li class="nav-item active" id="home-nav-item">
+					<a class="nav-link" routerLink="." fragment="home">Home</a>
+				</li>
+				<li class="nav-item" id="about-nav-item">
+					<a class="nav-link" routerLink="."  fragment="about">About</a>
+				</li>
+				<li class="nav-item" id="team-nav-item">
+					<a class="nav-link" routerLink="."  fragment="team">Team</a>
+				</li>
+				<li class="nav-item" id="contact-nav-item">
+					<a class="nav-link" routerLink="." fragment="contact">Contact</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" [routerLink]="['/auth/login']">Personal area</a>
+				</li>
+			</ul>
+		</div>
+	</nav>
+	<!-- End Header Area -->
+
+	<!-- Start Banner Area -->
+	<canvas id="canvas-basic"></canvas>
+	<section class="banner-area" id="home">
+		<img src="assets/img/pages/front/uk-flag.webp" alt="banner image" class="mt-7 ml-5 position-absolute banner-img w-30">
+		<img src="assets/img/pages/front/headset-girl.png" alt="banner image" class="mt-7 ml-5 position-absolute banner-img w-30" style="margin-left:65% !important; margin-top:25% !important;">
+		<div class="banner-content text-center pt-max position-relative">
+			<p class="text-white">We work hard, we result perfect</p>
+			<h1 class="text-white">Skype English Lessons</h1>
+			<h3 class="white">Individual approach, guararanteed result</h3>
+			<a routerLink="."  fragment="team" class="primary-btn banner-btn">Explore Us</a>
+			<br>
+			<i class="fa fa-chevron-down white mt-5 arrow bounce" aria-hidden="true"></i>
+		</div>
+	</section>
+	<!-- End Banner Area -->
+
+	<!-- About Area -->
+	<section class="about py-10" id="about">
+		<div class="container">
+			<h3 class="text-center black headline">About Out Team </h3>
+			<p class="text-center mt-4">Our teachers have great experience of educating of people with wide range of level &ndash;
+				from the very beginers to very advanced.</p>
+			<div class="row">
+				<div class="col-md-6 col-12 mt-5 pl-sm">
+					<h4>
+						<i class="fa fa-coffee danger mr-2 font-md" aria-hidden="true"></i> Personal approach</h4>
+					<p class="mt-2">Although we use highly self-proved learning strategies, we treat each student individually.</p>
+				</div>
+				<div class="col-md-6 col-12 mt-5 pl-sm">
+					<h4>
+						<i class="fa fa-rocket danger mr-2 font-md" aria-hidden="true"></i> Quick result</h4>
+					<p class="mt-2">Lessons with the the native-speaker teacher will always bring you the result because
+						you'll be concentrated on really important things.</p>
+				</div>
+			</div>
+		</div>
+	</section>
+	<!-- End About Area -->
+
+<!-- Customer Team Area -->
+<section class="reviews py-10" id="team">
+	<div class="container">
+		<h3 class="text-center black headline">Team</h3>
+		<p class="text-center mt-4">Our high qualified teachers are targeted to help you wherever you are</p>
+		<div class="card-deck mt-5">
+			<div class="card card-empty mb-3">
+			</div>
+			<div class="card mb-3">
+				<img class="card-img-top img-fluid" src="assets/img/pages/front/photo-1.png" alt="Card image cap">
+				<div class="card-body text-center">
+					<h5 class="card-title">Tertia Fourie</h5>
+					<p class="card-text">Teacher</p>
+				</div>
+			</div>
+			<div class="card mb-3">
+				<img class="card-img-top img-fluid" src="assets/img/pages/front/photo-2.png" alt="Card image cap">
+				<div class="card-body text-center">
+					<h5 class="card-title">Zane Fourie</h5>
+					<p class="card-text">Teacher</p>
+				</div>
+			</div>
+			<div class="card card-empty mb-3">
+			</div>
+		</div>
+	</div>
+</section>
+<!-- End Team Area -->
+
+<!-- Customers Area -->
+<section class="customers" id="customers">
+	<div class="bg-black p-5 text-center">
+		<div class="h1">
+			<i class="fa fa-heart danger" aria-hidden="true"></i>
+		</div>
+		<h2 class="white">Loved by 100+ of happy students</h2>
+	</div>
+</section>
+<!-- End Customers Area -->
+
+	<!-- Parallax Area -->
+	<section class="parallax">
+		<div class="parallax text-center pt-10 white">
+			<h1 class="mb-4 white">Callan Method</h1>
+			<h3 class="white">This method has been existing for more than 50 years</h3>
+			<p class="mt-4">One of our courses is Callan Method. It brings the quickest way of learning of English with natural way to remembering of grammar rules and extention of the vocabulary</p>
+		</div>
+	</section>
+	<!-- End Parallax Area -->
+
+	<!-- Everything for you Area -->
+	<section class="everything" id="everything">
+		<div class="row">
+			<div class="col-lg-6 col-12 p-0 ">
+				<div class="everything"></div>
+			</div>
+			<div class="col-lg-6 col-12 bg-black white p-5 py-10">
+				<h2 class="white">Five reasons to contact us today:</h2>
+				<div class="row">
+					<div class="col-6 mt-5">
+						<h4 class="white">
+							<span class="white">01.</span> Learn English from natives!</h4>
+						<p class="muted mb-0">It's not the top secret, that the real possibility of speaking cames with practice, and the best option to start from is to speak with the people whose primary language is English.</p>
+					</div>
+					<div class="col-6 mt-5">
+						<h4 class="white">
+							<span class="white">02.</span> Book the time convenient to you </h4>
+						<p class="muted mb-0">The earlier you start, the more time windows are available.</p>
+					</div>
+					<div class="col-6 mt-5">
+						<h4 class="white">
+							<span class="white">03.</span> Real people</h4>
+						<p class="muted mb-0">Our support team consists of graduated teachers, so you'll find the real help of them.</p>
+					</div>
+					<div class="col-6 mt-5">
+						<h4 class="white">
+							<span class="white">04.</span> Useful account system</h4>
+						<p class="muted mb-0">We worked hard to provide you the elegant and convenient personal area to book the lessons and to monitor your progress.</p>
+					</div>
+					<div class="col-6 mt-5">
+						<h4 class="white">
+							<span class="white">05.</span> Just do it!</h4>
+						<p class="muted mb-0">Don't be an oscillated person, make the first step at once you've decied to do it.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<!-- End everything for you Area -->
+
+	<!-- Purchase Area -->
+	<section class="purchase" id="purchase">
+		<div class="text-center py-10 white bg-overlay">
+			<h4 class="muted">You are at the right step now</h4>
+			<h1 class="white mt-3">Fill-in the contact form and we will contact you in a short!</h1>
+			<a  routerLink="." fragment="contact" class="primary-btn banner-btn mt-4">Contact us</a>
+		</div>
+		<div class="purchase-bg"></div>
+	</section>
+	<!-- End Purchase Area -->
+
+	<!-- Contact Us Area -->
+	<section class="contect py-10" id="contact">
+		<div class="container">
+			<h3 class="text-center black mb-4 headline">Let's Get In Touch</h3>
+			<p class="text-center mt-4">Please fill up the form and we'll be in touch soon.</p>
+			<div class="row mt-5 p-sm">
+				<div class="col-lg-6 mt-3">
+					<p>Tell us a little about yourself, leave your contacts and we will contact you ASAP</p>
+				</div>
+				<div class="col-lg-6">
+					<div class="form-area">
+						<form>
+							<br style="clear:both">
+							<div class="form-group">
+								<input type="text" class="form-control" id="name" name="name" placeholder="Name" required>
+							</div>
+							<div class="form-group">
+								<input type="text" class="form-control" id="email" name="email" placeholder="Email" required>
+							</div>
+							<div class="form-group">
+								<textarea class="form-control" id="message" placeholder="Your goals" maxlength="140" rows="7"></textarea>
+							</div>
+							<a href="#" class="primary-btn banner-btn mt-4" style=" color: #000;">Submit Form</a>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<!-- End Contact Us Area -->
+
+	<!-- scrollUp Area -->
+	<section class="nav-item text-center">
+		<a class="nav-link p-0" href="#home">
+			<i class="fa fa-angle-up scrollUp white" aria-hidden="true"></i>
+		</a>
+	</section>
+	<!-- End scrollUp Area -->
+
+	<!-- Footer Area -->
+	<footer>
+		<section class="footer" id="footer">
+			<div class="bg-black p-5 text-center">
+				<h2 class="white">
+					<span style="font-size: 14px; font-weight:100;" class="muted mr-2">Powered By</span> Apex</h2>
+			</div>
+		</section>
+	</footer>
+	<!-- End footer Area -->
