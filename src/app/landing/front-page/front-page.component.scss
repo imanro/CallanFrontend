@@ -378,6 +378,11 @@
   }
 
   /* Navbar */
+  .navbar {
+    .navbar-nav {
+      display: flex !important;
+    }
+  }
 
   .navbar-dark .navbar-nav .nav-link{
     color: rgba(255, 255, 255, 0.65);

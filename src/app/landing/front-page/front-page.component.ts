@@ -4,6 +4,7 @@ import {DOCUMENT} from '@angular/common';
 import * as Granim from 'granim';
 import * as $ from 'jquery';
 import {ActivatedRoute, Router} from '@angular/router';
+import {timer as observableTimer} from 'rxjs';
 
 @Component({
     selector: 'app-callan-front-page',
@@ -13,6 +14,8 @@ import {ActivatedRoute, Router} from '@angular/router';
 export class CallanFrontPageComponent implements OnInit {
 
     @ViewChild('navbar') navbar;
+
+    private isHighlightOfCorresponding = false;
 
     constructor(
         private router: Router,
@@ -44,20 +47,45 @@ export class CallanFrontPageComponent implements OnInit {
         this.route.fragment.subscribe((fragment: string) => {
             if (fragment && document.getElementById(fragment) != null) {
 
-                const $navbar = $(this.navbar.nativeElement);
-                $navbar.find('.active').removeClass('active');
-                $navbar.find('#' + fragment + '-nav-item').addClass('active');
+                this.highlightLink(fragment);
 
                 console.log('nav to', fragment);
                 document.getElementById(fragment).scrollIntoView({ behavior: "smooth" });
+
+                // temporary turn off this feature
+                this.isHighlightOfCorresponding = false;
+
+                observableTimer(2000).subscribe(() => {
+                    this.isHighlightOfCorresponding = true;
+                });
             }
         });
     }
 
     @HostListener('window:scroll', [])
     onWindowScroll() {
-        const scroll = $(window).scrollTop();
 
+        this.modifyNavbarLook();
+
+        if (this.isHighlightOfCorresponding) {
+            // highlight by scroll
+            this.highlightCorrespondingLink();
+        }
+    }
+
+    toggleNavbarCollapse() {
+        const $navbar = $(this.navbar.nativeElement);
+        $navbar.find('.navbar-collapse').toggleClass('show');
+    }
+
+    private highlightLink(fragment: string) {
+        const $navbar = $(this.navbar.nativeElement);
+        $navbar.find('.active').removeClass('active');
+        $navbar.find('#' + fragment + '-nav-item').addClass('active');
+    }
+
+    private modifyNavbarLook() {
+        const scroll = $(window).scrollTop();
         const $navbar = $(this.navbar.nativeElement);
 
         if (scroll > 100) {
@@ -67,6 +95,26 @@ export class CallanFrontPageComponent implements OnInit {
             $navbar.removeClass('navbar-light').addClass('navbar-dark');
             $navbar.find('.navbar-brand img').attr('src', 'assets/img/pages/front/logo.png');
         }
+    }
+
+    private highlightCorrespondingLink() {
+        const scroll = $(window).scrollTop();
+        const $navbar = $(this.navbar.nativeElement);
+
+        $navbar.find('a').each((index, el) => {
+
+           const $link = $(el);
+           const fragment = $link.attr('fragment');
+
+           if (fragment) {
+               const $refEl = $('#' + fragment);
+
+               if ($refEl.position().top <= scroll && $refEl.position().top + $refEl.height() > scroll) {
+                   this.highlightLink(fragment);
+               }
+           }
+        });
+
     }
 
 }
