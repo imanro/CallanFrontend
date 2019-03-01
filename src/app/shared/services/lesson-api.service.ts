@@ -16,6 +16,7 @@ import {AppError} from '../models/error.model';
 import {CallanLesson} from '../models/lesson.model';
 import {CallanCourseStage} from '../models/course-stage.model';
 import {CallanCourseCompetence} from '../models/course-competence.model';
+import {AppDataFilter} from '../models/data-filter.model';
 
 @Injectable()
 export class CallanLessonApiService extends CallanLessonService {
@@ -281,6 +282,32 @@ export class CallanLessonApiService extends CallanLessonService {
             );
     }
 
+    findLessonEvents(filter: AppDataFilter): Observable<CallanLessonEvent[]> {
+
+        const url = this.getApiUrl('/LessonEvents?filter=' + JSON.stringify({
+            where: filter.where,
+            order: ['state ASC', 'startTime DESC'],
+            include: ['Teacher', 'Student', {CourseProgress: ['Course']}, {Lesson: ['Course']}]
+        }));
+
+        return this.http.get<CallanLessonEvent[]>(url)
+            .pipe(
+                map<any, CallanLessonEvent[]>(rows => {
+
+                    const lessonEvents: CallanLessonEvent[] = [];
+
+                    for (const row of rows) {
+                        const lessonEvent = CallanLessonService.createLessonEvent();
+                        this.mapDataToLessonEvent(lessonEvent, row);
+                        lessonEvents.push(lessonEvent);
+                    }
+
+                    return lessonEvents;
+                }),
+                catchError(this.handleHttpError<CallanLessonEvent[]>())
+            );
+    }
+
     getLessonEvent(id: number): Observable<CallanLessonEvent> {
         const url = this.getApiUrl('/LessonEvents/' + id + '?filter=' + JSON.stringify({
             include: ['Teacher', 'Student', {CourseProgress: ['Course']}, {Lesson: ['Course']}]
@@ -333,6 +360,8 @@ export class CallanLessonApiService extends CallanLessonService {
                         const lessonEvent = CallanLessonService.createLessonEvent();
                         this.mapDataToLessonEvent(lessonEvent, row);
                         return lessonEvent;
+                    } else {
+                        return null;
                     }
                 }),
                 catchError(this.handleHttpError<CallanLessonEvent>())

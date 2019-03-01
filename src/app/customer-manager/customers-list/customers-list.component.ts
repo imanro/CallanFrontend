@@ -1,4 +1,4 @@
-import {Component, OnInit, EventEmitter, Input, Output, OnDestroy} from '@angular/core';
+import {Component, OnInit, EventEmitter, Input, Output, OnDestroy, ViewChild, TemplateRef} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import {LocalDataSource} from 'ng2-smart-table';
 
@@ -12,121 +12,85 @@ import {Subject} from 'rxjs';
     styleUrls: ['./customers-list.component.scss']
 })
 
-export class CallanCustomersListComponent implements OnInit, OnDestroy {
+export class CallanCustomersListComponent implements OnInit {
 
-    @Input() customers$: Observable<CallanCustomer[]>;
+    @Input() customers: CallanCustomer[];
+
+    @Input() listRowsLimit: number;
 
     @Output() setCurrentCustomer = new EventEmitter<any>();
 
     @Output() viewCustomer = new EventEmitter<CallanCustomer>();
 
-    source: LocalDataSource;
-    settings: any;
+    @ViewChild('columnNameTpl') columnNameTpl: TemplateRef<any>;
 
-    private unsubscribe: Subject<void> = new Subject();
+    @ViewChild('columnRolesTpl') columnRolesTpl: TemplateRef<any>;
+
+    @ViewChild('columnActionsTpl') columnActionsTpl: TemplateRef<any>;
+
+    columns: any;
 
     constructor() {
-        this.source = new LocalDataSource();
-
-        this.settings = {
-            columns: {
-                id: {
-                    title: 'ID',
-                    filter: false,
-                },
-                email: {
-                    title: 'E-mail',
-                    filter: false
-                },
-                name: {
-                    title: 'Name',
-                    valuePrepareFunction: function (cell, row) {
-                        if (row instanceof CallanCustomer) {
-                            return row.getFullName();
-                        } else {
-                            return '';
-                        }
-                    },
-                    filter: false
-                },
-                roles: {
-                    title: 'Roles',
-                    filter: false,
-                    valuePrepareFunction: function (value) {
-                        const list = [];
-                        if (value) {
-                            for (const item of value) {
-                                list.push(item.name);
-                            }
-                        }
-
-                        return list.join(', ');
-                    }
-                }
-            },
-            hideSubHeader: true,
-
-            actions: {
-                custom: [
-                    {
-                        name: 'setCurrent',
-                        title: '<i class="ft-user-check success font-medium-1 mr-2" title="Set user for on-behave"></i>',
-                    },
-                    {
-                        name: 'view',
-                        title: '<i class="ft-eye info font-medium-1 mr-2" title="View customer"></i>'
-                    }
-                ],
-                add: false,
-                edit: false,
-                delete: false,
-                position: 'right'
-            },
-            attr: {
-                class: 'table table-responsive'
-            },
-            edit: {
-                editButtonContent: '<i class="ft-edit-2 info font-medium-1 mr-2"></i>'
-            },
-            delete: {
-                deleteButtonContent: '<i class="ft-x danger font-medium-1 mr-2"></i>'
-            },
-            custom: {
-                setCurrentButtonContent: ''
-            }
-        };
     }
 
     ngOnInit() {
-        this.customers$
-            .pipe(
-                takeUntil(this.unsubscribe)
-            )
-            .subscribe(customers => {
-                this.source.load(customers);
-                // console.log(customers);
-            });
+        this.columns = [
+            {
+                prop: 'id',
+                name: 'ID',
+                flexGrow: 1
+            },
+            {
+                prop: 'email',
+                name: 'E-mail',
+                flexGrow: 3
+            },
+            {
+                prop: 'role',
+                cellTemplate: this.columnRolesTpl,
+                sortable: false,
+                flexGrow: 4
+            },
+            {
+                prop: 'name',
+                cellTemplate: this.columnNameTpl,
+                sortable: false,
+                flexGrow: 5
+            },
+            {
+                prop: 'actions',
+                name: '',
+                cellTemplate: this.columnActionsTpl,
+                cellClass: 'cell-actions',
+                sortable: false,
+                flexGrow: 1
+            },
+        ];
     }
 
-    ngOnDestroy() {
-        this.unsubscribe.next();
-        this.unsubscribe.complete();
-    }
-
-    handleCustomAction($e) {
-        // emit the data
-        switch ($e.action) {
-            case('setCurrent'):
-                this.setCurrentCustomer.next($e.data);
-                break;
-            case('view'):
-                this.viewCustomer.next($e.data);
-                console.log($e);
-                break;
+    formatRoles(roles) {
+        const list = [];
+        if (roles) {
+            for (const item of roles) {
+                list.push(item.name);
+            }
         }
+
+        return list.join(', ');
     }
 
-    handleRowSelect($e) {
-        this.viewCustomer.next($e.data);
+    handleViewCustomer(customer: CallanCustomer) {
+        this.viewCustomer.next(customer);
+    }
+
+    handleSetCurrentCustomer(customer: CallanCustomer) {
+        this.setCurrentCustomer.next(customer);
+    }
+
+    handleRowActivate(event) {
+        if (event.type === 'click' && (!event.column || event.column.prop !== 'actions')) {
+            console.log('act', event);
+            this.viewCustomer.next(event.row);
+        }
     }
 }

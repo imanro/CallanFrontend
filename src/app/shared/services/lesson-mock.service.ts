@@ -21,6 +21,7 @@ import {CallanLesson} from '../models/lesson.model';
 import {CallanCourseStage} from '../models/course-stage.model';
 import {CallanCourseCompetence} from '../models/course-competence.model';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {AppDataFilter} from '../models/data-filter.model';
 
 @Injectable()
 export class CallanLessonMockService extends CallanLessonService {
@@ -245,6 +246,10 @@ export class CallanLessonMockService extends CallanLessonService {
 
     getLessonEventsByTeacher(teacher: CallanCustomer): Observable<CallanLessonEvent[]> {
         return this.getLessonEventsByStudent(teacher);
+    }
+
+    findLessonEvents(filter: AppDataFilter): Observable<CallanLessonEvent[]> {
+        return this.getLessonEvents(null);
     }
 
     getLessonEvent(id: number): Observable<CallanLessonEvent> {

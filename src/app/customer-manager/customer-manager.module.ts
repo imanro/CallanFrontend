@@ -1,7 +1,7 @@
 import {NgModule} from '@angular/core';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {CommonModule} from '@angular/common';
-import { Ng2SmartTableModule } from 'ng2-smart-table';
+import {NgxDatatableModule} from '@swimlane/ngx-datatable';
 import {ReactiveFormsModule} from '@angular/forms';
 
 import {CallanCustomersRoutingModule} from './customer-manager-routing.module';
@@ -21,7 +21,7 @@ import {CallanCustomerHeaderModule} from '../shared-modules/customer-header/cust
     ],
     imports: [
         CommonModule,
-        Ng2SmartTableModule,
+        NgxDatatableModule,
         NgbModule,
         ReactiveFormsModule,
         CallanCustomersRoutingModule,

@@ -178,9 +178,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
         if (customer) {
             if (CallanCustomerService.hasCustomerRole(customer, CallanRoleNameEnum.STUDENT)) {
                 this.lessonService.getNearestStudentLessonEvent(customer).subscribe(lessonEvent => {
-                    this.currentLessonEvent = lessonEvent;
-
                     if (lessonEvent) {
+                        this.currentLessonEvent = lessonEvent;
+
                         console.log('New lesson event assigned, the lesson is', lessonEvent);
                         this.assignNearestLessonEventRemainingMinutes(lessonEvent);
                     }
@@ -191,15 +191,15 @@ export class NavbarComponent implements OnInit, OnDestroy {
             } else if (CallanCustomerService.hasCustomerRole(customer, CallanRoleNameEnum.TEACHER)) {
                 this.lessonService.getNearestTeacherLessonEvent(customer).subscribe(lessonEvent => {
 
-                    if (isFromInterval && (!this.currentLessonEvent || this.currentLessonEvent.id !== lessonEvent.id)) {
-                        this.toastrService.success('New upcoming lesson!', 'Notification');
-                    }
-
-                    this.currentLessonEvent = lessonEvent;
-
                     if (lessonEvent) {
-                        console.log('New lesson event assigned, the lesson is', lessonEvent);
-                        this.assignNearestLessonEventRemainingMinutes(lessonEvent);
+                        if (isFromInterval && (!this.currentLessonEvent || this.currentLessonEvent.id !== lessonEvent.id)) {
+                            this.toastrService.success('New upcoming lesson!', 'Notification');
+                        }
+
+                        this.currentLessonEvent = lessonEvent;
+
+                            console.log('New lesson event assigned, the lesson is', lessonEvent);
+                            this.assignNearestLessonEventRemainingMinutes(lessonEvent);
                     }
                 }, err => {
                     this.currentLessonEvent = null;

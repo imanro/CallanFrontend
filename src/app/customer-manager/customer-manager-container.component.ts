@@ -14,6 +14,7 @@ import {CallanLessonService} from '../shared/services/lesson.service';
 import {ActivatedRoute} from '@angular/router';
 import {takeUntil, finalize} from 'rxjs/operators';
 import {CallanCustomerManagerOperationEnum} from '../shared/enums/customer-manager.operation.enum';
+import {AppConfig} from '../app.config';
 
 @Component({
     selector: 'app-callan-customer-manager-container',
@@ -29,7 +30,7 @@ export class CallanCustomerManagerContainerComponent implements OnInit, OnDestro
 
     operationNameEnum: any;
 
-    customers$ = new BehaviorSubject<CallanCustomer[]>([]);
+    customers: CallanCustomer[];
 
     rolesList: CallanRole[];
 
@@ -41,9 +42,12 @@ export class CallanCustomerManagerContainerComponent implements OnInit, OnDestro
 
     formErrors$ = new BehaviorSubject<AppFormErrors>(null);
 
+    listRowsLimit: number;
+
     private unsubscribe$: Subject<void> = new Subject();
 
     constructor(
+        private appConfig: AppConfig,
         private location: Location,
         private route: ActivatedRoute,
         private customerService: CallanCustomerService,
@@ -52,6 +56,7 @@ export class CallanCustomerManagerContainerComponent implements OnInit, OnDestro
     ) {
         this.viewNameEnum = CallanCustomerManagerViewEnum;
         this.operationNameEnum = CallanCustomerManagerOperationEnum;
+        this.listRowsLimit = this.appConfig.listRowsLimit;
     }
 
     ngOnInit() {
@@ -256,7 +261,7 @@ export class CallanCustomerManagerContainerComponent implements OnInit, OnDestro
 
     private fetchCustomers() {
         this.customerService.getCustomers().subscribe(customers => {
-            this.customers$.next(customers);
+            this.customers = customers;
         });
     }
 

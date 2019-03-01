@@ -73,9 +73,10 @@ export class CallanLessonManagerStudentContainerComponent implements OnInit, OnD
 
     formErrors$ = new Subject<AppFormErrors>();
     calendarRefresh$ = new Subject<void>();
-    lessonEventsListRefresh$ = new Subject<void>();
+    lessonEventsListRefresh$ = new Subject<void>(); // DEPRECATED
 
     scheduleMinuteStep: number;
+    listRowsLimit: number;
 
     // checkme
     private isInitialRouteProcessed = true;
@@ -94,6 +95,7 @@ export class CallanLessonManagerStudentContainerComponent implements OnInit, OnD
         private modalService: NgbModal
     ) {
         this.scheduleMinuteStep = appConfig.scheduleMinuteStep;
+        this.listRowsLimit = this.appConfig.listRowsLimit;
         this.viewNameEnum = CallanLessonManagerStudentViewEnum;
         this.lessonEventViewNameEnum = CallanLessonEventViewEnum;
     }

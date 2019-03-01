@@ -23,6 +23,7 @@ import {CallanRoleNameEnum} from '../shared/enums/role.name.enum';
 import {CallanCourse} from '../shared/models/course.model';
 import {CalendarEvent} from 'angular-calendar';
 import {CallanGeneralEvent} from '../shared/models/general-event.model';
+import {AppDataFilter} from '../shared/models/data-filter.model';
 
 @Component({
     selector: 'app-callan-lesson-manager-teacher-container',
@@ -71,13 +72,17 @@ export class CallanLessonManagerTeacherContainerComponent implements OnInit, OnD
 
     scheduleMinuteStep: number;
 
-    formErrors$ = new Subject<AppFormErrors>();
+    listRowsLimit: number;
 
-    lessonEventsListRefresh$ = new Subject<void>();
+    formErrors$ = new Subject<AppFormErrors>();
 
     calendarRefresh$ = new Subject<void>();
 
     isSaving = false;
+
+    lessonEventsFilterByStudentValue: CallanCustomer;
+
+    studentList$ = new Subject<CallanCustomer[]>();
 
     private unsubscribe$: Subject<void> = new Subject();
 
@@ -92,6 +97,7 @@ export class CallanLessonManagerTeacherContainerComponent implements OnInit, OnD
         this.viewNameEnum = CallanLessonManagerTeacherViewEnum;
         this.lessonEventViewNameEnum = CallanLessonEventViewEnum;
         this.scheduleMinuteStep = appConfig.scheduleMinuteStep;
+        this.listRowsLimit = this.appConfig.listRowsLimit;
 
         this.buildTabs();
     }
@@ -119,9 +125,16 @@ export class CallanLessonManagerTeacherContainerComponent implements OnInit, OnD
     }
 
     handleTabSelected(id: CallanLessonManagerTeacherViewEnum) {
+        this.setView(id);
+    }
+
+    setView(id: CallanLessonManagerTeacherViewEnum) {
         console.log('selected tab', id);
         this.view = id;
-        this.tabSelected = id;
+
+        if(this.tabs[id] !== undefined) {
+            this.tabSelected = id;
+        }
     }
 
     handleSetCurrentLessonEvent(lessonEvent) {
@@ -293,6 +306,21 @@ export class CallanLessonManagerTeacherContainerComponent implements OnInit, OnD
         }
     }
 
+    handleStudentSearch(term) {
+        this.customerService.findCustomers(term).subscribe(customers => {
+            this.studentList$.next(customers);
+        });
+    }
+
+    handleFilterLessonEventsByStudent(student: CallanCustomer) {
+        this.filterLessonEventsByStudent(student);
+    }
+
+    handleGetStudentDetails(student: CallanCustomer) {
+        this.filterLessonEventsByStudent(student);
+        this.setView(CallanLessonManagerTeacherViewEnum.LESSON_LIST);
+    }
+
     private buildTabs() {
         this.tabs[CallanLessonManagerTeacherViewEnum.DASHBOARD] = 'Schedule';
         this.tabs[CallanLessonManagerTeacherViewEnum.COURSE_SPECIALITY_LIST] = 'Your qualifications';
@@ -455,14 +483,27 @@ export class CallanLessonManagerTeacherContainerComponent implements OnInit, OnD
         });
     }
 
+    private filterLessonEventsByStudent(student: CallanCustomer) {
+        if (student) {
+            const filter = new AppDataFilter();
+            filter.where = {studentId: student.id, teacherId: this.currentCustomer.id};
+            this.findLessonEvents(filter);
+            this.lessonEventsFilterByStudentValue = student;
+        } else {
+            this.assignLessonEvents(this.currentCustomer);
+        }
+    }
+
     private assignLessonEvents(customer) {
         this.lessonService.getLessonEventsByTeacher(customer).subscribe(lessonEvents => {
             this.lessonEvents = lessonEvents;
             this.setCalendarEvents();
+        });
+    }
 
-            observableTimer(50).subscribe(() => {
-                this.lessonEventsListRefresh$.next();
-            });
+    private findLessonEvents(filter: AppDataFilter) {
+        this.lessonService.findLessonEvents(filter).subscribe(lessonEvents => {
+            this.lessonEvents = lessonEvents;
         });
     }
 

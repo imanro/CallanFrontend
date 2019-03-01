@@ -16,6 +16,7 @@
           <app-callan-lesson-event
                   [lessonEvent]="currentLessonEvent"
                   [view]="lessonEventViewNameEnum.TEACHER"
+                  (getStudentDetails)="handleGetStudentDetails($event)"
                   *ngIf="currentLessonEvent && isLessonEventShown"
           ></app-callan-lesson-event>
 
@@ -35,10 +36,14 @@
 
           <app-callan-lesson-events-list
                   [lessonEvents]="lessonEvents"
-                  [refresh$]="lessonEventsListRefresh$"
                   [isLessonEditingShown]="true"
+                  [listRowsLimit]="listRowsLimit"
+                  [studentList$]="studentList$"
+                  [filterByStudentValue]="lessonEventsFilterByStudentValue"
                   (setCurrentLessonEventEvent)="handleSetCurrentLessonEvent($event)"
                   (cancelLessonEventEvent)="handleCancelLessonEvent($event)"
+                  (studentSearchEvent)="handleStudentSearch($event)"
+                  (filterByStudentEvent)="handleFilterLessonEventsByStudent($event)"
                   *ngIf="view === viewNameEnum.LESSON_LIST"
           ></app-callan-lesson-events-list>
 

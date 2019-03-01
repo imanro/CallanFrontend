@@ -114,6 +114,8 @@ export abstract class CallanLessonService extends CallanBaseService {
 
     abstract getLessonEventsByTeacher(teacher: CallanCustomer): Observable<CallanLessonEvent[]>;
 
+    abstract findLessonEvents(dataFilter: AppDataFilter): Observable<CallanLessonEvent[]>;
+
     abstract getLessonEvent(id: number): Observable<CallanLessonEvent>;
 
     abstract saveLessonEvent(lessonEvent: CallanLessonEvent): Observable<CallanLessonEvent>;

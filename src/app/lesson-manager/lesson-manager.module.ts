@@ -1,6 +1,6 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {Ng2SmartTableModule} from 'ng2-smart-table';
+import {NgxDatatableModule} from '@swimlane/ngx-datatable';
 import {ReactiveFormsModule} from '@angular/forms';
 
 import {CallanLessonManagerRoutingModule} from './lesson-manager-routing.module';
@@ -27,6 +27,7 @@ import { CallanCourseSpecialityAddComponent } from './course-competence-add/cour
 import { CallanCourseCompetencesForCourseListComponent } from './course-competences-for-course-list/course-competences-for-course-list.component';
 import {CallanCustomerHeaderModule} from '../shared-modules/customer-header/customer-header.module';
 import {CallanNavTabsModule} from '../shared-modules/nav-tabs/nav-tabs.module';
+import {FlexLayoutModule} from '@angular/flex-layout';
 
 @NgModule({
     declarations: [
@@ -46,7 +47,7 @@ import {CallanNavTabsModule} from '../shared-modules/nav-tabs/nav-tabs.module';
     ],
     imports: [
         CommonModule,
-        Ng2SmartTableModule,
+        NgxDatatableModule,
         CallanLessonManagerRoutingModule,
         NgbModule,
         ReactiveFormsModule,
@@ -56,6 +57,7 @@ import {CallanNavTabsModule} from '../shared-modules/nav-tabs/nav-tabs.module';
         CallanNavTabsModule,
         AppModalContentModule,
         AppModalContentFeedbackModule,
+        FlexLayoutModule
     ],
     entryComponents: [AppModalContentComponent, AppModalContentFeedbackComponent],
 })

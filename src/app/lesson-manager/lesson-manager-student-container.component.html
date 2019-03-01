@@ -79,8 +79,9 @@
 
                     <app-callan-lesson-events-list
                             [lessonEvents]="lessonEvents"
-                            [refresh$]="lessonEventsListRefresh$"
                             [isLessonEditingShown]="true"
+                            [listRowsLimit]="listRowsLimit"
+                            [isFilterRowShown]="false"
                             *ngIf="view === viewNameEnum.DASHBOARD"
                             (setCurrentLessonEventEvent)="handleSetCurrentLessonEvent($event)"
                             (cancelLessonEventEvent)="handleCancelLessonEvent($event)"

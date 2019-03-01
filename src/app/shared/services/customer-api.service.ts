@@ -49,8 +49,8 @@ export class CallanCustomerApiService extends CallanCustomerService {
     }
 
     findCustomers(term: string): Observable<CallanCustomer[]> {
-        const filter = {include: ['roles', 'Timezone'], where: {email: {like: '___'}}};
-        const url = this.getApiUrl('/Customers?filter=' + JSON.stringify(filter).replace('___', encodeURI(term + '%')));
+        const filter = {include: ['roles', 'Timezone'], where: {or: [{email: {like: '___'}}, {lastName: {like: '___'}}]}};
+        const url = this.getApiUrl('/Customers?filter=' + JSON.stringify(filter).replace(/___/g, encodeURI(term + '%')));
 
         return this.http.get<CallanCustomer[]>(url)
             .pipe(

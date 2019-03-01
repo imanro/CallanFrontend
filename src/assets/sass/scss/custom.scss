@@ -25,6 +25,15 @@ ngb-accordion {
   padding: 0;
 }
 
+ngx-datatable {
+  .cell-actions {
+    cursor: pointer;
+  }
+
+  datatable-header-cell.sortable {
+    color: #009DA0;
+  }
+}
 
 ng2-smart-table {
 

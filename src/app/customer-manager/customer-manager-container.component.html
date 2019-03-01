@@ -14,10 +14,11 @@
                     </div>
                 </div>
 
-                <app-callan-customers-list [customers$]="customers$"
+                <app-callan-customers-list [customers]="customers"
+                                           [listRowsLimit]="listRowsLimit"
                                            (setCurrentCustomer)="handleSetCurrentCustomer($event)"
                                            (viewCustomer)="handleViewCustomer($event)"
-                                           *ngIf="view === viewNameEnum.LIST"></app-callan-customers-list>
+                                           *ngIf="view === viewNameEnum.LIST && customers"></app-callan-customers-list>
 
                     <app-callan-customer-view [customer]="operateCustomer"
                                               (navigateBack)="handleNavigateBack()"

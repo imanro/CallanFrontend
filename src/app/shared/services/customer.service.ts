@@ -41,9 +41,11 @@ export abstract class CallanCustomerService extends CallanBaseService {
     }
 
     static hasCustomerRole(customer: CallanCustomer, roleName: string) {
-        for (const role of customer.roles) {
-            if (role.name === roleName) {
-                return true;
+        if (customer) {
+            for (const role of customer.roles) {
+                if (role.name === roleName) {
+                    return true;
+                }
             }
         }
 

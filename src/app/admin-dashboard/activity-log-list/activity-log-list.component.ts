@@ -49,7 +49,6 @@ export class CallanActivityLogListComponent implements OnInit {
 
     initiatorFilterInput: FormControl;
 
-
     columns: any;
 
     previewContent: string;
@@ -220,19 +219,19 @@ export class CallanActivityLogListComponent implements OnInit {
     }
 
     private preparePreviewContent(kind, id): Observable<string> {
-            switch (kind) {
-                default:
-                    return new Observable<string>(observer => {
-                        observer.error('Unknown kind given');
-                        observer.complete();
-                    });
-                case(CallanActivityLogItemKindEnum.CUSTOMER):
-                    return this.preparePreviewCustomer(id);
-                case(CallanActivityLogItemKindEnum.LESSON_EVENT):
-                    return this.previewLessonEvent(id);
-                case(CallanActivityLogItemKindEnum.COURSE_PROGRESS):
-                    return this.previewCourseProgress(id);
-            }
+        switch (kind) {
+            default:
+                return new Observable<string>(observer => {
+                    observer.error('Unknown kind given');
+                    observer.complete();
+                });
+            case(CallanActivityLogItemKindEnum.CUSTOMER):
+                return this.preparePreviewCustomer(id);
+            case(CallanActivityLogItemKindEnum.LESSON_EVENT):
+                return this.previewLessonEvent(id);
+            case(CallanActivityLogItemKindEnum.COURSE_PROGRESS):
+                return this.previewCourseProgress(id);
+        }
     }
 
     private assignAffectedSearch() {
@@ -259,7 +258,6 @@ export class CallanActivityLogListComponent implements OnInit {
     }
 
     private assignInitiatorSearch() {
-
         this.initiatorSearch = (text$: Observable<string>) =>
             text$.pipe(
                 debounceTime(300),
@@ -294,7 +292,7 @@ export class CallanActivityLogListComponent implements OnInit {
 
                         const rolesInfo = [];
                         for (const role of customer.roles) {
-                            if (rolesInfo.indexOf(role.name) === -1){
+                            if (rolesInfo.indexOf(role.name) === -1) {
                                 rolesInfo.push(role.name);
                             }
                         }
