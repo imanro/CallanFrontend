@@ -15,6 +15,7 @@ import {AppConfig} from '../../app.config';
 import {CallanCourseStage} from '../models/course-stage.model';
 import {Subject} from 'rxjs';
 import {CallanCourseCompetence} from '../models/course-competence.model';
+import {AppDataFilter} from '../models/data-filter.model';
 
 
 @Injectable()

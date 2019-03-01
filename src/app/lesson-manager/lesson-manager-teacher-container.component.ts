@@ -339,7 +339,9 @@ export class CallanLessonManagerTeacherContainerComponent implements OnInit, OnD
                 // show in the calendar only this two types of lessons
                 if (
                     lessonEvent.state === CallanLessonEventStateEnum.PLANNED ||
-                    lessonEvent.state === CallanLessonEventStateEnum.STARTED
+                    lessonEvent.state === CallanLessonEventStateEnum.STARTED ||
+                    lessonEvent.state === CallanLessonEventStateEnum.COMPLETED ||
+                    lessonEvent.state === CallanLessonEventStateEnum.CONFIRMED
 
                 ) {
                     this.calendarEvents.push(CallanLessonService.convertLessonEventToCalendarEvent(lessonEvent, true));

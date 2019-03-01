@@ -4,14 +4,12 @@ import {
     Input,
     Output,
     EventEmitter,
-    OnDestroy,
     ViewChild,
     TemplateRef,
     OnChanges, SimpleChanges
 } from '@angular/core';
 import {CallanLessonEvent} from '../../shared/models/lesson-event.model';
 import {Observable, Subject} from 'rxjs';
-import {LocalDataSource} from 'ng2-smart-table';
 import {CallanLessonEventStateEnum} from '../../shared/enums/lesson-event.state.enum';
 import {CallanLessonService} from '../../shared/services/lesson.service';
 import {CallanCustomer} from '../../shared/models/customer.model';
@@ -69,7 +67,6 @@ export class CallanLessonEventsListComponent implements OnInit, OnChanges {
 
     constructor(
     ) {
-        this.source = new LocalDataSource();
         this.lessonEventStateEnum = CallanLessonEventStateEnum;
     }
 
