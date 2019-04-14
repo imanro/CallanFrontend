@@ -201,6 +201,7 @@ export class CallanLessonManagerStudentContainerComponent implements OnInit, OnD
             // take start time, increment by segment and check that this date is available
 
             modalRef.componentInstance.title = 'Confirm planning lesson';
+            modalRef.componentInstance.courseProgress = this.currentCourseProgress;
             modalRef.componentInstance.lessonEvent = lessonEvent;
 
             modalRef.componentInstance.durationChangeEvent.subscribe((duration) => {

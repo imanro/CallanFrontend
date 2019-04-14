@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
 import {CallanLessonEvent} from '../../shared/models/lesson-event.model';
@@ -53,7 +53,7 @@ import {timer as observableTimer} from 'rxjs';
 
     styles: ['.form-group { margin: 0; }']
 })
-export class AppModalContentLessonEventCreateComponent {
+export class AppModalContentLessonEventCreateComponent implements OnInit {
     @Input() title;
     @Input() body;
     @Input() lessonEvent: CallanLessonEvent;
@@ -67,21 +67,6 @@ export class AppModalContentLessonEventCreateComponent {
     private allButtons = {ok: true, cancel: true};
 
     constructor(public activeModal: NgbActiveModal) {
-
-        this.durationsList = CallanLessonEventDurationsEnum;
-
-        const durationKeys = Object.keys(CallanLessonEventDurationsEnum);
-        this.selectedDuration = durationKeys[1];
-
-        // it wont work in other way :(
-        observableTimer(100).subscribe(() => {
-            console.log('exposing');
-            this.durationChangeEvent.next(Number(durationKeys[1].replace(/[^\d]/, '')));
-        });
-
-
-        // this.durationsList = {a: 'b', c: 'd'};
-
         if (!this.buttons) {
             this.buttons = this.allButtons;
         } else {
@@ -93,12 +78,63 @@ export class AppModalContentLessonEventCreateComponent {
         }
     }
 
+    ngOnInit() {
+        if (this.lessonEvent) {
+            this.durationsList = this.createDurationList();
+        } else {
+            this.durationsList = CallanLessonEventDurationsEnum;
+        }
+
+        const defaultDuration = CallanLessonEventDurationsEnum['60m'];
+
+        for (const key in this.durationsList) {
+            if (this.durationsList.hasOwnProperty(key)) {
+
+                if (this.durationsList[key] === defaultDuration) {
+                    this.selectedDuration = key;
+                    break;
+                }
+            }
+        }
+
+        if (!this.selectedDuration) {
+            const durationKeys = Object.keys(this.durationsList);
+            if (durationKeys.length > 0) {
+                this.selectedDuration = durationKeys[0];
+            }
+        }
+
+        console.log('exposing', this.selectedDuration);
+        this.durationChangeEvent.next(this.durationEnumKeyIntoNumber(this.selectedDuration));
+
+    }
+
+    private createDurationList() {
+        const allDurations = CallanLessonEventDurationsEnum;
+        const selectedDurations = {};
+
+        for (const key in allDurations) {
+            if (allDurations.hasOwnProperty(key)) {
+                const duration = this.durationEnumKeyIntoNumber(key);
+
+                if (this.lessonEvent.courseProgress.minutesBalance >= duration) {
+                    selectedDurations[key] = allDurations[key];
+                }
+            }
+        }
+        return selectedDurations;
+    }
+
     formatDate(date: Date) {
-        return moment(date).format('D.MM.YYYY h:mm A')
+        return moment(date).format('D.MM.YYYY h:mm A');
     }
 
     handleDurationChange(duration) {
-        this.durationChangeEvent.next(Number(duration.replace(/[^\d]/, '')));
-        this.lessonEvent.duration = Number(duration.replace(/[^\d]/, ''));
+        this.durationChangeEvent.next(this.durationEnumKeyIntoNumber(duration));
+        this.lessonEvent.duration = this.durationEnumKeyIntoNumber(duration);
+    }
+
+    private durationEnumKeyIntoNumber(key) {
+        return Number(key.replace(/[^\d]/, ''));
     }
 }
