@@ -45,7 +45,7 @@ const courseProgressData = [
         course: courseCallan,
         lastLessonEvent: lastLessonEvent1,
         completedLessonEventsCount: 2,
-        lessonEventsBalance: 1
+        minutesBalance: 60
     },
     {
         id: 2,
@@ -53,14 +53,14 @@ const courseProgressData = [
         course: courseCallan,
         lastLessonEvent: lastLessonEvent2,
         completedLessonEventsCount: 34,
-        lessonEventsBalance: 2
+        minutesBalance: 120
     },
     {
         id: 3,
         customer: customer2,
         course: courseBusinessEnglish,
         completedLessonEventsCount: 19,
-        lessonEventsBalance: 0
+        minutesBalance: 0
     }
 ];
 

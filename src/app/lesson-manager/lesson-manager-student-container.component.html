@@ -22,12 +22,12 @@
                     <app-callan-courses-list
                             [courseProgresses]="courseProgresses"
                             [isLessonEventsCreateButtonShown]="isLessonEventsCreateButtonShown"
-                            [isTopUpLessonEventsBalanceButtonShown]="isTopUpLessonEventsBalanceButtonShown"
+                            [isTopUpBalanceButtonShown]="isTopUpBalanceButtonShown"
                             [currentCourseProgress]="currentCourseProgress"
                             [completedLessonEvents]="completedLessonEvents"
                             (courseSelectEvent)="handleSelectCourseProgress($event)"
                             (lessonEventCreateEvent)="handleLessonEventCreate($event)"
-                            (topUpLessonEventsBalanceEvent)="handleLessonEventsBalanceShown($event)"
+                            (topUpBalanceEvent)="handleBalanceShown($event)"
                             *ngIf="view === viewNameEnum.DASHBOARD"
                     ></app-callan-courses-list>
 
@@ -53,13 +53,13 @@
                             *ngIf="view === viewNameEnum.CUSTOMER_COURSE_ADD"
                     ></app-callan-customer-course-add>
 
-                    <app-lesson-events-balance-details
+                    <app-balance-details
                             [courseProgress]="currentCourseProgress"
                             [formErrors$]="formErrors$"
-                            (cancelEvent)="handleLessonEventsBalanceDetailsCancel()"
-                            (lessonEventsBalanceSaveEvent)="handleLessonEventsBalanceSave($event)"
+                            (cancelEvent)="handleBalanceDetailsCancel()"
+                            (balanceSaveEvent)="handleBalanceSave($event)"
                             *ngIf="view === viewNameEnum.BALANCE_DETAILS"
-                    ></app-lesson-events-balance-details>
+                    ></app-balance-details>
 
                     <app-callan-lesson-events-student-calendar
                             [calendarEvents]="calendarEvents"

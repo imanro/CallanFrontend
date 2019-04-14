@@ -451,7 +451,7 @@ export class CallanLessonApiService extends CallanLessonService {
     mapDataToCourseProgress(courseProgress: CallanCourseProgress, row: any, isRelationsMandatory = true): void {
         courseProgress.id = row.id;
         courseProgress.completedLessonEventsCount = Number(row.completedLessonEventsCount);
-        courseProgress.lessonEventsBalance = Number(row.lessonEventsBalance);
+        courseProgress.minutesBalance = Number(row.minutesBalance);
 
         if (row.Customer) {
             const customer = CallanCustomerService.createCustomer();
@@ -488,8 +488,8 @@ export class CallanLessonApiService extends CallanLessonService {
             data.id = progress.id;
         }
 
-        if (progress.lessonEventsBalance !== undefined) {
-            data.lessonEventsBalance = progress.lessonEventsBalance;
+        if (progress.minutesBalance !== undefined) {
+            data.minutesBalance = progress.minutesBalance;
         }
 
         data.customerId = progress.customer.id;

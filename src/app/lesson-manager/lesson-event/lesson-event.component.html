@@ -36,8 +36,12 @@
                             </div>
                             <div class="col-sm-3 meta-info">
                                 <div class="row">
-                                    <i class="ft-clock font-medium-3"></i>
+                                    <i class="ft-calendar font-medium-3"></i>
                                     <span>{{lessonEvent.startTime|date: 'short'}}</span>
+                                </div>
+                                <div class="row">
+                                    <i class="ft-clock font-medium-3"></i>
+                                    <span>{{lessonEvent.duration}} min.</span>
                                 </div>
                                 <div class="row">
                                     <i class="{{getStateClass(lessonEvent.state)}} {{getStateIcon(lessonEvent.state)}}"></i>
@@ -66,8 +70,12 @@
                                 </div>
                                 <div class="col-sm-3 meta-info">
                                     <div class="row">
-                                        <i class="ft-clock font-medium-3"></i>
+                                        <i class="ft-calendar font-medium-3"></i>
                                         <span>{{lessonEvent.startTime|date: 'short'}}</span>
+                                    </div>
+                                    <div class="row">
+                                        <i class="ft-clock font-medium-3"></i>
+                                        <span>{{lessonEvent.duration}} min.</span>
                                     </div>
                                     <div class="row">
                                         <i class="{{getStateClass(lessonEvent.state)}} {{getStateIcon(lessonEvent.state)}}"></i>

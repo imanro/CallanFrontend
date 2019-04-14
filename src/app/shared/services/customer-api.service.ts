@@ -182,9 +182,11 @@ export class CallanCustomerApiService extends CallanCustomerService {
 
                     const results = [];
                     for (const row of rows) {
-                        const item = CallanCustomerService.createGeneralEvent();
-                        this.mapDataToGeneralEvent(item, row);
-                        results.push(item);
+                        if (row.startTime && row.endTime) {
+                            const item = CallanCustomerService.createGeneralEvent();
+                            this.mapDataToGeneralEvent(item, row);
+                            results.push(item);
+                        }
                     }
 
                     return results;

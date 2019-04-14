@@ -8,13 +8,14 @@ import * as _ from 'lodash';
 import {takeUntil} from 'rxjs/operators';
 import {AppFormErrors} from '../../shared/models/form-errors.model';
 import {CallanFormHelper} from '../../shared/helpers/form-helper';
+import {CallanDateService} from '../../shared/services/date.service';
 
 @Component({
-    selector: 'app-lesson-events-balance-details',
-    templateUrl: './lesson-events-balance-details.component.html',
-    styleUrls: ['./lesson-events-balance-details.component.scss']
+    selector: 'app-balance-details',
+    templateUrl: './balance-details.component.html',
+    styleUrls: ['./balance-details.component.scss']
 })
-export class CallanLessonEventsBalanceDetailsComponent implements OnInit, OnDestroy
+export class CallanBalanceDetailsComponent implements OnInit, OnDestroy
 {
     @Input() courseProgress: CallanCourseProgress;
 
@@ -22,9 +23,9 @@ export class CallanLessonEventsBalanceDetailsComponent implements OnInit, OnDest
 
     @Output() cancelEvent = new EventEmitter<void>();
 
-    @Output() lessonEventsBalanceSaveEvent = new EventEmitter<CallanCourseProgress>();
+    @Output() balanceSaveEvent = new EventEmitter<CallanCourseProgress>();
 
-    lessonEventsBalanceForm: FormGroup;
+    balanceForm: FormGroup;
 
     commonFormErrors = [];
 
@@ -47,13 +48,13 @@ export class CallanLessonEventsBalanceDetailsComponent implements OnInit, OnDest
                 if (formErrors) {
                     console.log('Errors received');
 
-                    const unmapped = CallanFormHelper.bindErrors(formErrors, this.lessonEventsBalanceForm);
+                    const unmapped = CallanFormHelper.bindErrors(formErrors, this.balanceForm);
                     console.log('unmapped:', unmapped);
 
                     if (unmapped.length > 0) {
                         this.commonFormErrors = [];
                         this.commonFormErrors = this.commonFormErrors.concat(unmapped);
-                        console.log('common Form errors now', this.lessonEventsBalanceForm);
+                        console.log('common Form errors now', this.balanceForm);
                     }
                 }
             });
@@ -67,19 +68,22 @@ export class CallanLessonEventsBalanceDetailsComponent implements OnInit, OnDest
     }
 
     private setFormValues() {
-            this.lessonEventsBalanceForm.patchValue({'lessonEventsBalance': this.courseProgress.lessonEventsBalance});
+        this.balanceForm.patchValue({'hoursBalance': CallanDateService.getHoursPartOfHourlyConvertedMinutes(this.courseProgress.minutesBalance)});
+        this.balanceForm.patchValue({'minutesBalance': CallanDateService.getMinutesPartOfHourlyConvertedMinutes(this.courseProgress.minutesBalance)});
     }
 
     private buildForm() {
-        this.lessonEventsBalanceForm = this.fb.group({
-            lessonEventsBalance: ['', Validators.required],
+        this.balanceForm = this.fb.group({
+            hoursBalance: ['', Validators.required],
+            minutesBalance: [''],
         });
     }
 
     private prepareCourseProgressSave() {
         const courseProgressSave = _.cloneDeep(this.courseProgress);
-        const formModel = this.lessonEventsBalanceForm.value;
-        courseProgressSave.lessonEventsBalance = formModel.lessonEventsBalance;
+        const formModel = this.balanceForm.value;
+        courseProgressSave.minutesBalance = CallanDateService.convertHoursMinutesToMinutes(formModel.hoursBalance, formModel.minutesBalance);
+        console.log('obtained value', courseProgressSave.minutesBalance);
         return courseProgressSave;
     }
 
@@ -88,9 +92,9 @@ export class CallanLessonEventsBalanceDetailsComponent implements OnInit, OnDest
         this.cancelEvent.next();
     }
 
-    handleLessonEventsBalanceSave() {
+    handleMinutesBalanceSave() {
         const courseProgressSave = this.prepareCourseProgressSave();
-        this.lessonEventsBalanceSaveEvent.next(courseProgressSave);
+        this.balanceSaveEvent.next(courseProgressSave);
     }
 
 }

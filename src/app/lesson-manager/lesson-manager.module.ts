@@ -17,8 +17,10 @@ import {CallanLessonEventsTeacherCalendarComponent} from './lesson-events-teache
 import {CallanLessonEventComponent} from './lesson-event/lesson-event.component';
 import {CallanLessonEventsListComponent} from './lesson-events-list/lesson-events-list.component';
 import {CallanCustomerCourseAddComponent} from './customer-course-add/customer-course-add.component';
-import {CallanLessonEventsBalanceDetailsComponent} from './lesson-events-balance-details/lesson-events-balance-details.component';
+import {CallanBalanceDetailsComponent} from './balance-details/balance-details.component';
 import {AppModalContentModule} from '../shared-modules/modal-content/modal-content.module';
+import {AppModalContentLessonEventCreate} from '../shared-modules/modal-content-lesson-event-create/modal-content-lesson-event-create.module';
+import {AppModalContentLessonEventCreateComponent} from '../shared-modules/modal-content-lesson-event-create/modal-content-lesson-event-create.component';
 import {AppModalContentComponent} from '../shared-modules/modal-content/modal-content.component';
 import {AppModalContentFeedbackModule} from '../shared-modules/modal-content-feedback/modal-content-feedback.module';
 import {AppModalContentFeedbackComponent} from '../shared-modules/modal-content-feedback/modal-content-feedback.component';
@@ -40,7 +42,7 @@ import {FlexLayoutModule} from '@angular/flex-layout';
         CallanLessonEventComponent,
         CallanLessonEventsListComponent,
         CallanCustomerCourseAddComponent,
-        CallanLessonEventsBalanceDetailsComponent,
+        CallanBalanceDetailsComponent,
         CallanCourseCompetencesForCustomerListComponent,
         CallanCourseSpecialityAddComponent,
         CallanCourseCompetencesForCourseListComponent
@@ -56,10 +58,11 @@ import {FlexLayoutModule} from '@angular/flex-layout';
         CallanCustomerHeaderModule,
         CallanNavTabsModule,
         AppModalContentModule,
+        AppModalContentLessonEventCreate,
         AppModalContentFeedbackModule,
         FlexLayoutModule
     ],
-    entryComponents: [AppModalContentComponent, AppModalContentFeedbackComponent],
+    entryComponents: [AppModalContentComponent, AppModalContentFeedbackComponent, AppModalContentLessonEventCreateComponent],
 })
 export class CallanLessonManagerModule {
 }

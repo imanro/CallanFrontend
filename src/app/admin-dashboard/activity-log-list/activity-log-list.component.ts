@@ -11,6 +11,7 @@ import {CallanLessonService} from '../../shared/services/lesson.service';
 import {CallanCourseProgress} from '../../shared/models/course-progress.model';
 import {CallanLessonEvent} from '../../shared/models/lesson-event.model';
 import {formatDate} from '@angular/common';
+import {CallanDateService} from '../../shared/services/date.service';
 
 @Component({
     selector: 'app-activity-log-list',
@@ -321,10 +322,16 @@ export class CallanActivityLogListComponent implements OnInit {
     }
 
     private previewCourseProgress(id): Observable<string> {
+
+
         return this.lessonService.getCourseProgress(id)
             .pipe(
                 map<CallanCourseProgress, string>(progress => {
                     if (progress) {
+
+                        const studentName = progress.customer? progress.customer.getFullName() : '';
+
+                        const formattedMinutesBalance = CallanDateService.formatMinutesAsHoursString(progress.minutesBalance);
                         return `
 <h5>Course</h5>
 <dl>
@@ -332,8 +339,12 @@ export class CallanActivityLogListComponent implements OnInit {
 <dd>${progress.course.title}</dd>
 </dl>
 <dl>
+<dt>Student</dt>
+<dd>${studentName}</dd>
+</dl>
+<dl>
 <dt>Current ballance</dt>
-<dd>${progress.lessonEventsBalance}</dd>
+<dd>${formattedMinutesBalance}</dd>
 </dl>
 
 `;
@@ -381,6 +392,11 @@ export class CallanActivityLogListComponent implements OnInit {
 <dt>Date</dt>
 <dd>${date}</dd>
 </dl>
+<dl>
+<dt>Duration</dt>
+<dd>${lessonEvent.duration} min.</dd>
+</dl>
+
 ${teacherRow}
 <dl>
 <dt>Current state</dt>

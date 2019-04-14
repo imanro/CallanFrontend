@@ -13,7 +13,7 @@ export class CallanCoursesListComponent implements OnInit {
 
     @Input() currentCourseProgress: CallanCourseProgress;
 
-    @Input() isTopUpLessonEventsBalanceButtonShown;
+    @Input() isTopUpBalanceButtonShown;
 
     @Input() isLessonEventsCreateButtonShown;
 
@@ -21,7 +21,7 @@ export class CallanCoursesListComponent implements OnInit {
 
     @Output() courseSelectEvent = new EventEmitter<CallanCourseProgress>();
 
-    @Output() topUpLessonEventsBalanceEvent = new EventEmitter<void>();
+    @Output() topUpBalanceEvent = new EventEmitter<void>();
 
     @Output() lessonEventCreateEvent = new EventEmitter<CallanCourseProgress>();
 
@@ -56,7 +56,7 @@ export class CallanCoursesListComponent implements OnInit {
         this.lessonEventCreateEvent.next();
     }
 
-    handleTopUpLessonEventsBalance($event) {
-        this.topUpLessonEventsBalanceEvent.next($event);
+    handleTopUpBalance($event) {
+        this.topUpBalanceEvent.next($event);
     }
 }
