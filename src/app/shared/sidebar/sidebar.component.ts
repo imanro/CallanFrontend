@@ -10,6 +10,8 @@ import {environment} from '../../../environments/environment';
 import {AppEnvironmentNameEnum} from '../enums/environment.name.enum';
 import {AppConfig} from '../../app.config';
 import {CallanCustomer} from '../models/customer.model';
+import {RouteInfo} from './sidebar.metadata';
+import * as _ from 'lodash';
 
 declare var $: any;
 
@@ -26,6 +28,8 @@ export class SidebarComponent implements OnInit {
     appVersion: string;
     currentCustomer: CallanCustomer;
 
+    private ROUTES_HOLD: RouteInfo[] = [];
+
     constructor(
         private router: Router,
         private route: ActivatedRoute,
@@ -40,6 +44,8 @@ export class SidebarComponent implements OnInit {
     }
 
     ngOnInit() {
+
+        this.ROUTES_HOLD = _.cloneDeep(ROUTES);
         $.getScript('./assets/js/app-sidebar.js');
 
         this.customerService.getCurrentCustomer().subscribe(() => {
@@ -68,10 +74,9 @@ export class SidebarComponent implements OnInit {
                     checkCustomer = authCustomer;
                 }
 
-                if (CallanCustomerService.hasCustomerRole(authCustomer, CallanRoleNameEnum.ADMIN)) {
+                if (CallanCustomerService.hasCustomerRole(checkCustomer, CallanRoleNameEnum.ADMIN)) {
                     // admin-specific (auth user check)
                     choosenRoutes.push(...['/customers', '/admin-dashboard']);
-                    routeTitleReplacement = {'/lessons/student': 'Student Lessons', '/lessons/teacher': 'Teacher Lessons'}
                 }
 
                 if (CallanCustomerService.hasCustomerRole(checkCustomer, CallanRoleNameEnum.STUDENT)) {
@@ -82,26 +87,40 @@ export class SidebarComponent implements OnInit {
                     choosenRoutes.push(...['/lessons/teacher', '/schedule']);
                 }
 
+                // if customer has both roles
+                if (CallanCustomerService.hasCustomerRole(checkCustomer, CallanRoleNameEnum.STUDENT) && CallanCustomerService.hasCustomerRole(checkCustomer, CallanRoleNameEnum.TEACHER)) {
+                    console.log('this case!!');
+                    routeTitleReplacement = {
+                        '/lessons/student': 'Student Lessons',
+                        '/lessons/teacher': 'Teacher Lessons'
+                    }
+                }
+
 
                 if (CallanCustomerService.hasCustomerRole(checkCustomer, CallanRoleNameEnum.SUPPORT)) {
                     choosenRoutes.push(...['/claims']);
                 }
 
                 for (const name of choosenRoutes) {
-                    for (const route of ROUTES) {
+                    for (const i in ROUTES) {
 
-                        if (name === route.path) {
+                        if (ROUTES.hasOwnProperty(i)) {
+                            const route = ROUTES[i];
+                            const route_hold = this.ROUTES_HOLD[i];
 
-                            if (routeTitleReplacement[name] !== undefined) {
-                                route.title = routeTitleReplacement[name];
+                            if (name === route.path) {
+
+                                if (routeTitleReplacement[name] !== undefined) {
+                                    route.title = routeTitleReplacement[name];
+                                } else {
+                                    route.title = route_hold.title;
+                                }
+
+                                this.menuItems.push(route);
                             }
-
-                            this.menuItems.push(route);
                         }
                     }
                 }
-
-                console.log('customer received');
             });
         });
 

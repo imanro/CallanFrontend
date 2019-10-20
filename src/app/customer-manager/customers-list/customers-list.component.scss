@@ -1,3 +1,9 @@
+:host /deep/ ngx-datatable {
+  datatable-body-row {
+    cursor: pointer;
+  }
+}
+
 :host /deep/ ng2-smart-table {
   table-cell-view-mode {
     cursor: pointer;

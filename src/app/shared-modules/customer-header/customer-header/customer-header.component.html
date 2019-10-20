@@ -1,0 +1,5 @@
+<div class="customer-header-row-big" [style.display]="isInline ? 'inline' : 'block'" *ngIf="customer">
+  <!--To avoid sanitation, use [style.prop] syntax -->
+  <div class="customer-avatar-cont rounded-circle mr-1" [style.background]="customerAvatarColorSet(customer)['bg']" [style.color]="customerAvatarColorSet(customer)['fg']">{{customerAvatarInitials(customer)}}</div>
+  <h4 class="customer-name">{{customer.getFullName()}}</h4>
+</div>

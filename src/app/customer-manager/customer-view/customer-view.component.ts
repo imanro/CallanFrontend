@@ -1,6 +1,8 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output, Sanitizer, SecurityContext} from '@angular/core';
 import {CallanCustomer} from '../../shared/models/customer.model';
 import * as _ from 'lodash';
+import {CallanCustomerService} from '../../shared/services/customer.service';
+import {CallanUiService} from '../../shared/services/ui.service';
 
 @Component({
     selector: 'app-callan-customer-view',
@@ -21,7 +23,9 @@ export class CustomerViewComponent implements OnInit {
 
     @Output() editCustomer = new EventEmitter<CallanCustomer>();
 
-    constructor() {
+    constructor(
+        private sanitizer: Sanitizer
+    ) {
     }
 
     ngOnInit() {
@@ -60,5 +64,13 @@ export class CustomerViewComponent implements OnInit {
 
     handleEditCustomer(customer: CallanCustomer) {
         this.editCustomer.next(customer);
+    }
+
+    customerAvatarInitials(customer: CallanCustomer) {
+        return CallanCustomerService.getCustomerAvatarInitials(customer);
+    }
+
+     customerAvatarColorSet(customer: CallanCustomer) {
+        return CallanUiService.getCustomerAvatarsColors(customer);
     }
 }

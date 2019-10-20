@@ -11,8 +11,11 @@
     margin-bottom: 0;
   }
 
-  dd.lesson-count-value {
-    font-size: 48px;
-    line-height: 48px;
+  dd.balance-value {
+
+    .value, .spacer {
+      font-size: 48px;
+      line-height: 48px;
+    }
   }
 }

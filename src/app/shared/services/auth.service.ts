@@ -16,7 +16,7 @@ export abstract class CallanAuthService extends CallanBaseService {
         }
     }
 
-    public getAuthToken(): string {
+    getAuthToken(): string {
 
         const authData = this.getAuthDataFromStorage();
 

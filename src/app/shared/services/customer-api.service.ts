@@ -13,6 +13,7 @@ import {AppError} from '../models/error.model';
 import {CallanAuthService} from './auth.service';
 import {CallanTimezone} from '../models/timezone.model';
 import {CallanDateService} from './date.service';
+import {CallanGeneralEvent} from '../models/general-event.model';
 
 @Injectable()
 export class CallanCustomerApiService extends CallanCustomerService {
@@ -48,8 +49,8 @@ export class CallanCustomerApiService extends CallanCustomerService {
     }
 
     findCustomers(term: string): Observable<CallanCustomer[]> {
-        const filter = {include: ['roles', 'Timezone'], where: {email: {like: '___'}}};
-        const url = this.getApiUrl('/Customers?filter=' + JSON.stringify(filter).replace('___', encodeURI(term + '%')));
+        const filter = {include: ['roles', 'Timezone'], where: {or: [{email: {like: '___'}}, {lastName: {like: '___'}}]}};
+        const url = this.getApiUrl('/Customers?filter=' + JSON.stringify(filter).replace(/___/g, encodeURI(term + '%')));
 
         return this.http.get<CallanCustomer[]>(url)
             .pipe(
@@ -157,6 +158,40 @@ export class CallanCustomerApiService extends CallanCustomerService {
                     }
                 }),
                 catchError(this.handleHttpError<boolean>())
+            );
+    }
+
+    getGoogleCalendarEvents(customer: CallanCustomer, startDate: Date, endDate: Date, isIncludeEventTitles = false): Observable<CallanGeneralEvent[]> {
+
+        console.log('Checking Google Auth');
+
+        const params: any = {};
+
+        params.customerId = customer.id;
+        params.startDate = startDate.toISOString();
+        params.endDate = endDate.toISOString();
+        params.isIncludeEventTitles =
+        params.isIncludeEventTitles = isIncludeEventTitles;
+
+        const url = this.getApiUrl('/Customers/getGoogleCalendarEvents') + '?' + this.buildQueryString(params);
+
+        return this.http.get(url)
+            .pipe(
+                map<any, CallanGeneralEvent[]>(rows => {
+                    console.log(rows, 'obtained');
+
+                    const results = [];
+                    for (const row of rows) {
+                        if (row.startTime && row.endTime) {
+                            const item = CallanCustomerService.createGeneralEvent();
+                            this.mapDataToGeneralEvent(item, row);
+                            results.push(item);
+                        }
+                    }
+
+                    return results;
+                }),
+                catchError(this.handleHttpError<CallanGeneralEvent[]>())
             );
     }
 
@@ -303,5 +338,11 @@ export class CallanCustomerApiService extends CallanCustomerService {
         data.id = role.id;
         data.name = role.name;
         return data;
+    }
+
+    mapDataToGeneralEvent(generalEvent: CallanGeneralEvent, row: any): void {
+        generalEvent.title = row.title;
+        generalEvent.startTime = new Date(row.startTime);
+        generalEvent.endTime = new Date(row.endTime);
     }
 }

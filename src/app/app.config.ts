@@ -12,6 +12,7 @@ export interface IAppConfig {
     nearestLessonEventRemainingMinutesCheckIntervalMs: number;
     nearestLessonEventCheckIntervalMs: number;
     scheduleMinuteStep: number;
+    listRowsLimit: number;
 }
 
 @Injectable()
@@ -34,6 +35,8 @@ export class AppConfig implements IAppConfig {
     lessonEventAllowStartOffsetMinutes = 5;
 
     scheduleMinuteStep = 15;
+
+    listRowsLimit = 10;
 
     constructor(
         private http: HttpClient

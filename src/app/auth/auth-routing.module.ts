@@ -17,6 +17,13 @@ const routes: Routes = [
             title: 'Auth'
         },
     },
+    {
+        path: 'logout',
+        component: CallanAuthContainerComponent,
+        data: {
+            title: 'Auth'
+        },
+    },
 ];
 
 @NgModule({

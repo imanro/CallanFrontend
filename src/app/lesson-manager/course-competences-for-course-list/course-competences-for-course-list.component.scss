@@ -4,6 +4,16 @@
       border: none;
       margin-bottom: 0;
       border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+
+      .button-container {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+
+        button {
+          margin: 0;
+        }
+      }
     }
 
     .list-group-item:last-child {

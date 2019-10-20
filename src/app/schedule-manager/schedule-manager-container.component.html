@@ -3,7 +3,16 @@
     <div class="content-wrapper">
       <div class="container-fluid">
         <section>
-        <div class="row" *ngIf="view === viewNameEnum.DASHBOARD && currentCustomer">
+
+          <app-callan-nav-tabs
+                  [tabs]="tabs"
+                  [activeTab]="tabSelected"
+                  (tabSelected)="handleTabSelected($event)"
+                  [icon]="'assets/img/elements/test.svg'"
+                  [iconOffset]="{top: '-122px', right: '18px', bottom: '0', left: 0}"
+          ></app-callan-nav-tabs>
+
+          <div class="row" *ngIf="view === viewNameEnum.DASHBOARD && currentCustomer">
           <div class="col-sm-12">
             <a class="btn mb-0 btn-raised gradient-summer white" href="javascript:void(0)" (click)="handleShowScheduleRangeDetails()">Add a new time range</a>
           </div>
@@ -29,7 +38,7 @@
                 [scheduleMinuteStep]="scheduleMinuteStep"
                 [refresh$]="refresh$"
                 (setCurrentDateEvent)="handleSetCurrentDate($event)"
-                *ngIf="view === viewNameEnum.DASHBOARD && currentCustomer && currentDate"
+                *ngIf="view === viewNameEnum.CALENDAR && currentCustomer && currentDate"
         ></app-callan-schedule-range-calendar>
         </section>
       </div>

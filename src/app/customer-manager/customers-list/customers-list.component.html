@@ -1,3 +1,19 @@
+<ng-template #columnNameTpl let-row="row">
+    {{row.getFullName()}}
+</ng-template>
+
+<ng-template #columnRolesTpl  let-row="row">
+    {{formatRoles(row.roles)}}
+</ng-template>
+
+<ng-template #columnActionsTpl  let-row="row">
+    <i class="ft-user-check success font-medium-1 mr-2" title="Set user for on-behave" (click)="handleSetCurrentCustomer(row)"></i>
+    <i class="ft-eye info font-medium-1 mr-2" title="View customer" (click)="handleViewCustomer(row)"></i>
+</ng-template>
+
+
+
+
 <div class="row">
     <div class="col-sm-12">
         <div class="content-header">Customers</div>
@@ -9,8 +25,18 @@
         <div class="card">
             <div class="card-body">
                 <div class="card-block pt-4">
-                    <ng2-smart-table [settings]="settings" [source]="source"
-                                     (custom)="handleCustomAction($event)" (userRowSelect)="handleRowSelect($event)"></ng2-smart-table>
+                    <ngx-datatable #table
+                                   class='bootstrap'
+                                   [columns]="columns"
+                                   [headerHeight]="50"
+                                   [footerHeight]="50"
+                                   [columnMode]="'flex'"
+                                   [rowHeight]="'auto'"
+                                   [limit]="listRowsLimit"
+                                   [rows]="customers"
+                                   (activate)="handleRowActivate($event)"
+                    >
+                    </ngx-datatable>
                 </div>
             </div>
         </div>

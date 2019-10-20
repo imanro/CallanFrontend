@@ -37,8 +37,9 @@
                   <app-callan-course-competences-for-course-list
                           [courseCompetences]="courseCompetences"
                           (selectCourseCompetenceEvent)="handleSelectCourseCompetence($event)"
-                          *ngIf="toNumber(courseAddForm.get('course').value.teacherChoice) === courseTeacherChoiceEnum.MANUAL && courseCompetences && courseCompetences.length > 0"
+                          *ngIf="toNumber(courseAddForm.get('course').value.teacherChoice) === courseTeacherChoiceEnum.MANUAL && courseCompetences && courseCompetences.length > 0;"
                   ></app-callan-course-competences-for-course-list>
+                  <div class="mt-2 text-" *ngIf="toNumber(courseAddForm.get('course').value.teacherChoice) === courseTeacherChoiceEnum.MANUAL && (!courseCompetences || courseCompetences.length === 0)">This Course currently don't has any teacher</div>
                 </div>
               </div>
 
@@ -47,7 +48,7 @@
               </ul>
 
               <div class="form-actions">
-                <button type="button" class="btn btn-raised btn-warning mr-1" (click)="handleCancel()">
+                <button type="button" class="btn btn-raised btn-secondary mr-1" (click)="handleCancel()">
                   Cancel
                 </button>
 

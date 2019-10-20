@@ -3,6 +3,7 @@ import {CallanLessonEvent} from '../../shared/models/lesson-event.model';
 import {CallanLessonEventStateEnum} from '../../shared/enums/lesson-event.state.enum';
 import {CallanLessonService} from '../../shared/services/lesson.service';
 import {CallanLessonEventViewEnum} from '../../shared/enums/lesson-event.view.enum';
+import {CallanCustomer} from '../../shared/models/customer.model';
 
 @Component({
     selector: 'app-callan-lesson-event',
@@ -19,6 +20,8 @@ export class CallanLessonEventComponent implements OnInit {
 
     @Output() lessonEventConfirmEvent = new EventEmitter<CallanLessonEvent>();
 
+    @Output() getStudentDetails = new EventEmitter<CallanCustomer>();
+
     lessonEventStateEnum: any;
 
     viewNameEnum: any;
@@ -33,6 +36,10 @@ export class CallanLessonEventComponent implements OnInit {
 
     handleLessonEventConfirm($e) {
         this.lessonEventConfirmEvent.next($e);
+    }
+
+    handleGetStudentDetails(student: CallanCustomer) {
+        this.getStudentDetails.next(student);
     }
 
     ngOnInit() {

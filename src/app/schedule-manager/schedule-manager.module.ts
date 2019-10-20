@@ -14,6 +14,7 @@ import {AppModalContentComponent} from '../shared-modules/modal-content/modal-co
 import { CallanScheduleRangeCalendarComponent } from './schedule-range-calendar/schedule-range-calendar.component';
 import {CalendarModule} from 'angular-calendar';
 import {CalendarWeekHoursViewModule} from '@imanro/angular-calendar-week-hours-view';
+import {CallanNavTabsModule} from '../shared-modules/nav-tabs/nav-tabs.module';
 
 @NgModule({
     imports: [
@@ -25,7 +26,8 @@ import {CalendarWeekHoursViewModule} from '@imanro/angular-calendar-week-hours-v
         NgbModalModule,
         AppModalContentModule,
         CalendarModule,
-        CalendarWeekHoursViewModule
+        CalendarWeekHoursViewModule,
+        CallanNavTabsModule
     ],
     declarations: [
         CallanScheduleManagerContainerComponent,

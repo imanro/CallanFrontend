@@ -15,6 +15,7 @@ import {AppConfig} from '../../app.config';
 import {CallanCourseStage} from '../models/course-stage.model';
 import {Subject} from 'rxjs';
 import {CallanCourseCompetence} from '../models/course-competence.model';
+import {AppDataFilter} from '../models/data-filter.model';
 
 
 @Injectable()
@@ -56,7 +57,7 @@ export abstract class CallanLessonService extends CallanBaseService {
         lessonEvent.state = CallanLessonEventStateEnum.PLANNED;
     }
 
-    static convertLessonEventToCalendarEvent(lessonEvent: CallanLessonEvent): CalendarEvent {
+    static convertLessonEventToCalendarEvent(lessonEvent: CallanLessonEvent, isStudentInfo?: boolean, isTeacherInfo?: boolean): CalendarEvent {
 
         const endMinutes = lessonEvent.duration % 60;
         const endHours = Math.floor(lessonEvent.duration / 60);
@@ -66,7 +67,15 @@ export abstract class CallanLessonService extends CallanBaseService {
         endDate.setMinutes(lessonEvent.startTime.getMinutes() + endMinutes);
 
         const subTitle = lessonEvent.courseProgress ? lessonEvent.courseProgress.course.title : '';
-        const title = lessonEvent.title ? (subTitle ? lessonEvent.title + '(' + subTitle + ')' : '') : subTitle;
+        let title = lessonEvent.title ? (subTitle ? lessonEvent.title + '(' + subTitle + ')' : '') : subTitle;
+
+        if (isStudentInfo) {
+            title += lessonEvent.student ? '<br/>Student: ' + lessonEvent.student.getFullName() : '';
+        }
+
+        if (isTeacherInfo) {
+            title += lessonEvent.teacher ? '<br/>Teacher: ' + lessonEvent.teacher.getFullName() : '';
+        }
 
         return {
             start: lessonEvent.startTime,
@@ -76,7 +85,8 @@ export abstract class CallanLessonService extends CallanBaseService {
                 primary: '#ad2121',
                 secondary:
                     '#FAE3E3'
-            }
+            },
+            meta: lessonEvent
         };
     }
 
@@ -104,6 +114,8 @@ export abstract class CallanLessonService extends CallanBaseService {
     abstract getLessonEventsByStudent(student: CallanCustomer): Observable<CallanLessonEvent[]>;
 
     abstract getLessonEventsByTeacher(teacher: CallanCustomer): Observable<CallanLessonEvent[]>;
+
+    abstract findLessonEvents(dataFilter: AppDataFilter): Observable<CallanLessonEvent[]>;
 
     abstract getLessonEvent(id: number): Observable<CallanLessonEvent>;
 

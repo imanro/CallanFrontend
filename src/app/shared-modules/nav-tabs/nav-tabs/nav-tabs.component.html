@@ -1,0 +1,18 @@
+<div class="row">
+  <div class="col-sm-12">
+    <div class="card">
+      <div class="card-body pb-1" >
+
+        <div class="nav-row" fxLayout="column" fxLayout.gt-xs="row" fxLayoutAlign="center start">
+          <div fxFlex="1 1 auto" class="text-center p-3" *ngFor="let item of tabs|keys" [class.active]="item.key === activeTab">
+            <a class="font-medium-2 font-weight-600" (click)="handleTabSelected(item.key)" [ngClass]="(item.key === activeTab)? 'default' : 'primary'">{{item.value}}</a>
+          </div>
+        </div>
+
+
+     <div class="text-right img-cont" *ngIf="icon"><img src="{{icon}}" width="120" [style.margin-top]="iconOffset?.top" [style.margin-bottom]="iconOffset?.bottom" [style.margin-right]="iconOffset?.right" [style.margin-left]="iconOffset?.left" /></div>
+
+      </div>
+    </div>
+  </div>
+</div>

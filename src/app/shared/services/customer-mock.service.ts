@@ -10,6 +10,7 @@ import {mockCustomers} from '../data/mock-customers';
 import {mockRoles} from '../data/mock-roles';
 import {CallanRole} from '../models/role.model';
 import {CallanAuthService} from './auth.service';
+import {CallanGeneralEvent} from '../models/general-event.model';
 
 @Injectable()
 export class CallanCustomerMockService extends CallanCustomerService {
@@ -91,6 +92,13 @@ export class CallanCustomerMockService extends CallanCustomerService {
         })
     }
 
+    getGoogleCalendarEvents(customer: CallanCustomer, startDate: Date, endDate: Date): Observable<CallanGeneralEvent[]> {
+        return new Observable(observer => {
+            observer.next([]);
+            observer.complete();
+        })
+    }
+
     getGoogleAuthLink(customer: CallanCustomer): Observable<string|boolean> {
         return new Observable(observer => {
             observer.next('http://google.com');
@@ -110,6 +118,9 @@ export class CallanCustomerMockService extends CallanCustomerService {
 
     mapRoleToData(role: CallanRole): object {
         return {};
+    }
+
+    mapDataToGeneralEvent(generalEvent: CallanGeneralEvent, row: any): void {
     }
 
     saveCustomer(customer: CallanCustomer): Observable<CallanCustomer> {

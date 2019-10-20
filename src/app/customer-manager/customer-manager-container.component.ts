@@ -12,8 +12,9 @@ import {AppError} from '../shared/models/error.model';
 import {CallanCustomerManagerViewEnum} from '../shared/enums/customer-manager.view.enum';
 import {CallanLessonService} from '../shared/services/lesson.service';
 import {ActivatedRoute} from '@angular/router';
-import {takeUntil} from 'rxjs/operators';
+import {takeUntil, finalize} from 'rxjs/operators';
 import {CallanCustomerManagerOperationEnum} from '../shared/enums/customer-manager.operation.enum';
+import {AppConfig} from '../app.config';
 
 @Component({
     selector: 'app-callan-customer-manager-container',
@@ -29,7 +30,7 @@ export class CallanCustomerManagerContainerComponent implements OnInit, OnDestro
 
     operationNameEnum: any;
 
-    customers$ = new BehaviorSubject<CallanCustomer[]>([]);
+    customers: CallanCustomer[];
 
     rolesList: CallanRole[];
 
@@ -37,13 +38,16 @@ export class CallanCustomerManagerContainerComponent implements OnInit, OnDestro
 
     currentCustomer: CallanCustomer;
 
-    isSaving = false;
+    isProgress = false;
 
     formErrors$ = new BehaviorSubject<AppFormErrors>(null);
+
+    listRowsLimit: number;
 
     private unsubscribe$: Subject<void> = new Subject();
 
     constructor(
+        private appConfig: AppConfig,
         private location: Location,
         private route: ActivatedRoute,
         private customerService: CallanCustomerService,
@@ -52,6 +56,7 @@ export class CallanCustomerManagerContainerComponent implements OnInit, OnDestro
     ) {
         this.viewNameEnum = CallanCustomerManagerViewEnum;
         this.operationNameEnum = CallanCustomerManagerOperationEnum;
+        this.listRowsLimit = this.appConfig.listRowsLimit;
     }
 
     ngOnInit() {
@@ -102,7 +107,7 @@ export class CallanCustomerManagerContainerComponent implements OnInit, OnDestro
 
     handleCustomerSave(customer: CallanCustomer, operation?: string) {
 
-        this.isSaving = true;
+        this.isProgress = true;
 
         // checking if this user exists
         if (customer.id) {
@@ -110,49 +115,55 @@ export class CallanCustomerManagerContainerComponent implements OnInit, OnDestro
             this.customerService.findCustomerByEmail(customer.email).subscribe(existingCustomer => {
                 if (existingCustomer && existingCustomer.id !== customer.id) {
                     // create form errors object
+                    this.isProgress = false;
                     const formErrors = this.createFormErrors();
                     this.toastrService.warning('Please check the form', 'Warning');
                     CallanFormHelper.addFormError(formErrors, 'email', 'Another user with the same email is already exists');
                     this.formErrors$.next(formErrors);
                 } else {
-                    this.customerService.saveCustomer(customer).subscribe(() => {
-                        this.isSaving = false;
-                        this.fetchCustomers();
+                    this.customerService.saveCustomer(customer)
+                        .pipe(
+                            finalize(() => {
+                                console.log('Here!!');
+                                this.isProgress = false;
+                            })
+                        )
+                        .subscribe(() => {
+                            this.fetchCustomers();
 
-                        switch (operation) {
-                            case (CallanCustomerManagerOperationEnum.SAVE):
-                            default:
-                                this.toastrService.success('The Customer has been successfully saved', 'Success');
-                                break;
-                            case (CallanCustomerManagerOperationEnum.ACTIVATE):
-                                this.toastrService.success('The Customer has been successfully activate', 'Success');
-                                break;
-                            case (CallanCustomerManagerOperationEnum.DEACTIVATE):
-                                this.toastrService.warning('The Customer has been successfully blocked', 'Warning');
-                                break;
-                        }
-
-                        this.handleViewCustomer(customer);
-                    }, err => {
-
-                        this.isSaving = false;
-
-                        if (err instanceof AppError) {
-                            if (err.httpStatus === 401 || err.httpStatus === 403) {
-                                throw err.error;
-                            } else {
-                                this.toastrService.warning('Please check the form', 'Warning');
-                                const formErrors = this.createFormErrors();
-                                const message = err.message;
-                                formErrors.common.push(message);
-                                formErrors.assignServerFieldErrors(err.formErrors);
-                                this.formErrors$.next(formErrors);
+                            switch (operation) {
+                                case (CallanCustomerManagerOperationEnum.SAVE):
+                                default:
+                                    this.toastrService.success('The Customer has been successfully saved', 'Success');
+                                    break;
+                                case (CallanCustomerManagerOperationEnum.ACTIVATE):
+                                    this.toastrService.success('The Customer has been successfully activate', 'Success');
+                                    break;
+                                case (CallanCustomerManagerOperationEnum.DEACTIVATE):
+                                    this.toastrService.warning('The Customer has been successfully blocked', 'Warning');
+                                    break;
                             }
 
-                        } else {
-                            throw err;
-                        }
-                    });
+                            this.handleViewCustomer(customer);
+                        }, err => {
+
+                            if (err instanceof AppError) {
+                                if (err.httpStatus === 401 || err.httpStatus === 403) {
+                                    throw err.error;
+                                } else {
+                                    this.toastrService.warning('Please check the form', 'Warning');
+                                    const formErrors = this.createFormErrors();
+                                    const message = err.message;
+                                    formErrors.common.push(message);
+                                    formErrors.assignServerFieldErrors(err.formErrors);
+                                    this.formErrors$.next(formErrors);
+                                }
+
+
+                            } else {
+                                throw err;
+                            }
+                        });
                 }
             });
 
@@ -168,7 +179,7 @@ export class CallanCustomerManagerContainerComponent implements OnInit, OnDestro
 
                     this.customerService.saveCustomer(customer).subscribe(() => {
 
-                        this.isSaving = false;
+                        this.isProgress = false;
 
                         this.fetchCustomers();
 
@@ -190,7 +201,7 @@ export class CallanCustomerManagerContainerComponent implements OnInit, OnDestro
 
                     }, err => {
 
-                        this.isSaving = false;
+                        this.isProgress = false;
 
                         if (err instanceof AppError) {
                             if (err.httpStatus === 401 || err.httpStatus === 403) {
@@ -250,7 +261,7 @@ export class CallanCustomerManagerContainerComponent implements OnInit, OnDestro
 
     private fetchCustomers() {
         this.customerService.getCustomers().subscribe(customers => {
-            this.customers$.next(customers);
+            this.customers = customers;
         });
     }
 

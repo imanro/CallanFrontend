@@ -16,9 +16,9 @@
                         <app-callan-course-progress-details
                                 [courseProgress]="progress"
                                 [isLessonEventsCreateButtonShown]="isLessonEventsCreateButtonShown"
-                                [isTopUpLessonEventsBalanceButtonShown]="isTopUpLessonEventsBalanceButtonShown"
+                                [isTopUpBalanceButtonShown]="isTopUpBalanceButtonShown"
                                 [completedLessonEventsCount]="completedLessonEvents[progress.id]"
-                                (topUpLessonEventsBalanceEvent)="handleTopUpLessonEventsBalance(progress)"
+                                (topUpBalanceEvent)="handleTopUpBalance(progress)"
                                 (lessonEventCreateEvent)="handleLessonEventsCreate()"
                         ></app-callan-course-progress-details>
                     </div>

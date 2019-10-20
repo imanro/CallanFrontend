@@ -1,6 +1,12 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {interval as observableInterval, Subject, timer as observableTimer} from 'rxjs';
+import {interval as observableInterval, Observable, Subject, timer as observableTimer} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
+import * as moment from 'moment';
+import {ToastrService} from 'ngx-toastr';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {AppError} from '../shared/models/error.model';
+import {AppFormErrors} from '../shared/models/form-errors.model';
+
 import {CallanLessonEvent} from '../shared/models/lesson-event.model';
 import {CallanLessonManagerTeacherViewEnum} from '../shared/enums/lesson-manager-teacher.view.enum';
 import {CallanCustomerService} from '../shared/services/customer.service';
@@ -13,12 +19,11 @@ import {AppConfig} from '../app.config';
 import {AppModalContentComponent} from '../shared-modules/modal-content/modal-content.component';
 import {AppModalContentFeedbackComponent} from '../shared-modules/modal-content-feedback/modal-content-feedback.component';
 import {CallanLessonEventStateEnum} from '../shared/enums/lesson-event.state.enum';
-import {AppError} from '../shared/models/error.model';
-import {ToastrService} from 'ngx-toastr';
-import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {CallanRoleNameEnum} from '../shared/enums/role.name.enum';
 import {CallanCourse} from '../shared/models/course.model';
-import {AppFormErrors} from '../shared/models/form-errors.model';
+import {CalendarEvent} from 'angular-calendar';
+import {CallanGeneralEvent} from '../shared/models/general-event.model';
+import {AppDataFilter} from '../shared/models/data-filter.model';
 
 @Component({
     selector: 'app-callan-lesson-manager-teacher-container',
@@ -27,30 +32,57 @@ import {AppFormErrors} from '../shared/models/form-errors.model';
 })
 export class CallanLessonManagerTeacherContainerComponent implements OnInit, OnDestroy {
 
-    currentLessonEvent: CallanLessonEvent;
-    currentCourseCompetence: CallanCourseCompetence;
+    view = CallanLessonManagerTeacherViewEnum.DASHBOARD;
+
+    viewNameEnum: any;
+
+    tabs: {[id: string]: string} = {};
+
+    tabSelected: string;
 
     authCustomer: CallanCustomer;
+
     currentCustomer: CallanCustomer;
+
+    currentLessonEvent: CallanLessonEvent;
+
+    currentCourseCompetence: CallanCourseCompetence;
+
     currentDate: Date;
 
+    datesEnabled: Date[];
+
     allCourses: CallanCourse[];
+
     courseSpecialities: CallanCourseCompetence[];
+
     lessonEvents: CallanLessonEvent[];
 
-    lessonEventsListRefresh$ = new Subject<void>();
+    generalEvents: CallanGeneralEvent[];
+
+    calendarEvents: CalendarEvent[];
 
     isLessonEventShown = false;
+
     isAddCourseSpecialityButtonShown = false;
+
     isCourseSpecialityListControlsShown = false;
 
-    view = CallanLessonManagerTeacherViewEnum.DASHBOARD;
-    viewNameEnum: any;
     lessonEventViewNameEnum: any;
+
+    scheduleMinuteStep: number;
+
+    listRowsLimit: number;
 
     formErrors$ = new Subject<AppFormErrors>();
 
+    calendarRefresh$ = new Subject<void>();
+
     isSaving = false;
+
+    lessonEventsFilterByStudentValue: CallanCustomer;
+
+    studentList$ = new Subject<CallanCustomer[]>();
 
     private unsubscribe$: Subject<void> = new Subject();
 
@@ -64,6 +96,10 @@ export class CallanLessonManagerTeacherContainerComponent implements OnInit, OnD
     ) {
         this.viewNameEnum = CallanLessonManagerTeacherViewEnum;
         this.lessonEventViewNameEnum = CallanLessonEventViewEnum;
+        this.scheduleMinuteStep = appConfig.scheduleMinuteStep;
+        this.listRowsLimit = this.appConfig.listRowsLimit;
+
+        this.buildTabs();
     }
 
     ngOnInit() {
@@ -76,13 +112,29 @@ export class CallanLessonManagerTeacherContainerComponent implements OnInit, OnD
 
         this.assignAuthCustomer();
         this.assignAllCourses();
-        this.assignCurrentCustomer();
-        this.setCurrentDate(new Date());
+        this.assignCurrentCustomer().subscribe(() => {
+            this.setCurrentDate(new Date());
+            this.assignDatesEnabled(this.currentDate, this.currentCustomer);
+            this.assignGeneralEvents(this.currentDate, this.currentCustomer);
+        });
     }
 
     ngOnDestroy() {
         this.unsubscribe$.next();
         this.unsubscribe$.complete();
+    }
+
+    handleTabSelected(id: CallanLessonManagerTeacherViewEnum) {
+        this.setView(id);
+    }
+
+    setView(id: CallanLessonManagerTeacherViewEnum) {
+        console.log('selected tab', id);
+        this.view = id;
+
+        if(this.tabs[id] !== undefined) {
+            this.tabSelected = id;
+        }
     }
 
     handleSetCurrentLessonEvent(lessonEvent) {
@@ -222,7 +274,92 @@ export class CallanLessonManagerTeacherContainerComponent implements OnInit, OnD
         }, () => {
             // just do nothing
         });
+    }
 
+    handleCalendarShowPreviousWeek() {
+        this.currentDate.setDate(this.currentDate.getDate() - 7);
+        this.assignDatesEnabled(this.currentDate, this.currentCustomer);
+        this.assignGeneralEvents(this.currentDate, this.currentCustomer);
+    }
+
+    handleCalendarShowNextWeek() {
+        this.currentDate.setDate(this.currentDate.getDate() + 7);
+        this.assignDatesEnabled(this.currentDate, this.currentCustomer);
+        this.assignGeneralEvents(this.currentDate, this.currentCustomer);
+    }
+
+    handleCalendarShowCurrentWeek() {
+        this.setCurrentDate(new Date());
+        this.assignDatesEnabled(this.currentDate, this.currentCustomer);
+        this.assignGeneralEvents(this.currentDate, this.currentCustomer);
+    }
+
+    handleCalendarLessonEventClick($event) {
+        const event: {event: CalendarEvent} = $event;
+
+        // meta now is lessonEvent itself
+        if (event.event.meta instanceof CallanLessonEvent) {
+            console.log('show event!!');
+            this.setCurrentLessonEvent(event.event.meta);
+            this.setIsLessonEventShown(true);
+            window.scrollTo(0,0);
+        }
+    }
+
+    handleStudentSearch(term) {
+        this.customerService.findCustomers(term).subscribe(customers => {
+            this.studentList$.next(customers);
+        });
+    }
+
+    handleFilterLessonEventsByStudent(student: CallanCustomer) {
+        this.filterLessonEventsByStudent(student);
+    }
+
+    handleGetStudentDetails(student: CallanCustomer) {
+        this.filterLessonEventsByStudent(student);
+        this.setView(CallanLessonManagerTeacherViewEnum.LESSON_LIST);
+    }
+
+    private buildTabs() {
+        this.tabs[CallanLessonManagerTeacherViewEnum.DASHBOARD] = 'Schedule';
+        this.tabs[CallanLessonManagerTeacherViewEnum.COURSE_SPECIALITY_LIST] = 'Your qualifications';
+        this.tabs[CallanLessonManagerTeacherViewEnum.LESSON_LIST] = 'Lessons';
+
+        this.tabSelected = CallanLessonManagerTeacherViewEnum.DASHBOARD;
+    }
+
+    private setCalendarEvents() {
+
+        this.calendarEvents = [];
+
+        if (this.lessonEvents) {
+            for (const lessonEvent of this.lessonEvents) {
+
+                // show in the calendar only this two types of lessons
+                if (
+                    lessonEvent.state === CallanLessonEventStateEnum.PLANNED ||
+                    lessonEvent.state === CallanLessonEventStateEnum.STARTED ||
+                    lessonEvent.state === CallanLessonEventStateEnum.COMPLETED ||
+                    lessonEvent.state === CallanLessonEventStateEnum.CONFIRMED
+
+                ) {
+                    this.calendarEvents.push(CallanLessonService.convertLessonEventToCalendarEvent(lessonEvent, true));
+                }
+            }
+        }
+
+        if (this.generalEvents) {
+            for (const event of this.generalEvents) {
+                // show in the calendar only this two types of lessons
+                this.calendarEvents.push(CallanCustomerService.convertGeneralEventToCalendarEvent(event));
+            }
+        }
+
+
+        observableTimer(500).subscribe(() => {
+            this.calendarRefresh$.next();
+        });
     }
 
     private setCurrentLessonEvent(lessonEvent) {
@@ -326,29 +463,49 @@ export class CallanLessonManagerTeacherContainerComponent implements OnInit, OnD
         }
     }
 
-    private assignCurrentCustomer() {
-        this.customerService.getCurrentCustomer()
-            .pipe(
-                takeUntil(this.unsubscribe$)
-            )
-            .subscribe(customer => {
-                this.currentCustomer = customer;
+    private assignCurrentCustomer(): Observable<void> {
+        return new Observable(observer => {
+            this.customerService.getCurrentCustomer()
+                .pipe(
+                    takeUntil(this.unsubscribe$)
+                )
+                .subscribe(customer => {
+                    this.currentCustomer = customer;
 
-                if (customer) {
-                    this.assignLessonEvents(customer);
-                    this.assignCourseSpecialities(customer);
-                    //
-                }
-            });
+                    if (customer) {
+                        this.assignLessonEvents(customer);
+                        this.assignCourseSpecialities(customer);
+
+
+                            observer.next();
+                            observer.complete();
+                        //
+                    }
+                });
+        });
+    }
+
+    private filterLessonEventsByStudent(student: CallanCustomer) {
+        if (student) {
+            const filter = new AppDataFilter();
+            filter.where = {studentId: student.id, teacherId: this.currentCustomer.id};
+            this.findLessonEvents(filter);
+            this.lessonEventsFilterByStudentValue = student;
+        } else {
+            this.assignLessonEvents(this.currentCustomer);
+        }
     }
 
     private assignLessonEvents(customer) {
         this.lessonService.getLessonEventsByTeacher(customer).subscribe(lessonEvents => {
             this.lessonEvents = lessonEvents;
+            this.setCalendarEvents();
+        });
+    }
 
-            observableTimer(50).subscribe(() => {
-                this.lessonEventsListRefresh$.next();
-            });
+    private findLessonEvents(filter: AppDataFilter) {
+        this.lessonService.findLessonEvents(filter).subscribe(lessonEvents => {
+            this.lessonEvents = lessonEvents;
         });
     }
 
@@ -366,6 +523,34 @@ export class CallanLessonManagerTeacherContainerComponent implements OnInit, OnD
                 this.allCourses = courses;
                 this.assignIsAddCourseSpecialityButtonShown();
             });
+    }
+
+    private assignDatesEnabled(date: Date, customer: CallanCustomer) {
+
+        const range = CallanScheduleService.getWeekDatesRangeForDate(date);
+
+        // we need to getHoursAvailable also includes already booked times
+        this.scheduleService.getDatesAvailable(range[0], range[1], null, customer, true).subscribe(dates => {
+            console.log('dates enabled came');
+            this.datesEnabled = dates;
+
+            observableTimer(100).subscribe(() => {
+                console.log('rfrsh');
+                this.calendarRefresh$.next();
+            });
+        });
+    }
+
+    private assignGeneralEvents(date: Date, customer: CallanCustomer) {
+
+        const range = CallanScheduleService.getWeekDatesRangeForDate(date);
+
+        // we need to getHoursAvailable also includes already booked times
+        this.customerService.getGoogleCalendarEvents(customer, range[0], range[1], true).subscribe(events => {
+            console.log('general events came', events);
+            this.generalEvents = events;
+            this.setCalendarEvents();
+        });
     }
 
     private setCurrentDate(date: Date) {

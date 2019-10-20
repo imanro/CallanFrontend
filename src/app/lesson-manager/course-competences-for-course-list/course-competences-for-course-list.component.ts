@@ -1,5 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {CallanCourseCompetence} from '../../shared/models/course-competence.model';
+import {CallanRoleNameEnum} from '../../shared/enums/role.name.enum';
 
 @Component({
     selector: 'app-callan-course-competences-for-course-list',
@@ -14,7 +15,10 @@ export class CallanCourseCompetencesForCourseListComponent implements OnInit {
 
     selectedCourseCompetence: CallanCourseCompetence;
 
+    roleNameEnum: any;
+
     constructor() {
+        this.roleNameEnum = CallanRoleNameEnum;
     }
 
     ngOnInit() {

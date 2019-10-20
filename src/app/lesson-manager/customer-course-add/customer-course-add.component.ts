@@ -70,7 +70,7 @@ export class CallanCustomerCourseAddComponent implements OnInit, OnDestroy, OnCh
     ngOnChanges(changes: SimpleChanges) {
         console.log('changes', changes);
 
-        if(changes.allCourses !== undefined) {
+        if (changes.allCourses !== undefined) {
             this.setCourses();
             this.setFormValues();
         }

@@ -1,15 +1,70 @@
-<div class="row">
-  <div class="col-sm-12">
-    <div class="content-header">Lessons</div>
-  </div>
-</div>
+<ng-template #columnStartTimeTpl let-value="value">
+  {{value|date: 'short'}}
+</ng-template>
+
+<ng-template #columnCourseTpl let-value="value">
+  {{value.course?.title}}
+</ng-template>
+
+<ng-template #columnCustomerTpl let-value="value">
+  {{formatCustomerName(value)}}
+</ng-template>
+
+<ng-template #columnStateTpl let-value="value">
+  {{formatState(value)}}
+</ng-template>
+
+<ng-template #columnActionsTpl  let-row="row">
+  <i class="ft-eye info font-medium-1 mr-2" title="View customer" (click)="handleSetCurrentLessonEvent(row)"></i>
+  <i class="ft-trash-2 danger cancel font-medium-1 mr-2" title="Cancel lesson event" (click)="handleCancelLessonEvent(row)" *ngIf="isLessonEditingShown && (row.state === lessonEventStateEnum.PLANNED && (!row.startTime || row.startTime.getTime() > currentDate.getTime()))"></i>
+</ng-template>
+
+<ng-template #customerSearchResultTemplate let-r="result" let-t="term">
+  <ngb-highlight [result]="formatCustomerInfo(r)" [term]="t"></ngb-highlight>
+</ng-template>
+
 
 <div class="row">
   <div class="col-sm-12">
     <div class="card">
       <div class="card-body">
         <div class="card-block pt-4">
-          <ng2-smart-table [settings]="settings" [source]="source" (custom)="handleCustomAction($event)"></ng2-smart-table>
+          <div fxLayout="row" fxLayout.xs="column" *ngIf="isFilterRowShown">
+            <div class="p-2" fxFlex="0 0 20%">
+            </div>
+            <div class="p-2" fxFlex="0 0 6.66%">
+            </div>
+            <div class="p-2" fxFlex="0 0 20%">
+            </div>
+            <div class="p-2" fxFlex="0 0 20%">
+              <input type='text' class="form-control" placeholder='Type to search for Student...'
+                     [formControl]="studentFilterInput"
+                     (selectItem)="handleStudentSelect($event)"
+                     [ngbTypeahead]="studentSearch"
+                     [resultTemplate]="customerSearchResultTemplate"
+                     [inputFormatter]="customerFormatter"
+              >
+            </div>
+            <div class="p-2" fxFlex="0 0 20%">
+            </div>
+            <div class="p-2" fxFlex="0 0 6.66%">
+            </div>
+            <div class="p-2" fxFlex="0 0 6.66%">
+
+            </div>
+          </div>
+          <ngx-datatable #table
+                         class='bootstrap'
+                         [columns]="columns"
+                         [headerHeight]="50"
+                         [footerHeight]="50"
+                         [columnMode]="'flex'"
+                         [rowHeight]="'auto'"
+                         [limit]="listRowsLimit"
+                         [rows]="lessonEvents"
+                         (activate)="handleRowActivate($event)"
+          >
+          </ngx-datatable>
         </div>
       </div>
     </div>

@@ -132,7 +132,7 @@ export class CallanScheduleApiService extends CallanScheduleService {
 
         params.startDate = startDate.toISOString();
         params.endDate = endDate.toISOString();
-        params.isLookupLessonEvents = isLookupLessonEvents;
+        params.isLookupLessonEvents = false;
 
         if (courseProgress) {
             params.courseProgressId = courseProgress.id;

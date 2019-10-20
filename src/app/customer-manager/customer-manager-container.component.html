@@ -2,7 +2,7 @@
     <div class="main-content">
         <div class="content-wrapper">
             <div class="container-fluid">
-                <div class="mb-1" *ngIf="isSaving">
+                <div class="mb-1" *ngIf="isProgress">
                     <ngb-progressbar type="info" [value]="100"  [striped]="true" [animated]="true" class="progress-bar-sm"></ngb-progressbar>
                 </div>
 
@@ -14,10 +14,11 @@
                     </div>
                 </div>
 
-                <app-callan-customers-list [customers$]="customers$"
+                <app-callan-customers-list [customers]="customers"
+                                           [listRowsLimit]="listRowsLimit"
                                            (setCurrentCustomer)="handleSetCurrentCustomer($event)"
                                            (viewCustomer)="handleViewCustomer($event)"
-                                           *ngIf="view === viewNameEnum.LIST"></app-callan-customers-list>
+                                           *ngIf="view === viewNameEnum.LIST && customers"></app-callan-customers-list>
 
                     <app-callan-customer-view [customer]="operateCustomer"
                                               (navigateBack)="handleNavigateBack()"
@@ -31,7 +32,7 @@
                     <app-callan-customer-details [customer]="operateCustomer"
                                              [rolesList]="rolesList"
                                              [formErrors$]="formErrors$"
-                                             [isSaving]="isSaving"
+                                             [isSaving]="isProgress"
                                              (customerSaveEvent)="handleCustomerSave($event)"
                                              (cancelEvent)="handleViewCustomer()"
                                              *ngIf="operateCustomer && view === viewNameEnum.CUSTOMER_DETAILS"></app-callan-customer-details>

@@ -28,14 +28,14 @@ const lastLessonEvent1 = new CallanLessonEvent();
 lastLessonEvent1.lesson = mockLessons[0];
 lastLessonEvent1.duration = 1200;
 lastLessonEvent1.startTime = new Date();
-lastLessonEvent1.student = customer1;
+lastLessonEvent1.teacher = customer1;
 lastLessonEvent1.teacher = customer2;
 
 const lastLessonEvent2 = new CallanLessonEvent();
 lastLessonEvent1.lesson = mockLessons[1];
 lastLessonEvent1.duration = 3600;
 lastLessonEvent1.startTime = new Date();
-lastLessonEvent1.student = customer2;
+lastLessonEvent1.teacher = customer2;
 lastLessonEvent1.teacher = customer1;
 
 const courseProgressData = [
@@ -45,7 +45,7 @@ const courseProgressData = [
         course: courseCallan,
         lastLessonEvent: lastLessonEvent1,
         completedLessonEventsCount: 2,
-        lessonEventsBalance: 1
+        minutesBalance: 60
     },
     {
         id: 2,
@@ -53,14 +53,14 @@ const courseProgressData = [
         course: courseCallan,
         lastLessonEvent: lastLessonEvent2,
         completedLessonEventsCount: 34,
-        lessonEventsBalance: 2
+        minutesBalance: 120
     },
     {
         id: 3,
         customer: customer2,
         course: courseBusinessEnglish,
         completedLessonEventsCount: 19,
-        lessonEventsBalance: 0
+        minutesBalance: 0
     }
 ];
 

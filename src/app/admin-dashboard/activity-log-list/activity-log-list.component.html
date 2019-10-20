@@ -40,8 +40,6 @@
     <div class="col-sm-12">
       <div class="card">
         <div class="card-body">
-
-
           <div class="card-block pt-4">
             <div fxLayout="row" fxLayout.xs="column">
               <div class="p-2" fxFlex="0 0 28.56%">
@@ -51,7 +49,7 @@
               <div class="p-2" fxFlex="0 0 28.56%">
               </div>
               <div class="p-2" fxFlex="0 0 14.28%">
-                <input type='text' class="form-control" placeholder='Type to search in affected...'
+                <input type='text' class="form-control" placeholder='Type to search in initiator...'
                        [formControl]="initiatorFilterInput"
                        (selectItem)="handleInitiatorSelect($event)"
                        [ngbTypeahead]="initiatorSearch"

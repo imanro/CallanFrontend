@@ -11,6 +11,7 @@ import {CallanLessonService} from '../../shared/services/lesson.service';
 import {CallanCourseProgress} from '../../shared/models/course-progress.model';
 import {CallanLessonEvent} from '../../shared/models/lesson-event.model';
 import {formatDate} from '@angular/common';
+import {CallanDateService} from '../../shared/services/date.service';
 
 @Component({
     selector: 'app-activity-log-list',
@@ -48,7 +49,6 @@ export class CallanActivityLogListComponent implements OnInit {
     affectedFilterInput: FormControl;
 
     initiatorFilterInput: FormControl;
-
 
     columns: any;
 
@@ -220,19 +220,19 @@ export class CallanActivityLogListComponent implements OnInit {
     }
 
     private preparePreviewContent(kind, id): Observable<string> {
-            switch (kind) {
-                default:
-                    return new Observable<string>(observer => {
-                        observer.error('Unknown kind given');
-                        observer.complete();
-                    });
-                case(CallanActivityLogItemKindEnum.CUSTOMER):
-                    return this.preparePreviewCustomer(id);
-                case(CallanActivityLogItemKindEnum.LESSON_EVENT):
-                    return this.previewLessonEvent(id);
-                case(CallanActivityLogItemKindEnum.COURSE_PROGRESS):
-                    return this.previewCourseProgress(id);
-            }
+        switch (kind) {
+            default:
+                return new Observable<string>(observer => {
+                    observer.error('Unknown kind given');
+                    observer.complete();
+                });
+            case(CallanActivityLogItemKindEnum.CUSTOMER):
+                return this.preparePreviewCustomer(id);
+            case(CallanActivityLogItemKindEnum.LESSON_EVENT):
+                return this.previewLessonEvent(id);
+            case(CallanActivityLogItemKindEnum.COURSE_PROGRESS):
+                return this.previewCourseProgress(id);
+        }
     }
 
     private assignAffectedSearch() {
@@ -259,7 +259,6 @@ export class CallanActivityLogListComponent implements OnInit {
     }
 
     private assignInitiatorSearch() {
-
         this.initiatorSearch = (text$: Observable<string>) =>
             text$.pipe(
                 debounceTime(300),
@@ -294,7 +293,7 @@ export class CallanActivityLogListComponent implements OnInit {
 
                         const rolesInfo = [];
                         for (const role of customer.roles) {
-                            if (rolesInfo.indexOf(role.name) === -1){
+                            if (rolesInfo.indexOf(role.name) === -1) {
                                 rolesInfo.push(role.name);
                             }
                         }
@@ -323,10 +322,16 @@ export class CallanActivityLogListComponent implements OnInit {
     }
 
     private previewCourseProgress(id): Observable<string> {
+
+
         return this.lessonService.getCourseProgress(id)
             .pipe(
                 map<CallanCourseProgress, string>(progress => {
                     if (progress) {
+
+                        const studentName = progress.customer? progress.customer.getFullName() : '';
+
+                        const formattedMinutesBalance = CallanDateService.formatMinutesAsHoursString(progress.minutesBalance);
                         return `
 <h5>Course</h5>
 <dl>
@@ -334,8 +339,12 @@ export class CallanActivityLogListComponent implements OnInit {
 <dd>${progress.course.title}</dd>
 </dl>
 <dl>
+<dt>Student</dt>
+<dd>${studentName}</dd>
+</dl>
+<dl>
 <dt>Current ballance</dt>
-<dd>${progress.lessonEventsBalance}</dd>
+<dd>${formattedMinutesBalance}</dd>
 </dl>
 
 `;
@@ -383,6 +392,11 @@ export class CallanActivityLogListComponent implements OnInit {
 <dt>Date</dt>
 <dd>${date}</dd>
 </dl>
+<dl>
+<dt>Duration</dt>
+<dd>${lessonEvent.duration} min.</dd>
+</dl>
+
 ${teacherRow}
 <dl>
 <dt>Current state</dt>

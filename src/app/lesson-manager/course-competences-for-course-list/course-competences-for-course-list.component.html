@@ -3,7 +3,13 @@
     [ngClass]="{'selected': selectedCourseCompetence && selectedCourseCompetence === competence}"
     *ngFor="let competence of courseCompetences"
 >
-  <span class="teacher-name text-info">{{competence.customer.getFullName()}}</span>
+  <div class="row">
+  <div class="col-sm-10">
+  <app-callan-customer-header [customer]="competence.customer" [forceRole]="roleNameEnum.TEACHER" [isInline]="true" *ngIf="competence.customer"></app-callan-customer-header>
+  <div class="customer-description">{{competence.customer.description}}</div>
+  </div>
+
+  <div class="col-sm-2 button-container">
   <button type="button" class="btn btn-raised float-right"
           [ngClass]="{
           'btn-success': selectedCourseCompetence && selectedCourseCompetence === competence,
@@ -13,6 +19,8 @@
     <span *ngIf="selectedCourseCompetence && selectedCourseCompetence === competence; else promptText">Selected</span>
     <ng-template #promptText>Select this tutor</ng-template>
   </button>
+  </div>
+  </div>
 </li>
 
 </ul>

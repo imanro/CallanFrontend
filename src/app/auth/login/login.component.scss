@@ -1,5 +1,21 @@
 :host {
+  button.login {
+    padding: 0 0 0.375rem;
+    /* 0.375rem 0.75rem */
+
+    .spacer {
+      height: 0.25rem;
+    }
+
+    .spacer, ngb-progressbar {
+      display: block;
+      margin: 0 0 0.125rem;
+    }
+  }
+
+
   .danger {
     color: #ff7b29 !important;
   }
 }
+

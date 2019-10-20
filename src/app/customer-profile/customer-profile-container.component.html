@@ -27,11 +27,13 @@
                         </div>
                     </div>
 
+                    <div class="row mt-3">
                     <app-callan-customer-google-auth
                             [isAuthorized]="isGoogleAuthorized"
                             (authorize)="handleAuthorizeGoogle()"
                             *ngIf="view === viewNameEnum.DASHBOARD && currentCustomer"
                     ></app-callan-customer-google-auth>
+                    </div>
 
                 </section>
 
