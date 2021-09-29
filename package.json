@@ -42,7 +42,7 @@
     "classlist.js": "^1.1.20150312",
     "core-js": "^2.5.7",
     "d3": "^5.4.0",
-    "datatables.net": "^1.10.15",
+    "datatables.net": "^1.11.3",
     "granim": "^2.0.0",
     "intl": "^1.2.5",
     "jquery": "^3.2.1",
