@@ -37,7 +37,7 @@
     "@types/jquery": "^3.3.2",
     "@types/lodash": "^4.14.116",
     "angular-calendar": "^0.25.2",
-    "bootstrap": "4.0.0",
+    "bootstrap": "4.3.1",
     "chartist": "^0.11.0",
     "classlist.js": "^1.1.20150312",
     "core-js": "^2.5.7",
